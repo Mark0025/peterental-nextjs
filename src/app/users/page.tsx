@@ -10,8 +10,7 @@ import { Badge } from "@/components/ui/badge";
 export default function UsersPage() {
   const [userEmail, setUserEmail] = useState("");
   const [currentUser, setCurrentUser] = useState<string | null>(null);
-  const [authStatus, setAuthStatus] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const [authStatus, setAuthStatus] = useState<{ authorized: boolean; expires_at?: string } | null>(null);
 
   useEffect(() => {
     // Check if user is logged in (stored in localStorage)
