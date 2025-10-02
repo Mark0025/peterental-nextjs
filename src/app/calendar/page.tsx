@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 
 async function getCalendarStatus() {
   try {
-    const response = await fetch('http://localhost:8000/calendar/auth/status', {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+    const response = await fetch(`${apiUrl}/calendar/auth/status`, {
       cache: 'no-store'
     });
     return response.json();
@@ -90,11 +91,12 @@ export default async function CalendarPage() {
               </div>
 
               <div className="pt-4">
-                <a href="http://localhost:8000/calendar/auth/start" target="_blank" rel="noopener noreferrer">
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    {calendarStatus?.authenticated ? "Reconnect Calendar" : "Connect Microsoft Calendar"}
-                  </Button>
-                </a>
+                <Alert variant="default">
+                  <AlertDescription>
+                    Use the <strong>Users</strong> page to authenticate with your Microsoft Calendar.
+                    Multi-user support available with email-based identification.
+                  </AlertDescription>
+                </Alert>
               </div>
             </CardContent>
           </Card>

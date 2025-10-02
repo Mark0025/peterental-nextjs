@@ -160,9 +160,9 @@ export default function APIEndpointsPage() {
               <CardTitle>Base URL</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="font-mono text-sm">http://localhost:8000</p>
+              <p className="font-mono text-sm">{process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}</p>
               <p className="text-xs text-muted-foreground mt-2">
-                Production: https://peterentalvapi-latest.onrender.com
+                {process.env.NODE_ENV === 'production' ? 'Production API' : 'Local Development'}
               </p>
             </CardContent>
           </Card>
@@ -173,12 +173,12 @@ export default function APIEndpointsPage() {
             </CardHeader>
             <CardContent>
               <a
-                href="http://localhost:8000/docs"
+                href={`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/docs`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline font-mono text-sm"
               >
-                http://localhost:8000/docs
+                {process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/docs
               </a>
               <p className="text-xs text-muted-foreground mt-2">
                 Interactive OpenAPI (Swagger) documentation

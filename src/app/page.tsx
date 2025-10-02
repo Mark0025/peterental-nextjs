@@ -40,7 +40,7 @@ export default async function DashboardPage() {
               {error}
               <br />
               <span className="text-xs mt-2 block">
-                Make sure the Python backend is running on http://localhost:8000
+                Unable to connect to backend API. Check if the backend is accessible.
               </span>
             </AlertDescription>
           </Alert>
