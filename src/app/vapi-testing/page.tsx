@@ -7,9 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 
+interface TestResult {
+  endpoint: string;
+  success: boolean;
+  data?: unknown;
+  error?: string;
+}
+
 export default function VAPITestingPage() {
   const [userEmail, setUserEmail] = useState("");
-  const [testResult, setTestResult] = useState<any>(null);
+  const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState("");
 
@@ -42,8 +49,12 @@ export default function VAPITestingPage() {
       );
       const data = await response.json();
       setTestResult({ endpoint: "availability", success: response.ok, data });
-    } catch (error: any) {
-      setTestResult({ endpoint: "availability", success: false, error: error.message });
+    } catch (error) {
+      setTestResult({
+        endpoint: "availability",
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
     } finally {
       setLoading(false);
     }
@@ -65,8 +76,12 @@ export default function VAPITestingPage() {
       );
       const data = await response.json();
       setTestResult({ endpoint: "auth/status", success: response.ok, data });
-    } catch (error: any) {
-      setTestResult({ endpoint: "auth/status", success: false, error: error.message });
+    } catch (error) {
+      setTestResult({
+        endpoint: "auth/status",
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
     } finally {
       setLoading(false);
     }
