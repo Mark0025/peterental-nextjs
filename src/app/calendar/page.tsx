@@ -7,10 +7,23 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+interface CalendarEvent {
+  id: string;
+  subject: string;
+  start_time: string;
+  end_time: string;
+  location: string;
+  attendees: Array<{ name: string; email: string }>;
+  is_online_meeting: boolean;
+  web_link?: string;
+}
+
 export default function CalendarPage() {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [authStatus, setAuthStatus] = useState<{ authorized: boolean; expires_at?: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("calendar_user_id");
@@ -28,11 +41,56 @@ export default function CalendarPage() {
       const response = await fetch(`${apiUrl}/calendar/auth/status?user_id=${encodeURIComponent(userId)}`);
       const data = await response.json();
       setAuthStatus(data);
+
+      // If authorized, fetch events automatically
+      if (data.authorized) {
+        fetchEvents(userId);
+      }
     } catch (error) {
       console.error("Failed to check auth status:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchEvents = async (userId: string) => {
+    setEventsLoading(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${apiUrl}/calendar/events?user_id=${encodeURIComponent(userId)}&days_ahead=14`);
+      const data = await response.json();
+
+      if (data.status === "success") {
+        setEvents(data.events);
+      }
+    } catch (error) {
+      console.error("Failed to fetch events:", error);
+    } finally {
+      setEventsLoading(false);
+    }
+  };
+
+  const formatEventTime = (startTime: string, endTime: string) => {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+
+    const dateStr = start.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric"
+    });
+
+    const startTimeStr = start.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit"
+    });
+
+    const endTimeStr = end.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit"
+    });
+
+    return `${dateStr} · ${startTimeStr} - ${endTimeStr}`;
   };
 
   return (
@@ -101,6 +159,83 @@ export default function CalendarPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Upcoming Events Card */}
+          {currentUser && authStatus?.authorized && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Upcoming Events</CardTitle>
+                <CardDescription>
+                  Your Microsoft Calendar events for the next 14 days
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {eventsLoading ? (
+                  <p className="text-muted-foreground">Loading events...</p>
+                ) : events.length === 0 ? (
+                  <Alert>
+                    <AlertDescription>
+                      No upcoming events found. Your calendar is clear!
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <div className="space-y-4">
+                    {events.map((event) => (
+                      <div
+                        key={event.id}
+                        className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-lg">{event.subject}</h3>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {formatEventTime(event.start_time, event.end_time)}
+                            </p>
+                            {event.location && (
+                              <p className="text-sm text-muted-foreground mt-1">
+                                📍 {event.location}
+                              </p>
+                            )}
+                            {event.attendees.length > 0 && (
+                              <div className="mt-2">
+                                <p className="text-xs text-muted-foreground">
+                                  Attendees: {event.attendees.map(a => a.name || a.email).join(", ")}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-2 items-end">
+                            {event.is_online_meeting && (
+                              <Badge variant="secondary">Online Meeting</Badge>
+                            )}
+                            {event.web_link && (
+                              <a
+                                href={event.web_link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs text-blue-600 hover:underline"
+                              >
+                                View in Outlook →
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {currentUser && (
+                      <Button
+                        onClick={() => fetchEvents(currentUser)}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        Refresh Events
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Configuration Card */}
           <Card>
