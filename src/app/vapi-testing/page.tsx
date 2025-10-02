@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 
+// Force cache bust - v2.0
+
 interface TestResult {
   endpoint: string;
   success: boolean;
