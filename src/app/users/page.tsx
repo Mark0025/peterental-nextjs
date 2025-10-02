@@ -13,9 +13,26 @@ export default function UsersPage() {
   const [authStatus, setAuthStatus] = useState<{ authorized: boolean; expires_at?: string } | null>(null);
 
   useEffect(() => {
+    // Check URL params for OAuth callback
+    const params = new URLSearchParams(window.location.search);
+    const authStatus = params.get('auth');
+    const email = params.get('email');
+
+    if (authStatus === 'success' && email) {
+      // OAuth succeeded - store user and show success
+      localStorage.setItem("calendar_user_id", email);
+      setCurrentUser(email);
+      checkAuthStatus(email);
+      // Clean URL
+      window.history.replaceState({}, '', '/users');
+    } else if (authStatus === 'error') {
+      alert(`Authentication failed: ${params.get('message')}`);
+      window.history.replaceState({}, '', '/users');
+    }
+
     // Check if user is logged in (stored in localStorage)
     const storedUser = localStorage.getItem("calendar_user_id");
-    if (storedUser) {
+    if (storedUser && !authStatus) {
       setCurrentUser(storedUser);
       checkAuthStatus(storedUser);
     }
