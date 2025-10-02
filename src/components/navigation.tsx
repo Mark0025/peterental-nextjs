@@ -32,13 +32,13 @@ export default function Navigation() {
         href="/"
         style={pathname === '/' ? activeLinkStyle : linkStyle}
       >
-        Dashboard
+        Home
       </Link>
       <Link
-        href="/api-endpoints"
-        style={pathname.startsWith('/api-endpoints') ? activeLinkStyle : linkStyle}
+        href="/dashboard"
+        style={pathname.startsWith('/dashboard') ? activeLinkStyle : linkStyle}
       >
-        API Endpoints
+        Rentals
       </Link>
       <Link
         href="/calendar"
@@ -59,10 +59,10 @@ export default function Navigation() {
         VAPI Testing
       </Link>
       <Link
-        href="/whats-working"
-        style={pathname.startsWith('/whats-working') ? activeLinkStyle : linkStyle}
+        href="/api-endpoints"
+        style={pathname.startsWith('/api-endpoints') ? activeLinkStyle : linkStyle}
       >
-        What&apos;s Working
+        API Docs
       </Link>
     </nav>
   );

@@ -135,7 +135,7 @@ export default function UsersPage() {
             </Card>
           )}
 
-          {/* Add User Card */}
+          {/* Add User Card - Only show if not authenticated */}
           {!currentUser && (
             <Card>
               <CardHeader>
@@ -175,6 +175,34 @@ export default function UsersPage() {
                     Authenticate with Microsoft
                   </Button>
                 </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Re-authenticate Card - Show if authenticated */}
+          {currentUser && authStatus && !authStatus.authorized && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Re-authenticate Required</CardTitle>
+                <CardDescription>Your token has expired or is invalid</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Alert variant="destructive">
+                  <AlertTitle>Authentication Needed</AlertTitle>
+                  <AlertDescription>
+                    Your Microsoft Calendar connection needs to be refreshed. Click below to re-authenticate.
+                  </AlertDescription>
+                </Alert>
+                <Button
+                  onClick={() => {
+                    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+                    const authUrl = `${apiUrl}/calendar/auth/start?user_id=${encodeURIComponent(currentUser)}`;
+                    window.open(authUrl, "_blank");
+                  }}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  Re-authenticate with Microsoft
+                </Button>
               </CardContent>
             </Card>
           )}

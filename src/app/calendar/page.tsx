@@ -1,22 +1,39 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-async function getCalendarStatus() {
-  try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-    const response = await fetch(`${apiUrl}/calendar/auth/status`, {
-      cache: 'no-store'
-    });
-    return response.json();
-  } catch {
-    return null;
-  }
-}
+export default function CalendarPage() {
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [authStatus, setAuthStatus] = useState<{ authorized: boolean; expires_at?: string } | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export default async function CalendarPage() {
-  const calendarStatus = await getCalendarStatus();
+  useEffect(() => {
+    const storedUser = localStorage.getItem("calendar_user_id");
+    if (storedUser) {
+      setCurrentUser(storedUser);
+      checkAuthStatus(storedUser);
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
+  const checkAuthStatus = async (userId: string) => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${apiUrl}/calendar/auth/status?user_id=${encodeURIComponent(userId)}`);
+      const data = await response.json();
+      setAuthStatus(data);
+    } catch (error) {
+      console.error("Failed to check auth status:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
@@ -38,28 +55,49 @@ export default async function CalendarPage() {
               <CardDescription>Current Microsoft Calendar connection status</CardDescription>
             </CardHeader>
             <CardContent>
-              {calendarStatus ? (
+              {loading ? (
+                <p className="text-muted-foreground">Checking authentication status...</p>
+              ) : currentUser ? (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <span className="font-medium">Status:</span>
-                    <Badge variant={calendarStatus.authenticated ? "default" : "secondary"}>
-                      {calendarStatus.authenticated ? "Connected" : "Not Connected"}
-                    </Badge>
-                  </div>
-                  {calendarStatus.authenticated && calendarStatus.user_email && (
-                    <div className="flex items-center gap-4">
-                      <span className="font-medium">Connected as:</span>
-                      <span className="font-mono text-sm">{calendarStatus.user_email}</span>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{currentUser}</p>
+                      {authStatus && (
+                        <div className="mt-2">
+                          {authStatus.authorized ? (
+                            <>
+                              <Badge className="bg-green-600">✓ Connected</Badge>
+                              {authStatus.expires_at && (
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  Token expires: {new Date(authStatus.expires_at).toLocaleString()}
+                                </p>
+                              )}
+                            </>
+                          ) : (
+                            <Badge variant="destructive">Not Authorized</Badge>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  )}
+                    <Link href="/users">
+                      <Button variant="outline">Manage Connection</Button>
+                    </Link>
+                  </div>
                 </div>
               ) : (
-                <Alert>
-                  <AlertTitle>Unable to fetch status</AlertTitle>
-                  <AlertDescription>
-                    Make sure the Python backend is running on port 8000
-                  </AlertDescription>
-                </Alert>
+                <div className="space-y-4">
+                  <Alert>
+                    <AlertTitle>No Calendar Connected</AlertTitle>
+                    <AlertDescription>
+                      Connect your Microsoft Calendar to enable VAPI integration.
+                    </AlertDescription>
+                  </Alert>
+                  <Link href="/users">
+                    <Button className="bg-blue-600 hover:bg-blue-700">
+                      Connect Calendar
+                    </Button>
+                  </Link>
+                </div>
               )}
             </CardContent>
           </Card>
