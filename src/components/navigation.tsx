@@ -53,6 +53,12 @@ export default function Navigation() {
         Users
       </Link>
       <Link
+        href="/vapi-testing"
+        style={pathname.startsWith('/vapi-testing') ? activeLinkStyle : linkStyle}
+      >
+        VAPI Testing
+      </Link>
+      <Link
         href="/whats-working"
         style={pathname.startsWith('/whats-working') ? activeLinkStyle : linkStyle}
       >
