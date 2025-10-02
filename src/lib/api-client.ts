@@ -1,7 +1,6 @@
 // API Client for PeteRental Python Backend
 
 import type {
-  Rental,
   SystemStatus,
   RentalData,
   HealthStatus,
