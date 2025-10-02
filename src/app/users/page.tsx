@@ -1,8 +1,72 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 
 export default function UsersPage() {
+  const [userEmail, setUserEmail] = useState("");
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [authStatus, setAuthStatus] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Check if user is logged in (stored in localStorage)
+    const storedUser = localStorage.getItem("calendar_user_id");
+    if (storedUser) {
+      setCurrentUser(storedUser);
+      checkAuthStatus(storedUser);
+    }
+  }, []);
+
+  const checkAuthStatus = async (userId: string) => {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${apiUrl}/calendar/auth/status?user_id=${encodeURIComponent(userId)}`);
+      const data = await response.json();
+      setAuthStatus(data);
+    } catch (error) {
+      console.error("Failed to check auth status:", error);
+    }
+  };
+
+  const handleAuthenticate = () => {
+    if (!userEmail) {
+      alert("Please enter your email address");
+      return;
+    }
+
+    // Store user ID in localStorage
+    localStorage.setItem("calendar_user_id", userEmail);
+    setCurrentUser(userEmail);
+
+    // Open OAuth flow
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const authUrl = `${apiUrl}/calendar/auth/start?user_id=${encodeURIComponent(userEmail)}`;
+    window.open(authUrl, "_blank");
+
+    // Check status after a delay
+    setTimeout(() => {
+      checkAuthStatus(userEmail);
+    }, 5000);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("calendar_user_id");
+    setCurrentUser(null);
+    setAuthStatus(null);
+    setUserEmail("");
+  };
+
+  const handleRefreshStatus = () => {
+    if (currentUser) {
+      checkAuthStatus(currentUser);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
       <div className="container mx-auto p-8">
@@ -17,6 +81,89 @@ export default function UsersPage() {
 
         <div className="grid gap-6">
           {/* Current User Status */}
+          {currentUser && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Current User</CardTitle>
+                <CardDescription>Your calendar connection status</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">{currentUser}</p>
+                    {authStatus && (
+                      <div className="mt-2">
+                        {authStatus.authorized ? (
+                          <Badge className="bg-green-600">Authorized</Badge>
+                        ) : (
+                          <Badge variant="destructive">Not Authorized</Badge>
+                        )}
+                        {authStatus.expires_at && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Expires: {new Date(authStatus.expires_at).toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-x-2">
+                    <Button onClick={handleRefreshStatus} variant="outline">
+                      Refresh Status
+                    </Button>
+                    <Button onClick={handleLogout} variant="destructive">
+                      Logout
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Add User Card */}
+          {!currentUser && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Connect Microsoft Calendar</CardTitle>
+                <CardDescription>Authenticate to grant calendar access</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="text-sm font-medium">
+                    Your Email Address
+                  </label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="your.email@example.com"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                    className="mt-2"
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Enter your email and click below to authenticate with Microsoft:
+                </p>
+                <ol className="list-decimal list-inside space-y-2 text-sm">
+                  <li>Enter your email address above</li>
+                  <li>Click &quot;Authenticate with Microsoft&quot;</li>
+                  <li>Sign in with your Microsoft account</li>
+                  <li>Grant calendar permissions</li>
+                  <li>Return here to see your connection status</li>
+                </ol>
+                <div className="pt-4">
+                  <Button
+                    onClick={handleAuthenticate}
+                    className="bg-blue-600 hover:bg-blue-700"
+                    disabled={!userEmail}
+                  >
+                    Authenticate with Microsoft
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Authentication Flow Info */}
           <Card>
             <CardHeader>
               <CardTitle>Authentication System</CardTitle>
@@ -24,42 +171,20 @@ export default function UsersPage() {
             </CardHeader>
             <CardContent>
               <Alert>
-                <AlertTitle>Microsoft Calendar OAuth</AlertTitle>
+                <AlertTitle>How It Works</AlertTitle>
                 <AlertDescription>
-                  Users authenticate via Microsoft OAuth to grant calendar permissions.
-                  Tokens are stored securely and refreshed automatically.
+                  <ul className="list-disc list-inside space-y-1 mt-2">
+                    <li>Your email identifies your calendar session</li>
+                    <li>Microsoft OAuth grants secure calendar access</li>
+                    <li>Tokens are stored on the server and refreshed automatically</li>
+                    <li>You stay logged in until you click &quot;Logout&quot;</li>
+                  </ul>
                 </AlertDescription>
               </Alert>
             </CardContent>
           </Card>
 
-          {/* Add User Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Add New User</CardTitle>
-              <CardDescription>Authenticate additional users for calendar access</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">
-                To add a new user, they must complete the Microsoft OAuth flow:
-              </p>
-              <ol className="list-decimal list-inside space-y-2 text-sm">
-                <li>Click &quot;Authenticate with Microsoft&quot; below</li>
-                <li>Sign in with their Microsoft account</li>
-                <li>Grant calendar permissions</li>
-                <li>Tokens will be stored for API access</li>
-              </ol>
-              <div className="pt-4">
-                <a href="http://localhost:8000/calendar/auth/start" target="_blank" rel="noopener noreferrer">
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    Authenticate with Microsoft
-                  </Button>
-                </a>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Token Storage Info */}
+          {/* Token Management */}
           <Card>
             <CardHeader>
               <CardTitle>Token Management</CardTitle>
@@ -67,15 +192,15 @@ export default function UsersPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <h3 className="font-medium mb-2">Token Storage:</h3>
-                <p className="text-sm text-muted-foreground font-mono">
-                  data/calendar_tokens.json
+                <h3 className="font-medium mb-2">Server Storage:</h3>
+                <p className="text-sm text-muted-foreground">
+                  Tokens stored securely in <code className="font-mono">data/calendar_tokens.json</code>
                 </p>
               </div>
               <div>
                 <h3 className="font-medium mb-2">Stored Information:</h3>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                  <li>Access token (expires in 1 hour)</li>
+                  <li>Access token (expires in 1 hour, auto-refreshed)</li>
                   <li>Refresh token (long-lived, for token renewal)</li>
                   <li>User email and profile information</li>
                   <li>Token expiration timestamps</li>
@@ -84,9 +209,9 @@ export default function UsersPage() {
               <div>
                 <h3 className="font-medium mb-2">Security Features:</h3>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                  <li>Tokens stored locally (not in database)</li>
+                  <li>Tokens stored server-side (not exposed to client)</li>
                   <li>Automatic token refresh before expiration</li>
-                  <li>Secure OAuth 2.0 flow with PKCE</li>
+                  <li>Secure OAuth 2.0 flow with MSAL</li>
                   <li>Permissions scoped to calendar operations only</li>
                 </ul>
               </div>
@@ -97,16 +222,16 @@ export default function UsersPage() {
           <Card>
             <CardHeader>
               <CardTitle>Multi-User Support</CardTitle>
-              <CardDescription>Current implementation status</CardDescription>
+              <CardDescription>System capabilities</CardDescription>
             </CardHeader>
             <CardContent>
               <Alert variant="default">
-                <AlertTitle>Single User Mode</AlertTitle>
+                <AlertTitle>✅ Multi-User Enabled</AlertTitle>
                 <AlertDescription className="space-y-2">
-                  <p>The current implementation stores one user&apos;s tokens at a time.</p>
+                  <p>The system supports multiple authenticated users simultaneously.</p>
                   <p className="mt-2">
-                    <strong>To add multi-user support:</strong> Modify the token storage to use a
-                    database with user_id as key, allowing multiple authenticated users.
+                    Each user is identified by their email address, with tokens stored separately
+                    on the server. Multiple people can connect their calendars independently.
                   </p>
                 </AlertDescription>
               </Alert>
