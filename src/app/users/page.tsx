@@ -44,7 +44,7 @@ export default function UsersPage() {
                 To add a new user, they must complete the Microsoft OAuth flow:
               </p>
               <ol className="list-decimal list-inside space-y-2 text-sm">
-                <li>Click "Authenticate with Microsoft" below</li>
+                <li>Click &quot;Authenticate with Microsoft&quot; below</li>
                 <li>Sign in with their Microsoft account</li>
                 <li>Grant calendar permissions</li>
                 <li>Tokens will be stored for API access</li>
@@ -103,7 +103,7 @@ export default function UsersPage() {
               <Alert variant="default">
                 <AlertTitle>Single User Mode</AlertTitle>
                 <AlertDescription className="space-y-2">
-                  <p>The current implementation stores one user's tokens at a time.</p>
+                  <p>The current implementation stores one user&apos;s tokens at a time.</p>
                   <p className="mt-2">
                     <strong>To add multi-user support:</strong> Modify the token storage to use a
                     database with user_id as key, allowing multiple authenticated users.
