@@ -253,6 +253,66 @@ export default function UsersPage() {
               </Alert>
             </CardContent>
           </Card>
+
+          {/* VAPI Integration */}
+          <Card>
+            <CardHeader>
+              <CardTitle>VAPI Integration</CardTitle>
+              <CardDescription>How VAPI uses your calendar connection</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Alert>
+                <AlertTitle>Voice AI Calendar Access</AlertTitle>
+                <AlertDescription>
+                  Once authenticated, VAPI can interact with your calendar through voice commands.
+                </AlertDescription>
+              </Alert>
+
+              <div>
+                <h3 className="font-medium mb-2">Available VAPI Functions:</h3>
+                <ul className="list-disc list-inside space-y-2 text-sm text-muted-foreground">
+                  <li>
+                    <strong>Check Availability</strong> - &quot;What times am I free this week?&quot;
+                    <br />
+                    <code className="text-xs">POST /calendar/availability?user_id=your@email.com</code>
+                  </li>
+                  <li>
+                    <strong>Schedule Appointment</strong> - &quot;Book a showing for 2pm tomorrow&quot;
+                    <br />
+                    <code className="text-xs">POST /calendar/events?user_id=your@email.com</code>
+                  </li>
+                  <li>
+                    <strong>Multi-Calendar Support</strong> - Each user&apos;s calendar is accessed independently
+                    <br />
+                    <code className="text-xs">Pass user_id parameter to specify which calendar</code>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-2">How It Works:</h3>
+                <ol className="list-decimal list-inside space-y-1 text-sm text-muted-foreground">
+                  <li>User authenticates Microsoft Calendar (you&apos;re here! ✓)</li>
+                  <li>Token is stored securely on the backend</li>
+                  <li>VAPI makes API calls with user_id parameter</li>
+                  <li>Backend uses stored token to access Microsoft Calendar</li>
+                  <li>Results returned to VAPI for voice response</li>
+                </ol>
+              </div>
+
+              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <p className="text-sm font-medium text-blue-900 mb-2">
+                  🎙️ Example VAPI Flow:
+                </p>
+                <div className="space-y-1 text-sm text-blue-800">
+                  <p><strong>User:</strong> &quot;When am I free this week?&quot;</p>
+                  <p><strong>VAPI:</strong> Calls <code>/calendar/availability</code> with your email</p>
+                  <p><strong>Backend:</strong> Uses your stored token to check Microsoft Calendar</p>
+                  <p><strong>VAPI:</strong> &quot;You&apos;re free Tuesday at 2pm, Wednesday at 10am...&quot;</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
