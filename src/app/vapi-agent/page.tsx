@@ -27,21 +27,49 @@ export default function VAPIAgentPage() {
   const [isConnected, setIsConnected] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [devLogs, setDevLogs] = useState<Message[]>([]);
   const [selectedAssistant, setSelectedAssistant] = useState<string>("24464697-8f45-4b38-b43a-d337f50c370e");
   const [callType, setCallType] = useState<"voice" | "text">("voice");
+  const [assistants, setAssistants] = useState<AssistantConfig[]>([
+    { id: "24464697-8f45-4b38-b43a-d337f50c370e", name: "Loading assistants...", model: "gpt-4", voice: "jennifer" }
+  ]);
+  const [showDevLogs, setShowDevLogs] = useState<boolean>(true);
 
-  // Assistant configurations (can be fetched from VAPI API later)
-  const assistants: AssistantConfig[] = [
-    { id: "24464697-8f45-4b38-b43a-d337f50c370e", name: "Appointment Setter", model: "gpt-4", voice: "jennifer" }
-  ];
+  // Load assistants on mount
+  useEffect(() => {
+    const loadAssistants = async () => {
+      try {
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://peterentalvapi-latest.onrender.com";
+        const response = await fetch(`${backendUrl}/vapi/assistants`);
+        const data = await response.json();
+
+        if (data.status === "success" && data.assistants && data.assistants.length > 0) {
+          console.log(`✅ Loaded ${data.assistants.length} assistants from VAPI`);
+          setAssistants(data.assistants);
+          setSelectedAssistant(data.assistants[0].id);
+          addDevLog("system", `Loaded ${data.assistants.length} assistants from VAPI`);
+        } else {
+          console.error("Failed to load assistants:", data);
+          addDevLog("system", "⚠️ Failed to load assistants from backend");
+        }
+      } catch (error) {
+        console.error("Error loading assistants:", error);
+        addDevLog("system", `❌ Error loading assistants: ${error}`);
+      }
+    };
+
+    loadAssistants();
+  }, []);
 
   useEffect(() => {
     // Initialize VAPI client
     const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || "";
     console.log("VAPI Public Key loaded:", publicKey ? "Yes" : "No");
+    addDevLog("system", `VAPI initialized with public key: ${publicKey ? "✅" : "❌"}`);
 
     if (!publicKey) {
       console.error("VAPI_PUBLIC_KEY not found in environment variables");
+      addDevLog("system", "❌ VAPI_PUBLIC_KEY not found");
       return;
     }
 
@@ -76,6 +104,9 @@ export default function VAPIAgentPage() {
       vapiInstance.on("message", (message: Record<string, unknown>) => {
         console.log("Message received:", message);
 
+        // Log ALL messages to dev logs for debugging
+        addDevLog("system", `📨 VAPI Message: ${message.type} - ${JSON.stringify(message).substring(0, 100)}`);
+
         // Handle different message types
         if (message.type === "transcript" && message.transcriptType === "final") {
           if (message.role === "user") {
@@ -88,14 +119,24 @@ export default function VAPIAgentPage() {
         // Handle function calls
         if (message.type === "function-call") {
           const functionCall = message.functionCall as Record<string, unknown> | undefined;
-          addMessage("function", `Calling ${functionCall?.name as string}...`, functionCall?.name as string);
+          const funcName = functionCall?.name as string;
+          const params = JSON.stringify(functionCall?.parameters || {});
+          addMessage("function", `Calling ${funcName}...`, funcName);
+          addDevLog("function", `🔧 Function call: ${funcName}\nParams: ${params}`);
+
+          // Check if it's a calendar function to indicate Microsoft access
+          if (funcName === "get_availability" || funcName === "set_appointment") {
+            addDevLog("system", `🗓️ Agent accessing Microsoft Calendar via ${funcName}`);
+          }
         }
 
         // Handle function results
         if (message.type === "function-call-result") {
           const functionCallResult = message.functionCallResult as Record<string, unknown> | undefined;
           const result = functionCallResult?.result || functionCallResult;
-          addMessage("function", `Result: ${JSON.stringify(result, null, 2)}`, functionCallResult?.name as string);
+          const funcName = functionCallResult?.name as string;
+          addMessage("function", `Result: ${JSON.stringify(result, null, 2)}`, funcName);
+          addDevLog("function", `✅ Function result: ${funcName}\n${JSON.stringify(result, null, 2).substring(0, 200)}`);
         }
       });
 
@@ -116,6 +157,15 @@ export default function VAPIAgentPage() {
   const addMessage = (role: "user" | "assistant" | "function", content: string, functionName?: string) => {
     setMessages(prev => [...prev, {
       role,
+      content,
+      timestamp: new Date(),
+      functionName
+    }]);
+  };
+
+  const addDevLog = (role: "user" | "assistant" | "function" | "system", content: string, functionName?: string) => {
+    setDevLogs(prev => [...prev, {
+      role: role as "user" | "assistant" | "function",
       content,
       timestamp: new Date(),
       functionName
@@ -179,7 +229,7 @@ export default function VAPIAgentPage() {
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-4">
           {/* Left Column - Controls */}
           <div className="lg:col-span-1 space-y-6">
             {/* Call Controls */}
@@ -325,7 +375,7 @@ export default function VAPIAgentPage() {
             )}
           </div>
 
-          {/* Right Column - Conversation Log */}
+          {/* Middle Column - Conversation Log */}
           <div className="lg:col-span-2">
             <Card className="h-[calc(100vh-12rem)]">
               <CardHeader>
@@ -386,6 +436,72 @@ export default function VAPIAgentPage() {
                           </div>
                         )}
                         <div className="text-sm whitespace-pre-wrap">{message.content}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Dev Logs */}
+          <div className="lg:col-span-1">
+            <Card className="h-[calc(100vh-12rem)]">
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Dev Logs</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowDevLogs(!showDevLogs)}
+                  >
+                    {showDevLogs ? "Hide" : "Show"}
+                  </Button>
+                </CardTitle>
+                <CardDescription>
+                  Behind-the-scenes activity
+                  {devLogs.length > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setDevLogs([])}
+                      className="ml-4"
+                    >
+                      Clear
+                    </Button>
+                  )}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {!showDevLogs ? (
+                  <Alert>
+                    <AlertDescription>
+                      Dev logs hidden. Click "Show" to see activity.
+                    </AlertDescription>
+                  </Alert>
+                ) : devLogs.length === 0 ? (
+                  <Alert>
+                    <AlertDescription>
+                      No dev logs yet. Activity will appear here.
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <div className="space-y-2 max-h-[calc(100vh-20rem)] overflow-y-auto font-mono text-xs">
+                    {devLogs.map((log, index) => (
+                      <div
+                        key={index}
+                        className={`p-2 rounded border ${
+                          log.role === "function"
+                            ? "bg-yellow-50 border-yellow-200"
+                            : "bg-gray-50 border-gray-200"
+                        }`}
+                      >
+                        <div className="text-xs text-muted-foreground mb-1">
+                          {formatTime(log.timestamp)}
+                        </div>
+                        <div className="whitespace-pre-wrap break-words">
+                          {log.content}
+                        </div>
                       </div>
                     ))}
                   </div>
