@@ -109,11 +109,18 @@ export default function HomePage() {
               <p className="text-sm text-muted-foreground mb-4">
                 Configure and test your VAPI webhooks, view function definitions, and troubleshoot integration issues.
               </p>
-              <Link href="/vapi-testing">
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  Open VAPI Testing
-                </Button>
-              </Link>
+              <div className="flex gap-2">
+                <Link href="/vapi-testing">
+                  <Button className="bg-blue-600 hover:bg-blue-700">
+                    Webhook Testing
+                  </Button>
+                </Link>
+                <Link href="/vapi-agent">
+                  <Button className="bg-purple-600 hover:bg-purple-700">
+                    🎤 Voice Agent
+                  </Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
 

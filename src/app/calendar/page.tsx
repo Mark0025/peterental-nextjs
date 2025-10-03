@@ -33,6 +33,7 @@ export default function CalendarPage() {
     } else {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkAuthStatus = async (userId: string) => {
