@@ -38,6 +38,13 @@ export default function VAPIAgentPage() {
   useEffect(() => {
     // Initialize VAPI client
     const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || "";
+    console.log("VAPI Public Key loaded:", publicKey ? "Yes" : "No");
+
+    if (!publicKey) {
+      console.error("VAPI_PUBLIC_KEY not found in environment variables");
+      return;
+    }
+
     if (publicKey) {
       const vapiInstance = new Vapi(publicKey);
       setVapi(vapiInstance);
@@ -119,10 +126,14 @@ export default function VAPIAgentPage() {
     if (!vapi) return;
 
     try {
-      await vapi.start(selectedAssistant);
+      // Start call with assistant ID
+      await vapi.start({
+        assistantId: selectedAssistant
+      });
     } catch (error) {
       console.error("Failed to start call:", error);
-      alert("Failed to start call. Check console for details.");
+      const errorMessage = error instanceof Error ? error.message : "Unknown error";
+      alert(`Failed to start call: ${errorMessage}\n\nCheck browser console for details.`);
     }
   };
 
