@@ -39,22 +39,32 @@ export default function VAPIAgentPage() {
   useEffect(() => {
     const loadAssistants = async () => {
       try {
-        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://peterentalvapi-latest.onrender.com";
-        const response = await fetch(`${backendUrl}/vapi/assistants`);
-        const data = await response.json();
+        const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://peterental-vapi-github-newer.onrender.com";
+        console.log("Loading assistants from:", backendUrl);
 
-        if (data.status === "success" && data.assistants && data.assistants.length > 0) {
+        const response = await fetch(`${backendUrl}/vapi/assistants`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Assistants response:", data);
+
+        // Backend returns { assistants: [...] }
+        if (data.assistants && Array.isArray(data.assistants) && data.assistants.length > 0) {
           console.log(`✅ Loaded ${data.assistants.length} assistants from VAPI`);
           setAssistants(data.assistants);
           setSelectedAssistant(data.assistants[0].id);
-          addDevLog("system", `Loaded ${data.assistants.length} assistants from VAPI`);
+          addDevLog("system", `✅ Loaded ${data.assistants.length} VAPI assistants`);
         } else {
-          console.error("Failed to load assistants:", data);
-          addDevLog("system", "⚠️ Failed to load assistants from backend");
+          console.error("No assistants found in response:", data);
+          addDevLog("system", "⚠️ No assistants found in backend response");
         }
       } catch (error) {
         console.error("Error loading assistants:", error);
-        addDevLog("system", `❌ Error loading assistants: ${error}`);
+        addDevLog("system", `❌ Error loading assistants: ${error instanceof Error ? error.message : error}`);
+        // Keep default assistant so page doesn't break
       }
     };
 
@@ -177,9 +187,7 @@ export default function VAPIAgentPage() {
 
     try {
       // Start call with assistant ID
-      await vapi.start({
-        assistantId: selectedAssistant
-      });
+      await vapi.start(selectedAssistant);
     } catch (error) {
       console.error("Failed to start call:", error);
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -406,13 +414,12 @@ export default function VAPIAgentPage() {
                     {messages.map((message, index) => (
                       <div
                         key={index}
-                        className={`p-4 rounded-lg border ${
-                          message.role === "user"
-                            ? "bg-blue-50 border-blue-200 ml-8"
-                            : message.role === "assistant"
+                        className={`p-4 rounded-lg border ${message.role === "user"
+                          ? "bg-blue-50 border-blue-200 ml-8"
+                          : message.role === "assistant"
                             ? "bg-gray-50 border-gray-200 mr-8"
                             : "bg-yellow-50 border-yellow-200"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <Badge
@@ -420,8 +427,8 @@ export default function VAPIAgentPage() {
                               message.role === "user"
                                 ? "default"
                                 : message.role === "assistant"
-                                ? "secondary"
-                                : "outline"
+                                  ? "secondary"
+                                  : "outline"
                             }
                           >
                             {message.role === "user" ? "👤 You" : message.role === "assistant" ? "🤖 AI" : "🔧 Function"}
@@ -476,7 +483,7 @@ export default function VAPIAgentPage() {
                 {!showDevLogs ? (
                   <Alert>
                     <AlertDescription>
-                      Dev logs hidden. Click "Show" to see activity.
+                      Dev logs hidden. Click &quot;Show&quot; to see activity.
                     </AlertDescription>
                   </Alert>
                 ) : devLogs.length === 0 ? (
@@ -490,11 +497,10 @@ export default function VAPIAgentPage() {
                     {devLogs.map((log, index) => (
                       <div
                         key={index}
-                        className={`p-2 rounded border ${
-                          log.role === "function"
-                            ? "bg-yellow-50 border-yellow-200"
-                            : "bg-gray-50 border-gray-200"
-                        }`}
+                        className={`p-2 rounded border ${log.role === "function"
+                          ? "bg-yellow-50 border-yellow-200"
+                          : "bg-gray-50 border-gray-200"
+                          }`}
                       >
                         <div className="text-xs text-muted-foreground mb-1">
                           {formatTime(log.timestamp)}

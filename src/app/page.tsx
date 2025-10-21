@@ -1,38 +1,25 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { useUser } from '@/lib/hooks/use-user'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import Link from 'next/link'
+import { Loader2, RefreshCw } from 'lucide-react'
 
 export default function HomePage() {
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
-  const [authStatus, setAuthStatus] = useState<{ authorized: boolean; expires_at?: string } | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("calendar_user_id");
-    if (storedUser) {
-      setCurrentUser(storedUser);
-      checkAuthStatus(storedUser);
-    } else {
-      setLoading(false);
-    }
-  }, []);
-
-  const checkAuthStatus = async (userId: string) => {
-    try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-      const response = await fetch(`${apiUrl}/calendar/auth/status?user_id=${encodeURIComponent(userId)}`);
-      const data = await response.json();
-      setAuthStatus(data);
-    } catch (error) {
-      console.error("Failed to check auth status:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    userId,
+    email,
+    isAuthenticated,
+    calendarConnected,
+    calendarExpiresAt,
+    isLoading,
+    isCheckingAuth,
+    error,
+    refreshAuthStatus,
+  } = useUser()
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100">
@@ -40,7 +27,7 @@ export default function HomePage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-            Pete VAPI Integration
+            PeteRental Voice AI
           </h1>
           <p className="text-muted-foreground mt-2">
             Voice AI platform for rental property management
@@ -52,42 +39,70 @@ export default function HomePage() {
           <Card>
             <CardHeader>
               <CardTitle>Calendar Authentication Status</CardTitle>
-              <CardDescription>Microsoft Calendar connection for VAPI integration</CardDescription>
+              <CardDescription>
+                Microsoft Calendar connection for VAPI integration
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              {loading ? (
-                <p className="text-muted-foreground">Checking authentication status...</p>
-              ) : currentUser ? (
+              {isLoading || isCheckingAuth ? (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Checking authentication status...</span>
+                </div>
+              ) : error ? (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              ) : isAuthenticated && userId ? (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium">{currentUser}</p>
-                      {authStatus && (
-                        <div className="mt-2">
-                          {authStatus.authorized ? (
-                            <>
-                              <Badge className="bg-green-600">✓ Connected</Badge>
-                              {authStatus.expires_at && (
-                                <p className="text-sm text-muted-foreground mt-1">
-                                  Token expires: {new Date(authStatus.expires_at).toLocaleString()}
-                                </p>
-                              )}
-                            </>
-                          ) : (
-                            <Badge variant="destructive">Not Authorized</Badge>
-                          )}
-                        </div>
-                      )}
+                      <p className="font-medium">{email || userId}</p>
+                      <div className="mt-2">
+                        {calendarConnected ? (
+                          <>
+                            <Badge className="bg-green-600">✓ Connected</Badge>
+                            {calendarExpiresAt && (
+                              <p className="text-sm text-muted-foreground mt-1">
+                                Token expires:{' '}
+                                {new Date(calendarExpiresAt).toLocaleString()}
+                              </p>
+                            )}
+                          </>
+                        ) : (
+                          <Badge variant="destructive">Not Authorized</Badge>
+                        )}
+                      </div>
                     </div>
-                    <Link href="/users">
-                      <Button variant="outline">Manage</Button>
-                    </Link>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={refreshAuthStatus}
+                        disabled={isCheckingAuth}
+                      >
+                        {isCheckingAuth ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <>
+                            <RefreshCw className="h-4 w-4 mr-1" />
+                            Refresh
+                          </>
+                        )}
+                      </Button>
+                      <Link href="/users">
+                        <Button variant="outline" size="sm">
+                          Manage
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-4">
                   <p className="text-muted-foreground">
-                    No calendar connected. Connect your Microsoft Calendar to enable VAPI integration.
+                    No calendar connected. Connect your Microsoft Calendar to enable
+                    VAPI integration.
                   </p>
                   <Link href="/users">
                     <Button className="bg-blue-600 hover:bg-blue-700">
@@ -103,11 +118,14 @@ export default function HomePage() {
           <Card>
             <CardHeader>
               <CardTitle>VAPI Testing & Configuration</CardTitle>
-              <CardDescription>Test webhooks and configure VAPI integration</CardDescription>
+              <CardDescription>
+                Test webhooks and configure VAPI integration
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Configure and test your VAPI webhooks, view function definitions, and troubleshoot integration issues.
+                Configure and test your VAPI webhooks, view function definitions, and
+                troubleshoot integration issues.
               </p>
               <div className="flex gap-2">
                 <Link href="/vapi-testing">
@@ -128,11 +146,14 @@ export default function HomePage() {
           <Card>
             <CardHeader>
               <CardTitle>Rental Properties Dashboard</CardTitle>
-              <CardDescription>View tracked rental listings and availability</CardDescription>
+              <CardDescription>
+                View tracked rental listings and availability
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Monitor rental property listings, availability, and pricing across tracked websites.
+                Monitor rental property listings, availability, and pricing across
+                tracked websites.
               </p>
               <Link href="/dashboard">
                 <Button variant="outline">View Rentals</Button>
@@ -164,10 +185,14 @@ export default function HomePage() {
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 <Link href="/calendar">
-                  <Button variant="outline" className="w-full">Calendar Events</Button>
+                  <Button variant="outline" className="w-full">
+                    Calendar Events
+                  </Button>
                 </Link>
                 <Link href="/whats-working">
-                  <Button variant="outline" className="w-full">What&apos;s Working</Button>
+                  <Button variant="outline" className="w-full">
+                    What&apos;s Working
+                  </Button>
                 </Link>
               </div>
             </CardContent>
@@ -176,10 +201,13 @@ export default function HomePage() {
 
         {/* Footer Info */}
         <div className="mt-8 text-center text-sm text-muted-foreground">
-          <p>Backend: FastAPI + LangChain + Playwright</p>
-          <p>Frontend: Next.js 15 + shadcn/ui + TypeScript</p>
+          <p>Backend: FastAPI + LangChain + Playwright + Pendulum</p>
+          <p>Frontend: Next.js 15.5.4 + shadcn/ui + TypeScript</p>
+          <p className="mt-1 text-xs">
+            {isAuthenticated && userId && `Logged in as: ${email || userId}`}
+          </p>
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -7,14 +7,24 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   let status;
-  let rentals;
+  let rentalData;
   let error;
 
   try {
-    [status, rentals] = await Promise.all([
-      apiClient.getSystemStatus(),
-      apiClient.getAllRentals(),
+    const [statusResult, rentalsResult] = await Promise.all([
+      apiClient.rentals.getStatus(),
+      apiClient.rentals.getAvailable(),
     ]);
+    
+    status = statusResult;
+    
+    // Transform rentals array to match expected RentalData structure
+    rentalData = {
+      status: 'success',
+      total_available: rentalsResult.length,
+      current_date: new Date().toISOString().split('T')[0],
+      rentals: rentalsResult,
+    };
   } catch (e) {
     error = e instanceof Error ? e.message : "Failed to fetch data";
   }
@@ -54,9 +64,9 @@ export default async function DashboardPage() {
         )}
 
         {/* Rentals Table */}
-        {rentals && (
+        {rentalData && (
           <div className="mb-8">
-            <RentalTable rentals={rentals.rentals} />
+            <RentalTable rentals={rentalData.rentals} />
           </div>
         )}
 

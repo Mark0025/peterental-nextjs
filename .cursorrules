@@ -1,0 +1,688 @@
+# PeteRental Next.js 15.4 Frontend - Cursor Rules
+
+## 🎯 Project Overview
+
+This is a **LIVE PRODUCTION** Next.js 15.4 application for rental property management with VAPI (Voice AI) integration. The backend is a separate FastAPI service running at `https://peterental-vapi-github-newer.onrender.com`.
+
+## ⚠️ CRITICAL RULES
+
+### 1. **NEVER Break Production**
+
+- This is a live production app - test changes thoroughly
+- Always verify backend endpoints before implementation
+- Use feature flags for experimental features
+- Test with real backend, never mock or fake data
+
+### 2. **Backend Integration**
+
+- Backend URL: `https://peterental-vapi-github-newer.onrender.com`
+- NEVER mock backend responses - always use real API
+- All backend endpoints are documented in `/DEV_MAN/FRONTEND_INTEGRATION_GUIDE.md`
+- Backend handles: OAuth, Calendar, VAPI, Rentals, Multi-user support
+- Backend uses Pendulum for timezone handling (Central Time default)
+
+### 3. **Multi-User Architecture**
+
+- **NEVER hardcode user IDs** (e.g., "mark@peterei.com")
+- Design for 1 to 100,000+ users from day one
+- Use proper authentication context
+- Store user state in database, not localStorage (except temporary session)
+- All API calls must accept `user_id` parameter dynamically
+
+## 🏗️ Technology Stack
+
+### Core Technologies
+
+- **Next.js**: 15.5.4 (App Router, React Server Components)
+- **React**: 19.1.0
+- **TypeScript**: 5.x (Strict mode enabled)
+- **Tailwind CSS**: 4.x (Utility-first, NO inline styles)
+- **shadcn/ui**: For UI components
+- **Lucide React**: For icons
+
+### Key Libraries
+
+- `@vapi-ai/web`: Voice AI integration
+- `class-variance-authority`: Component variants
+- `tailwind-merge`: Utility class merging
+- `clsx`: Conditional classes
+
+## 📁 Project Structure
+
+```
+src/
+├── app/                    # Next.js 15 App Router
+│   ├── (auth)/            # Auth-protected routes
+│   ├── (public)/          # Public routes
+│   ├── api/               # API Route Handlers (Server Actions preferred)
+│   ├── layout.tsx         # Root layout
+│   └── page.tsx           # Home page
+├── components/
+│   ├── ui/                # shadcn/ui base components
+│   ├── features/          # Feature-specific components
+│   ├── providers/         # Context providers
+│   └── layouts/           # Layout components
+├── lib/
+│   ├── actions/           # Server Actions (preferred over API routes)
+│   ├── api-client.ts      # Backend API client
+│   ├── utils.ts           # Utility functions
+│   ├── validations/       # Zod schemas
+│   └── hooks/             # Custom React hooks
+├── types/
+│   ├── api.ts             # API response types
+│   ├── user.ts            # User types
+│   └── index.ts           # Exported types
+└── config/
+    ├── site.ts            # Site configuration
+    └── constants.ts       # Constants
+```
+
+## 🎨 Tailwind CSS 4 Best Practices
+
+### ✅ DO
+
+```tsx
+// Use Tailwind utility classes
+<div className="flex items-center justify-between gap-4 rounded-lg border p-4">
+  <h2 className="text-2xl font-bold text-gray-900">Title</h2>
+</div>
+
+// Use cn() utility for conditional classes
+import { cn } from "@/lib/utils"
+<div className={cn(
+  "rounded-lg border p-4",
+  isActive && "border-blue-500 bg-blue-50",
+  isError && "border-red-500 bg-red-50"
+)}>
+
+// Responsive design with Tailwind
+<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+
+// Dark mode support
+<div className="bg-white text-gray-900 dark:bg-gray-900 dark:text-white">
+```
+
+### ❌ DON'T
+
+```tsx
+// DON'T use inline styles
+<div style={{ padding: '12px', background: '#2d72d2' }}>
+
+// DON'T use arbitrary values when theme values exist
+<div className="p-[12px]"> // Use p-3 instead
+
+// DON'T create custom CSS files for simple utilities
+// Use Tailwind utilities or extend the theme
+```
+
+### Tailwind 4 Specific Features
+
+```tsx
+// Use new Tailwind 4 features
+<div className="grid-cols-[subgrid] grid-rows-[subgrid]">
+
+// Container queries
+<div className="@container">
+  <div className="@lg:grid-cols-2">
+
+// Modern gradient utilities
+<div className="bg-gradient-to-r from-blue-600 to-purple-600">
+```
+
+## ⚛️ Next.js 15.4 Best Practices
+
+### 1. **Server Components by Default**
+
+```tsx
+// app/dashboard/page.tsx
+// Server Component (default) - NO "use client"
+export default async function DashboardPage() {
+  const data = await fetchData(); // Can use async/await directly
+  return <Dashboard data={data} />;
+}
+```
+
+### 2. **Client Components Only When Needed**
+
+```tsx
+// Only use "use client" for:
+// - useState, useEffect, event handlers
+// - Browser APIs (localStorage, window)
+// - Third-party libraries requiring client-side
+
+'use client';
+import { useState } from 'react';
+
+export function InteractiveComponent() {
+  const [count, setCount] = useState(0);
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}
+```
+
+### 3. **Server Actions (Preferred over API Routes)**
+
+```tsx
+// app/actions/calendar.ts
+'use server';
+
+import { revalidatePath } from 'next/cache';
+
+export async function createAppointment(formData: FormData) {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/calendar/events`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        user_id: formData.get('userId'),
+        // ...
+      }),
+    }
+  );
+
+  revalidatePath('/calendar');
+  return response.json();
+}
+```
+
+### 4. **Data Fetching Patterns**
+
+```tsx
+// Server Component - Direct fetch with cache control
+async function getData(userId: string) {
+  const res = await fetch(`${API_URL}/calendar/events?user_id=${userId}`, {
+    next: { revalidate: 60 }, // Revalidate every 60 seconds
+    // OR
+    cache: 'no-store', // For always fresh data
+  });
+  return res.json();
+}
+
+// Client Component - Use React hooks or libraries
+('use client');
+export function ClientData() {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    fetchData().then(setData);
+  }, []);
+}
+```
+
+### 5. **Route Handlers (API Routes)**
+
+```tsx
+// app/api/calendar/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  const userId = request.nextUrl.searchParams.get('userId');
+
+  // Call backend
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/calendar/events?user_id=${userId}`
+  );
+  const data = await response.json();
+
+  return NextResponse.json(data);
+}
+```
+
+## 🔒 Environment Variables
+
+### Required Variables
+
+```bash
+# Backend API (PRODUCTION)
+NEXT_PUBLIC_API_URL=https://peterental-vapi-github-newer.onrender.com
+
+# VAPI Integration
+NEXT_PUBLIC_VAPI_PUBLIC_KEY=your_vapi_key_here
+
+# Optional: Environment-specific
+NEXT_PUBLIC_ENVIRONMENT=production
+```
+
+### Usage
+
+```tsx
+// ✅ Client-side (NEXT_PUBLIC_*)
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+// ✅ Server-side (any variable)
+const secretKey = process.env.SECRET_KEY;
+```
+
+## 📝 TypeScript Standards
+
+### 1. **Strict Type Safety**
+
+```tsx
+// Define types for all props
+interface UserCardProps {
+  userId: string;
+  userName: string;
+  onConnect: (userId: string) => Promise<void>;
+}
+
+export function UserCard({ userId, userName, onConnect }: UserCardProps) {
+  // Component implementation
+}
+
+// Use type inference when possible
+const users = await getUsers(); // Type inferred from getUsers() return type
+```
+
+### 2. **API Response Types**
+
+```tsx
+// types/api.ts
+export interface APIResponse<T> {
+  status: 'success' | 'error';
+  message?: string;
+  data?: T;
+}
+
+export interface CalendarEvent {
+  id: string;
+  subject: string;
+  start_time: string;
+  end_time: string;
+  attendees: Attendee[];
+}
+
+// Usage
+const response: APIResponse<CalendarEvent[]> = await fetchEvents();
+```
+
+### 3. **Avoid `any` - Use `unknown` or proper types**
+
+```tsx
+// ❌ BAD
+function handleData(data: any) {}
+
+// ✅ GOOD
+function handleData(data: unknown) {
+  if (isCalendarEvent(data)) {
+    // TypeScript knows data is CalendarEvent here
+  }
+}
+```
+
+## 🎯 Component Patterns
+
+### 1. **Component Organization**
+
+```tsx
+// components/features/calendar/appointment-card.tsx
+'use client';
+
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import type { CalendarEvent } from '@/types/api';
+
+interface AppointmentCardProps {
+  event: CalendarEvent;
+  onCancel?: (eventId: string) => void;
+}
+
+export function AppointmentCard({ event, onCancel }: AppointmentCardProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{event.subject}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Content */}
+        {onCancel && (
+          <Button onClick={() => onCancel(event.id)} variant="destructive">
+            Cancel
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### 2. **shadcn/ui Components**
+
+```tsx
+// Use existing shadcn/ui components
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Alert } from '@/components/ui/alert'
+
+// Extend variants if needed
+<Button variant="default" size="lg">Click Me</Button>
+<Badge variant="success">Active</Badge>
+```
+
+### 3. **Loading and Error States**
+
+```tsx
+// app/calendar/page.tsx
+import { Suspense } from 'react';
+import { CalendarSkeleton } from '@/components/skeletons';
+
+export default function CalendarPage() {
+  return (
+    <Suspense fallback={<CalendarSkeleton />}>
+      <CalendarEvents />
+    </Suspense>
+  );
+}
+
+// error.tsx for error boundaries
+('use client');
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error;
+  reset: () => void;
+}) {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <Card>
+        <CardContent>
+          <h2>Something went wrong!</h2>
+          <Button onClick={reset}>Try again</Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+```
+
+## 🔄 State Management
+
+### 1. **Use React Context for Global State**
+
+```tsx
+// components/providers/user-provider.tsx
+'use client';
+
+import { createContext, useContext, useState } from 'react';
+
+interface UserContextType {
+  userId: string | null;
+  setUserId: (id: string | null) => void;
+  isAuthenticated: boolean;
+}
+
+const UserContext = createContext<UserContextType | undefined>(undefined);
+
+export function UserProvider({ children }: { children: React.ReactNode }) {
+  const [userId, setUserId] = useState<string | null>(null);
+
+  return (
+    <UserContext.Provider
+      value={{
+        userId,
+        setUserId,
+        isAuthenticated: !!userId,
+      }}
+    >
+      {children}
+    </UserContext.Provider>
+  );
+}
+
+export function useUser() {
+  const context = useContext(UserContext);
+  if (!context) throw new Error('useUser must be used within UserProvider');
+  return context;
+}
+```
+
+### 2. **URL State for Shareable State**
+
+```tsx
+// Use searchParams for filters, pagination, etc.
+import { useSearchParams, useRouter } from 'next/navigation';
+
+function PropertyList() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const page = searchParams.get('page') || '1';
+  const filter = searchParams.get('filter') || 'all';
+
+  function updateFilter(newFilter: string) {
+    const params = new URLSearchParams(searchParams);
+    params.set('filter', newFilter);
+    router.push(`?${params.toString()}`);
+  }
+}
+```
+
+## 🧪 Testing Standards
+
+### 1. **Always Test Before Deploy**
+
+```bash
+# Run type checking
+pnpm build
+
+# Run linter
+pnpm lint
+
+# Test locally with production build
+pnpm build && pnpm start
+```
+
+### 2. **Backend Integration Testing**
+
+```tsx
+// Test backend connection before implementing features
+async function testBackendConnection() {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`);
+  const data = await response.json();
+  console.log('Backend status:', data.status);
+}
+```
+
+## 🚀 Performance Best Practices
+
+### 1. **Image Optimization**
+
+```tsx
+import Image from 'next/image';
+
+<Image
+  src="/property.jpg"
+  alt="Property"
+  width={800}
+  height={600}
+  placeholder="blur"
+  priority // For above-the-fold images
+/>;
+```
+
+### 2. **Code Splitting**
+
+```tsx
+// Dynamic imports for heavy components
+import dynamic from 'next/dynamic';
+
+const VAPIAgent = dynamic(() => import('@/components/vapi-agent'), {
+  ssr: false,
+  loading: () => <LoadingSpinner />,
+});
+```
+
+### 3. **Caching Strategy**
+
+```tsx
+// Revalidate static data periodically
+export const revalidate = 60; // Revalidate every 60 seconds
+
+// Or use on-demand revalidation
+import { revalidatePath } from 'next/cache';
+revalidatePath('/dashboard');
+```
+
+## 🐛 Error Handling
+
+### 1. **API Error Handling**
+
+```tsx
+// lib/api-client.ts
+export class APIError extends Error {
+  constructor(
+    public status: number,
+    public message: string,
+    public details?: unknown
+  ) {
+    super(message);
+  }
+}
+
+export async function handleAPIResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+
+    if (response.status === 401) {
+      throw new APIError(401, 'Please connect your calendar first', data);
+    }
+
+    throw new APIError(response.status, data.message || 'Request failed', data);
+  }
+
+  return response.json();
+}
+```
+
+### 2. **User-Friendly Error Messages**
+
+```tsx
+function handleError(error: unknown) {
+  if (error instanceof APIError) {
+    if (error.status === 401) {
+      toast.error('Please connect your calendar');
+      router.push('/auth/connect');
+    } else {
+      toast.error(error.message);
+    }
+  } else {
+    toast.error('An unexpected error occurred');
+    console.error(error);
+  }
+}
+```
+
+## 📚 Code Quality
+
+### 1. **DRY Principle**
+
+- Never duplicate code - create reusable utilities
+- Extract common patterns into hooks
+- Share types across files
+
+### 2. **Comments and Documentation**
+
+```tsx
+/**
+ * Fetches calendar events for a user
+ * @param userId - User email address
+ * @param daysAhead - Number of days to look ahead (default: 14)
+ * @returns Promise with calendar events
+ */
+export async function getCalendarEvents(userId: string, daysAhead = 14) {
+  // Implementation
+}
+```
+
+### 3. **Naming Conventions**
+
+- Components: PascalCase (`UserCard`, `CalendarView`)
+- Functions: camelCase (`getUserData`, `handleSubmit`)
+- Constants: UPPER_SNAKE_CASE (`API_URL`, `MAX_RETRIES`)
+- Files: kebab-case (`user-card.tsx`, `api-client.ts`)
+
+## 🔐 Security
+
+### 1. **Input Validation**
+
+```tsx
+import { z } from 'zod';
+
+const appointmentSchema = z.object({
+  userId: z.string().email(),
+  propertyAddress: z.string().min(1),
+  startTime: z.string().datetime(),
+});
+
+// Validate before sending to backend
+const validData = appointmentSchema.parse(formData);
+```
+
+### 2. **Never Expose Secrets**
+
+- All secrets in environment variables
+- Never commit `.env.local`
+- Use `NEXT_PUBLIC_*` only for truly public data
+
+## 🎨 Accessibility
+
+```tsx
+// Always include ARIA labels and semantic HTML
+<button
+  aria-label="Connect calendar"
+  onClick={handleConnect}
+  disabled={isLoading}
+>
+  {isLoading ? 'Connecting...' : 'Connect Calendar'}
+</button>
+
+// Use semantic HTML
+<nav aria-label="Main navigation">
+  <ul role="list">
+    <li><Link href="/dashboard">Dashboard</Link></li>
+  </ul>
+</nav>
+```
+
+## 📋 Commit Standards
+
+```bash
+# Format: <type>(<scope>): <message>
+
+feat(calendar): add appointment booking flow
+fix(api): handle 401 errors correctly
+refactor(ui): convert navigation to Tailwind utilities
+docs(readme): update setup instructions
+perf(images): add Next.js Image optimization
+```
+
+## 🎯 Priority Guidelines
+
+1. **User Experience First** - Fast, intuitive, accessible
+2. **Type Safety** - Catch errors at compile time
+3. **Performance** - Optimize for Core Web Vitals
+4. **Maintainability** - Clean, documented, tested code
+5. **Scalability** - Design for growth (1 to 100k+ users)
+
+## 🚫 Anti-Patterns to Avoid
+
+❌ Hardcoding user IDs
+❌ Using `any` type
+❌ Inline styles (use Tailwind)
+❌ Mocking backend data
+❌ localStorage for critical user data
+❌ Ignoring TypeScript errors
+❌ Client components when server components work
+❌ Not handling loading/error states
+
+## ✅ Always Remember
+
+- This is PRODUCTION - test thoroughly
+- Backend is separate - never assume it works, verify
+- Design for multiple users from day one
+- Use Tailwind utilities, not custom CSS
+- Prefer Server Components and Server Actions
+- Type everything with TypeScript
+- Handle errors gracefully
+- Keep user experience smooth and professional

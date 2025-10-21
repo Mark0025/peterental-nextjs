@@ -1,51 +1,86 @@
-// API Types for PeteRental Backend
+// Main type exports for PeteRental Frontend
+// Import and re-export all types for easy access
 
-export interface Rental {
-  address: string;
-  price: string;
-  bedrooms: number;
-  bathrooms: number;
-  square_feet: string;
-  available_date: string;
-  property_type: string;
-  availability_status: string;
-  days_until_available: number;
-}
+// API Types
+export type {
+  APIResponse,
+  HealthStatus,
+  ServiceInfo,
+  CalendarEvent,
+  Attendee,
+  AvailabilitySlot,
+  CalendarAuthStatus,
+  CreateEventRequest,
+  CreateEventResponse,
+  GetEventsResponse,
+  GetAvailabilityResponse,
+  VAPIAssistant,
+  VAPITool,
+  VAPIWebhookRequest,
+  VAPIToolCall,
+  VAPIWebhookResponse,
+  VAPIToolResult,
+  GetAssistantsResponse,
+  RentalProperty,
+  RentalData,
+  SystemStatus,
+  WebsiteStats,
+  DateTimeString,
+  EmailString,
+  SuccessResponse,
+  ErrorResponse,
+} from './api'
 
-export interface SystemStatus {
-  status: string;
-  database_stats: {
-    total_rentals: number;
-    websites_tracked: number;
-    last_updated: string;
-    websites: Record<string, {
-      rental_count: number;
-      last_scraped: string;
-    }>;
-  };
-}
+export { APIError } from './api'
 
-export interface RentalData {
-  status: string;
-  total_available: number;
-  current_date: string;
-  rentals: Rental[];
-}
+// User Types
+export type {
+  User,
+  UserPreferences,
+  AuthStatus,
+  UserSession,
+  StoredUser,
+  OAuthCallbackParams,
+} from './user'
 
-export interface HealthStatus {
-  status: string;
-  timestamp: string;
-  uptime_seconds?: number;
-}
+// VAPI Types
+export type {
+  VAPIEventType,
+  VAPIMessage,
+  VAPITranscript,
+  VAPICallState,
+  AgentConfig,
+  VAPIContextType,
+  VAPIToolFunction,
+  VAPIToolArguments,
+  VAPIError,
+} from './vapi'
 
-export interface ServiceInfo {
-  name: string;
-  version: string;
-  description: string;
-  endpoints: {
-    health: string;
-    webhook: string;
-    database_status: string;
-    rentals: string;
-  };
-}
+// Calendar Types
+export type {
+  CalendarDay,
+  CalendarWeek,
+  CalendarMonth,
+  AppointmentFormData,
+  AppointmentFormErrors,
+  CalendarView,
+  CalendarFilters,
+  TimeSlot,
+  CalendarEventUI,
+} from './calendar'
+
+// Rental Types
+export type {
+  RentalPropertyUI,
+  RentalFilters,
+  PropertyType,
+  AvailabilityStatus,
+  RentalSortOption,
+  RentalViewMode,
+  RentalStats,
+  RentalComparison,
+} from './rental'
+
+// Backwards compatibility (deprecated, use specific types)
+/** @deprecated Use RentalProperty from '@/types/api' instead */
+export type { RentalProperty as Rental } from './api'
