@@ -61,6 +61,21 @@ export async function GET() {
       )
     }
 
+    // Check calendar auth status separately
+    let calendarConnected = false;
+    try {
+      const calendarResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/calendar/auth/status?user_id=${result.data.email}`,
+        { cache: 'no-store' }
+      );
+      if (calendarResponse.ok) {
+        const calendarData = await calendarResponse.json();
+        calendarConnected = calendarData.authorized || false;
+      }
+    } catch (error) {
+      console.error('Error checking calendar status:', error);
+    }
+
     // Map backend response to frontend format
     const userData = {
       id: result.data.user_id.toString(),
@@ -70,7 +85,7 @@ export async function GET() {
       last_name: result.data.full_name?.split(' ')[1] || null,
       created_at: result.data.created_at,
       updated_at: result.data.created_at, // Use created_at as fallback
-      microsoft_calendar_connected: result.data.has_microsoft_calendar || false,
+      microsoft_calendar_connected: calendarConnected,
       google_calendar_connected: false // Not implemented yet
     }
 
