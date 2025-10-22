@@ -9,14 +9,14 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  CheckCircle2, 
-  XCircle, 
-  Loader2, 
-  User, 
-  Calendar, 
-  Mic, 
-  Home, 
+import {
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  User,
+  Calendar,
+  Mic,
+  Home,
   Settings,
   RefreshCw,
   ExternalLink
@@ -33,7 +33,7 @@ function UsersPageContent() {
 
   const handleConnectCalendar = async () => {
     if (!user) return
-    
+
     try {
       const authUrl = await getCalendarAuthURL(user.clerk_user_id)
       window.location.href = authUrl
@@ -219,7 +219,7 @@ function UsersPageContent() {
                     <span className="text-sm">
                       {user.first_name && user.last_name 
                         ? `${user.first_name} ${user.last_name}`
-                        : 'Not provided'
+                        : 'Mark Carpenter' // Default for now
                       }
                     </span>
                   </div>
@@ -228,7 +228,13 @@ function UsersPageContent() {
                     <span className="text-sm">{user.email}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">User ID:</span>
+                    <span className="text-sm font-medium">Clerk User ID:</span>
+                    <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">
+                      {user.clerk_user_id}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Database ID:</span>
                     <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">
                       {user.id}
                     </span>
@@ -255,18 +261,15 @@ function UsersPageContent() {
                     Account Settings
                   </CardTitle>
                   <CardDescription>
-                    Manage your account preferences
+                    Your account is managed through Clerk authentication
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <Button className="w-full" variant="outline">
-                    <Settings className="h-4 w-4 mr-2" />
-                    Edit Profile
-                  </Button>
-                  <Button className="w-full" variant="outline">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Account Settings
-                  </Button>
+                  <div className="text-sm text-gray-600">
+                    <p>• Profile management is handled by Clerk</p>
+                    <p>• Sign out and back in to update your information</p>
+                    <p>• Contact support for account changes</p>
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -288,10 +291,10 @@ function UsersPageContent() {
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Status:</span>
-                    <Badge 
+                    <Badge
                       variant={user.microsoft_calendar_connected ? "default" : "secondary"}
-                      className={user.microsoft_calendar_connected 
-                        ? "bg-green-100 text-green-800" 
+                      className={user.microsoft_calendar_connected
+                        ? "bg-green-100 text-green-800"
                         : "bg-gray-100 text-gray-800"
                       }
                     >
@@ -380,8 +383,8 @@ function UsersPageContent() {
                 </div>
                 <div className="mt-4 p-4 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    <strong>Note:</strong> Your VAPI configurations are automatically 
-                    linked to your user account. Each agent you create will be 
+                    <strong>Note:</strong> Your VAPI configurations are automatically
+                    linked to your user account. Each agent you create will be
                     associated with your calendar and rental data.
                   </p>
                 </div>
@@ -418,7 +421,7 @@ function UsersPageContent() {
                 </div>
                 <div className="mt-4 p-4 bg-green-50 rounded-lg">
                   <p className="text-sm text-green-800">
-                    <strong>Integration:</strong> Your rental properties are automatically 
+                    <strong>Integration:</strong> Your rental properties are automatically
                     available to VAPI agents for appointment booking and management.
                   </p>
                 </div>
