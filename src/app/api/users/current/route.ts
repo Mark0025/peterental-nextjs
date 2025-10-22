@@ -29,9 +29,9 @@ export async function GET() {
     console.log('Frontend API: Sending JWT token to backend:', token.substring(0, 50) + '...');
     console.log('Frontend API: User ID:', userId);
 
-    // Get user from your database by Clerk user ID
+    // Get user from your database using the new /users/me endpoint
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/by-clerk-id/${userId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -61,7 +61,20 @@ export async function GET() {
       )
     }
 
-    return NextResponse.json(result.data)
+    // Map backend response to frontend format
+    const userData = {
+      id: result.data.user_id.toString(),
+      clerk_user_id: userId,
+      email: result.data.email,
+      first_name: result.data.full_name?.split(' ')[0] || 'User',
+      last_name: result.data.full_name?.split(' ')[1] || 'Name',
+      created_at: result.data.created_at,
+      updated_at: result.data.created_at, // Use created_at as fallback
+      microsoft_calendar_connected: result.data.has_microsoft_calendar || false,
+      google_calendar_connected: false // Not implemented yet
+    }
+
+    return NextResponse.json(userData)
   } catch (error) {
     console.error('Error fetching current user:', error)
     return NextResponse.json(
