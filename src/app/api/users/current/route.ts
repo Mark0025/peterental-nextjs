@@ -12,10 +12,17 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
-    const { userId } = await auth()
+    const { userId, getToken } = await auth()
 
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
+    // Get the user's JWT token from Clerk
+    const token = await getToken()
+    
+    if (!token) {
+      return NextResponse.json({ error: 'Failed to get authentication token' }, { status: 401 })
     }
 
     // Get user from your database by Clerk user ID
@@ -23,7 +30,7 @@ export async function GET() {
       `${process.env.NEXT_PUBLIC_API_URL}/users/by-clerk-id/${userId}`,
       {
         headers: {
-          'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       }
