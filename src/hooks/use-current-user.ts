@@ -10,37 +10,50 @@
 'use client'
 
 import { useAuth } from '@clerk/nextjs'
-import { useQuery } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
 import { DatabaseUser } from '@/lib/auth/user-sync'
 
 export function useCurrentUser() {
   const { userId, isLoaded } = useAuth()
+  const [user, setUser] = useState<DatabaseUser | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<Error | null>(null)
 
-  const {
-    data: user,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<DatabaseUser | null>({
-    queryKey: ['current-user', userId],
-    queryFn: async () => {
-      if (!userId) return null
+  const fetchUser = async () => {
+    if (!userId || !isLoaded) {
+      setUser(null)
+      setIsLoading(false)
+      return
+    }
 
+    try {
+      setIsLoading(true)
+      setError(null)
+      
       const response = await fetch(`/api/users/current`)
       if (!response.ok) {
         throw new Error('Failed to fetch user')
       }
-      return response.json()
-    },
-    enabled: isLoaded && !!userId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  })
+      
+      const userData = await response.json()
+      setUser(userData)
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'))
+      setUser(null)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchUser()
+  }, [userId, isLoaded])
 
   return {
     user,
     isLoading: !isLoaded || isLoading,
     error,
-    refetch,
+    refetch: fetchUser,
     isSignedIn: !!userId && isLoaded,
   }
 }
