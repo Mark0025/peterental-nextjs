@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useCurrentUser } from '@/hooks/use-current-user'
+import { getCalendarAuthURL } from '@/actions/calendar-actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -29,6 +30,21 @@ function UsersPageContent() {
     message: string
   } | null>(null)
   const [refreshing, setRefreshing] = useState(false)
+
+  const handleConnectCalendar = async () => {
+    if (!user) return
+    
+    try {
+      const authUrl = await getCalendarAuthURL(user.clerk_user_id)
+      window.location.href = authUrl
+    } catch (error) {
+      console.error('Failed to get calendar auth URL:', error)
+      setOauthResult({
+        type: 'error',
+        message: 'Failed to start calendar connection'
+      })
+    }
+  }
 
   useEffect(() => {
     // Handle OAuth callback
@@ -297,7 +313,7 @@ function UsersPageContent() {
                       <p className="text-sm text-gray-600">
                         Connect your Microsoft Calendar to enable appointment booking
                       </p>
-                      <Button className="w-full">
+                      <Button className="w-full" onClick={handleConnectCalendar}>
                         <Calendar className="h-4 w-4 mr-2" />
                         Connect Microsoft Calendar
                       </Button>
