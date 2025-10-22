@@ -18,20 +18,36 @@ export async function GET() {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    // Temporary mock response until backend is updated
-    const mockUser = {
-      id: `user_${userId}`,
-      clerk_user_id: userId,
-      email: "user@example.com",
-      first_name: "Test",
-      last_name: "User",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-      microsoft_calendar_connected: false,
-      google_calendar_connected: false
+    // Get user from your database by Clerk user ID
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/by-clerk-id/${userId}`,
+      {
+        headers: {
+          'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+
+    if (!response.ok) {
+      console.error('Backend response not ok:', response.status, response.statusText)
+      return NextResponse.json(
+        { error: 'Failed to fetch user from database' },
+        { status: response.status }
+      )
     }
 
-    return NextResponse.json(mockUser)
+    const result = await response.json()
+    
+    if (!result.success) {
+      console.error('Backend returned error:', result.error)
+      return NextResponse.json(
+        { error: result.error || 'Failed to fetch user from database' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json(result.data)
   } catch (error) {
     console.error('Error fetching current user:', error)
     return NextResponse.json(
