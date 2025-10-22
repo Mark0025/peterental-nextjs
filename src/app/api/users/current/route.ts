@@ -66,8 +66,8 @@ export async function GET() {
       id: result.data.user_id.toString(),
       clerk_user_id: userId,
       email: result.data.email,
-      first_name: result.data.full_name?.split(' ')[0] || 'User',
-      last_name: result.data.full_name?.split(' ')[1] || 'Name',
+      first_name: result.data.full_name?.split(' ')[0] || null,
+      last_name: result.data.full_name?.split(' ')[1] || null,
       created_at: result.data.created_at,
       updated_at: result.data.created_at, // Use created_at as fallback
       microsoft_calendar_connected: result.data.has_microsoft_calendar || false,

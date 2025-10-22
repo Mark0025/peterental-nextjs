@@ -219,7 +219,7 @@ function UsersPageContent() {
                     <span className="text-sm">
                       {user.first_name && user.last_name 
                         ? `${user.first_name} ${user.last_name}`
-                        : 'Mark Carpenter' // Default for now
+                        : 'Name not provided'
                       }
                     </span>
                   </div>
