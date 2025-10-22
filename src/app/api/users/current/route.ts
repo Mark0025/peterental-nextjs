@@ -28,12 +28,12 @@ export async function GET() {
 
     console.log('Frontend API: User ID:', userId);
 
-    // Get user from your database using the /users/me endpoint with proper authorization
+    // Get user from your database using the /users/by-clerk-id endpoint with authorization
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
+      `${process.env.NEXT_PUBLIC_API_URL}/users/by-clerk-id/${userId}`,
       {
         headers: {
-          'Authorization': token,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       }
