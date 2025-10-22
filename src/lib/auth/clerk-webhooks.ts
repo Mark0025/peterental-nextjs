@@ -31,7 +31,7 @@ export async function handleClerkWebhook(req: Request) {
 
     // Get the body
     const payload = await req.text()
-    const body = JSON.parse(payload)
+    // const body = JSON.parse(payload)
 
     // Create a new Svix instance with your secret.
     const wh = new Webhook(WEBHOOK_SECRET)
@@ -59,9 +59,9 @@ export async function handleClerkWebhook(req: Request) {
       // Create user in your database
       const userData = {
         id,
-        emailAddresses: email_addresses,
-        firstName: first_name,
-        lastName: last_name,
+        emailAddresses: email_addresses.map((email: { email_address: string }) => ({ emailAddress: email.email_address })),
+        firstName: first_name || undefined,
+        lastName: last_name || undefined,
         createdAt: created_at,
         updatedAt: updated_at,
       }

@@ -10,7 +10,7 @@
 'use client'
 
 import { useAuth } from '@clerk/nextjs'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { DatabaseUser } from '@/lib/auth/user-sync'
 
 export function useCurrentUser() {
@@ -19,7 +19,7 @@ export function useCurrentUser() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     if (!userId || !isLoaded) {
       setUser(null)
       setIsLoading(false)
@@ -43,11 +43,11 @@ export function useCurrentUser() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [userId, isLoaded])
 
   useEffect(() => {
     fetchUser()
-  }, [userId, isLoaded])
+  }, [userId, isLoaded, fetchUser])
 
   return {
     user,

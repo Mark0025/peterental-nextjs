@@ -136,11 +136,14 @@ export function VAPILogger() {
                                     </div>
                                 )}
 
-                                {log.response && (
+                                {log.response !== undefined && log.response !== null && (
                                     <div className="mt-2">
                                         <strong>Response:</strong>
                                         <pre className="mt-1 p-2 bg-white/50 rounded overflow-x-auto">
-                                            {JSON.stringify(log.response, null, 2)}
+                                            {typeof log.response === 'string'
+                                                ? log.response
+                                                : JSON.stringify(log.response, null, 2)
+                                            }
                                         </pre>
                                     </div>
                                 )}

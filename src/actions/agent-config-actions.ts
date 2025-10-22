@@ -100,7 +100,7 @@ export async function importVAPIAssistant(assistantId: string, userId: string) {
               type: paramDef.type === 'number' ? 'number' : 
                     paramDef.type === 'boolean' ? 'boolean' : 'string',
               description: paramDef.description || `Parameter: ${paramName}`,
-              required: fn.parameters.required?.includes(paramName) || false,
+              required: fn.parameters?.required?.includes(paramName) || false,
               extractionPrompt: paramDef.description ? `What is the ${paramName.replace(/_/g, ' ')}?` : undefined,
             })
           }

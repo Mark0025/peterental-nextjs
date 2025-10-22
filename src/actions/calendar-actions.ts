@@ -7,8 +7,8 @@
  */
 
 import type {
-  CalendarEvent,
-  AvailabilitySlot,
+  // CalendarEvent,
+  // AvailabilitySlot,
   CalendarAuthStatus,
   CreateEventRequest,
   CreateEventResponse,

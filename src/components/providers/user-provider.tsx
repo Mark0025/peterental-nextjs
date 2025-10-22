@@ -8,7 +8,7 @@ import {
   useCallback,
   ReactNode,
 } from 'react'
-import type { AuthStatus } from '@/types'
+// import type { AuthStatus } from '@/types'
 // import { apiClient } from '@/lib/api/client' // Unused after switching to server actions
 
 interface UserContextType {

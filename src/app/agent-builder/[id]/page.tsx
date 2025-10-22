@@ -5,8 +5,8 @@
 
 'use client'
 
-import { use, useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { use, useState } from 'react'
+// import { useRouter } from 'next/navigation'
 import { useAgentConfig } from '@/lib/hooks/use-agent-config'
 import { syncAgent, previewAgentConfig } from '@/actions/agent-config-actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -40,7 +40,7 @@ export default function AgentConfigPage({
     const { id: rawId } = use(params)
     // Decode URL-encoded ID (e.g., agent_mark%40peterei.com_123 → agent_mark@peterei.com_123)
     const id = decodeURIComponent(rawId)
-    const router = useRouter()
+    // const router = useRouter()
     const { configs, updateConfig, loading: configsLoading } = useAgentConfig()
     const [syncing, setSyncing] = useState(false)
     const [showSlashMenu, setShowSlashMenu] = useState(false)
