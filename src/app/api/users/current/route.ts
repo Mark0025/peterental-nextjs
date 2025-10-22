@@ -22,8 +22,12 @@ export async function GET() {
     const token = await getToken()
     
     if (!token) {
-      return NextResponse.json({ error: 'Failed to get authentication token' }, { status: 401 })
+      console.error('Clerk: Failed to get user token for userId:', userId);
+      return NextResponse.json({ error: 'Failed to get user token' }, { status: 401 })
     }
+
+    console.log('Frontend API: Sending JWT token to backend:', token.substring(0, 50) + '...');
+    console.log('Frontend API: User ID:', userId);
 
     // Get user from your database by Clerk user ID
     const response = await fetch(
@@ -37,7 +41,9 @@ export async function GET() {
     )
 
     if (!response.ok) {
-      console.error('Backend response not ok:', response.status, response.statusText)
+      const errorText = await response.text();
+      console.error('Backend response not ok:', response.status, response.statusText);
+      console.error('Backend error response:', errorText);
       return NextResponse.json(
         { error: 'Failed to fetch user from database' },
         { status: response.status }
@@ -45,6 +51,7 @@ export async function GET() {
     }
 
     const result = await response.json()
+    console.log('Backend response:', result);
     
     if (!result.success) {
       console.error('Backend returned error:', result.error)
