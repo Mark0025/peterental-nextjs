@@ -26,15 +26,14 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to get user token' }, { status: 401 })
     }
 
-    console.log('Frontend API: Sending JWT token to backend:', token.substring(0, 50) + '...');
     console.log('Frontend API: User ID:', userId);
 
-    // Get user from your database using the new /users/me endpoint
+    // Get user from your database using the /users/me endpoint with proper authorization
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': token,
           'Content-Type': 'application/json',
         },
       }
@@ -61,15 +60,11 @@ export async function GET() {
       )
     }
 
-    // Check calendar auth status separately
-    // Note: Calendar auth is tied to mark@peterei.com, not the database email (test@example.com)
-    // This is a backend mapping issue - Clerk user should map to correct email for calendar auth
+    // Check calendar auth status using the user's actual email
     let calendarConnected = false;
     try {
-      // For now, use mark@peterei.com since that's where calendar auth is stored
-      // TODO: Backend should map Clerk user to correct email for calendar auth
       const calendarResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/calendar/auth/status?user_id=mark@peterei.com`,
+        `${process.env.NEXT_PUBLIC_API_URL}/calendar/auth/status?user_id=${result.data.email}`,
         { cache: 'no-store' }
       );
       if (calendarResponse.ok) {
