@@ -76,7 +76,7 @@ export function ImportAssistantDialog({ onClose }: { onClose: () => void }) {
     // Auto-load assistants on mount
     useEffect(() => {
         handleLoadAssistants()
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+         
     }, [])
 
     return (

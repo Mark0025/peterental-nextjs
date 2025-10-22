@@ -52,6 +52,13 @@ export async function importVAPIAssistant(assistantId: string, userId: string) {
     }
     
     // Type the VAPI assistant response
+    interface VAPIFunctionParameter {
+      type?: string
+      description?: string
+      enum?: string[]
+      default?: string | number | boolean
+    }
+    
     interface VAPIAssistantResponse {
       id: string
       name?: string
@@ -62,7 +69,7 @@ export async function importVAPIAssistant(assistantId: string, userId: string) {
         name: string
         description?: string
         parameters?: {
-          properties: Record<string, any>
+          properties: Record<string, VAPIFunctionParameter>
           required: string[]
         }
       }>
@@ -79,7 +86,7 @@ export async function importVAPIAssistant(assistantId: string, userId: string) {
       const functionVarIds: string[] = []
       
       if (fn.parameters?.properties) {
-        Object.entries(fn.parameters.properties).forEach(([paramName, paramDef]: [string, any]) => {
+        Object.entries(fn.parameters.properties).forEach(([paramName, paramDef]) => {
           // Skip user_id as it's automatically added
           if (paramName === 'user_id') return
           

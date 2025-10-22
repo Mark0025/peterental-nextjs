@@ -150,9 +150,23 @@ export default function VAPIAgentPage() {
         }
       });
 
-      vapiInstance.on("error", (error: Error) => {
+      vapiInstance.on("error", (error: unknown) => {
         console.error("VAPI Error:", error);
-        addMessage("assistant", `Error: ${error.message || "Unknown error"}`);
+
+        // Handle different error types
+        let errorMessage = "Unknown error";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else if (typeof error === "string") {
+          errorMessage = error;
+        } else if (error && typeof error === "object" && "message" in error) {
+          errorMessage = String(error.message);
+        } else if (error && typeof error === "object") {
+          errorMessage = JSON.stringify(error);
+        }
+
+        addMessage("assistant", `Error: ${errorMessage}`);
+        addDevLog("system", `❌ VAPI Error: ${errorMessage}\nFull error: ${JSON.stringify(error)}`);
       });
     }
 
@@ -183,21 +197,47 @@ export default function VAPIAgentPage() {
   };
 
   const startCall = async () => {
-    if (!vapi) return;
+    if (!vapi) {
+      addMessage("assistant", "Error: VAPI not initialized");
+      addDevLog("system", "❌ VAPI not initialized");
+      return;
+    }
+
+    if (!selectedAssistant) {
+      addMessage("assistant", "Error: No assistant selected");
+      addDevLog("system", "❌ No assistant selected");
+      return;
+    }
 
     try {
+      addMessage("assistant", "Connecting...");
+      addDevLog("system", `🚀 Starting call with assistant: ${selectedAssistant}`);
       // Start call with assistant ID
       await vapi.start(selectedAssistant);
-    } catch (error) {
+      addDevLog("system", "✅ Call started successfully");
+    } catch (error: unknown) {
       console.error("Failed to start call:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error";
-      alert(`Failed to start call: ${errorMessage}\n\nCheck browser console for details.`);
+      const errorMessage = error instanceof Error ? error.message : String(error) || "Unknown error";
+      addMessage("assistant", `Error starting call: ${errorMessage}`);
+      addDevLog("system", `❌ Failed to start call: ${errorMessage}`);
     }
   };
 
   const stopCall = () => {
-    if (vapi) {
+    if (!vapi) {
+      addDevLog("system", "❌ VAPI not initialized");
+      return;
+    }
+
+    try {
+      addMessage("assistant", "Disconnecting...");
+      addDevLog("system", "🛑 Stopping call");
       vapi.stop();
+      addDevLog("system", "✅ Call stopped successfully");
+    } catch (error: unknown) {
+      console.error("Error stopping call:", error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to stop call";
+      addDevLog("system", `❌ Failed to stop call: ${errorMessage}`);
     }
   };
 

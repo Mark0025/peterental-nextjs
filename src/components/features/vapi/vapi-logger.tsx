@@ -39,8 +39,8 @@ export function VAPILogger() {
             })
         }
 
-        window.addEventListener('vapi-log' as any, handleLogEvent)
-        return () => window.removeEventListener('vapi-log' as any, handleLogEvent)
+        window.addEventListener('vapi-log', handleLogEvent as EventListener)
+        return () => window.removeEventListener('vapi-log', handleLogEvent as EventListener)
     }, [])
 
     const clearLogs = () => {

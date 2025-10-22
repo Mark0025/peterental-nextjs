@@ -608,7 +608,7 @@ export default function AgentConfigPage({
                                                     ))}
                                                 {config.variables.filter(v => v.name.toLowerCase().includes(slashSearch) || v.displayName.toLowerCase().includes(slashSearch)).length === 0 && (
                                                     <div className="text-sm text-gray-500 px-3 py-2">
-                                                        No variables match "{slashSearch}"
+                                                        No variables match &quot;{slashSearch}&quot;
                                                     </div>
                                                 )}
                                             </div>
@@ -621,7 +621,7 @@ export default function AgentConfigPage({
                                         <ul className="text-xs text-gray-600 space-y-1">
                                             <li>• Describe what information the AI should collect in natural language</li>
                                             <li>• Mark required vs optional fields clearly</li>
-                                            <li>• Tell the AI when to call functions (e.g., "Once you have all info, call set_appointment")</li>
+                                            <li>• Tell the AI when to call functions (e.g., &quot;Once you have all info, call set_appointment&quot;)</li>
                                             <li>• The AI will extract variables from conversation automatically</li>
                                         </ul>
                                     </div>
