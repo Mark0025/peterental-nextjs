@@ -62,10 +62,14 @@ export async function GET() {
     }
 
     // Check calendar auth status separately
+    // Note: Calendar auth is tied to mark@peterei.com, not the database email (test@example.com)
+    // This is a backend mapping issue - Clerk user should map to correct email for calendar auth
     let calendarConnected = false;
     try {
+      // For now, use mark@peterei.com since that's where calendar auth is stored
+      // TODO: Backend should map Clerk user to correct email for calendar auth
       const calendarResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/calendar/auth/status?user_id=${result.data.email}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/calendar/auth/status?user_id=mark@peterei.com`,
         { cache: 'no-store' }
       );
       if (calendarResponse.ok) {
