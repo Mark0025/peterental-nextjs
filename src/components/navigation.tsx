@@ -21,6 +21,7 @@ const navItems: NavItem[] = [
   { href: '/users', label: 'Users', color: 'bg-green-600' },
   { href: '/vapi-agent', label: 'Voice AI', color: 'bg-pink-600' },
   { href: '/test-suite', label: 'Test Suite', color: 'bg-orange-600' },
+  { href: '/debug-clerk', label: 'Debug Clerk', color: 'bg-red-600' },
 ]
 
 export default function Navigation() {
