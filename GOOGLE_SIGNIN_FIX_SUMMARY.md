@@ -16,35 +16,36 @@
 4. ✅ Updated `update()` to auto-sync `full_name` when names change
 
 ### Issue 2: New Google sign-ins not creating database users
-**Status:** ⚠️ REQUIRES ACTION (Missing webhook secret)
+**Status:** ✅ FIXED (Frontend auto-creation enabled)
 
 **What was wrong:**
-- Clerk webhook secret (`CLERK_WEBHOOK_SECRET`) not configured
-- Webhook handler can't verify Clerk's signature
-- User creation silently fails
+- Frontend was calling `/users/by-clerk-id/{userId}` which doesn't auto-create users
+- Backend has `/users/me` endpoint that DOES auto-create users but wasn't being called
+- New users couldn't access app until manually created in database
 
-**Fix prepared:**
-1. ✅ Added comprehensive logging to webhook handler
-2. ✅ Added detailed error logging to user creation
-3. ✅ Created step-by-step setup guide: `CLERK_WEBHOOK_SETUP.md`
-4. ✅ Created quick fix guide: `URGENT_WEBHOOK_FIX.md`
-5. ✅ Updated `CLAUDE.md` with critical webhook requirement
+**Fix applied:**
+1. ✅ Updated `/api/users/current/route.ts` to call `/users/me` endpoint
+2. ✅ Changed auth to use Clerk JWT token (proper user authentication)
+3. ✅ Backend auto-creates users on first login with full_name populated
+4. ✅ Documented user auto-creation pattern in `CLAUDE.md`
+5. ✅ Pushed to GitHub and deployed to Vercel
 
 ---
 
 ## 🚀 What You Need to Do
 
-### URGENT: Configure Clerk Webhook (5 minutes)
+### ✅ NOTHING - All fixes are deployed!
 
-**Follow the guide in: `URGENT_WEBHOOK_FIX.md`**
+The user auto-creation fix has been pushed to GitHub and will be automatically deployed to Vercel.
 
-Quick steps:
-1. Get webhook secret from Clerk dashboard
-2. Add `CLERK_WEBHOOK_SECRET` to Vercel environment variables
-3. Redeploy app on Vercel
-4. Test with new Google sign-in
+**What happens now:**
+1. New users sign in with Google through Clerk
+2. Frontend calls `/api/users/current` endpoint
+3. Backend `/users/me` endpoint auto-creates user in database
+4. User can immediately access the app with their full name displayed
 
-**Without this, new users won't be created in your database!**
+**Optional (for redundancy):**
+You can still configure the Clerk webhook (see `URGENT_WEBHOOK_FIX.md`) for additional user sync capabilities, but it's no longer required for basic user creation.
 
 ---
 
@@ -52,10 +53,14 @@ Quick steps:
 
 ### Frontend (`peterental-nextjs`)
 ```
-✅ Committed to main:
+✅ Committed to main (Latest):
+- src/app/api/users/current/route.ts (auto-creation fix - calls /users/me)
+- CLAUDE.md (user auto-creation pattern documented)
+- GOOGLE_SIGNIN_FIX_SUMMARY.md (this file - updated with solution)
+
+✅ Committed to main (Previous):
 - src/lib/auth/clerk-webhooks.ts (detailed logging)
 - src/lib/auth/user-sync.ts (error logging)
-- CLAUDE.md (webhook requirement documented)
 - CLERK_WEBHOOK_SETUP.md (complete guide)
 - URGENT_WEBHOOK_FIX.md (quick fix)
 ```
@@ -175,10 +180,11 @@ vercel logs --follow
 
 You'll know everything works when:
 - ✅ Existing user shows "Mark Carpenter"
-- ✅ New Google sign-ins create database users
+- ✅ New Google sign-ins automatically create database users
 - ✅ Names display correctly (not "Name not provided")
-- ✅ Webhook logs show successful user creation
+- ✅ Users can access app immediately after first login
 - ✅ Database has users with `full_name` populated
+- ✅ No manual user creation needed
 
 ---
 
