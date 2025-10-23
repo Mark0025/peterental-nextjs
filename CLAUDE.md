@@ -117,6 +117,14 @@ When VAPI calls calendar functions (`get_availability`, `set_appointment`), the 
 - User authentication required before accessing app features
 - Webhook integration syncs Clerk users to backend database
 
+**User Auto-Creation Pattern** (IMPORTANT):
+- When a user logs in, frontend calls `/api/users/current` which fetches user from backend
+- Backend endpoint `/users/me` auto-creates users if they don't exist in database
+- Uses Clerk JWT token for authentication (not CLERK_SECRET_KEY)
+- New users get full_name auto-computed from first_name + last_name
+- This ensures seamless onboarding without manual user creation
+- See `USER_CREATION_FLOW_ANALYSIS.md` for complete flow documentation
+
 **User Context Provider** (`src/components/providers/user-provider.tsx`):
 - Client-side user state management
 - Tracks calendar connection status

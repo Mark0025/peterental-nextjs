@@ -12,7 +12,7 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
-    const { userId } = await auth()
+    const { userId, getToken } = await auth()
 
     if (!userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
@@ -20,13 +20,20 @@ export async function GET() {
 
     console.log('Frontend API: User ID:', userId);
 
-    // Get user from your database using the /users/by-clerk-id endpoint
-    // Use CLERK_SECRET_KEY for server-to-server authentication
+    // Get Clerk JWT token for user authentication
+    const token = await getToken()
+    if (!token) {
+      return NextResponse.json({ error: 'No authentication token' }, { status: 401 })
+    }
+
+    // Get user from your database using the /users/me endpoint
+    // This endpoint auto-creates users if they don't exist
+    // Uses Clerk JWT token for user authentication
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/by-clerk-id/${userId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
       {
         headers: {
-          'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       }
