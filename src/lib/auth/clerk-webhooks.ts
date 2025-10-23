@@ -56,6 +56,11 @@ export async function handleClerkWebhook(req: Request) {
     if (eventType === 'user.created') {
       const { id, email_addresses, first_name, last_name, created_at, updated_at } = evt.data
 
+      console.log('🔔 Clerk webhook: user.created event received')
+      console.log('📧 Email:', email_addresses[0]?.email_address)
+      console.log('👤 Name data:', { first_name, last_name })
+      console.log('🆔 Clerk ID:', id)
+
       // Create user in your database
       const userData = {
         id,
@@ -66,12 +71,14 @@ export async function handleClerkWebhook(req: Request) {
         updatedAt: updated_at,
       }
 
+      console.log('📤 Sending to backend:', JSON.stringify(userData, null, 2))
+
       const createdUser = await createUserInDatabase(userData)
-      
+
       if (createdUser) {
-        console.log('User created in database:', createdUser.id)
+        console.log('✅ User created in database:', createdUser.id)
       } else {
-        console.error('Failed to create user in database')
+        console.error('❌ Failed to create user in database - check backend logs')
       }
     }
 

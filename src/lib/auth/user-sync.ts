@@ -71,33 +71,48 @@ export async function getCurrentUser(): Promise<DatabaseUser | null> {
  */
 export async function createUserInDatabase(clerkUserData: ClerkUserData): Promise<DatabaseUser | null> {
   try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
+    const clerkSecret = process.env.CLERK_SECRET_KEY
+
+    console.log('🔧 Creating user in database...')
+    console.log('🌐 API URL:', apiUrl)
+    console.log('🔑 Clerk Secret exists:', !!clerkSecret)
+
+    const payload = {
+      clerk_user_id: clerkUserData.id,
+      email: clerkUserData.emailAddresses[0]?.emailAddress,
+      first_name: clerkUserData.firstName,
+      last_name: clerkUserData.lastName,
+      created_at: new Date(clerkUserData.createdAt).toISOString(),
+    }
+
+    console.log('📦 Payload:', JSON.stringify(payload, null, 2))
+
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/create-from-clerk`,
+      `${apiUrl}/users/create-from-clerk`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
+          'Authorization': `Bearer ${clerkSecret}`,
         },
-        body: JSON.stringify({
-          clerk_user_id: clerkUserData.id,
-          email: clerkUserData.emailAddresses[0]?.emailAddress,
-          first_name: clerkUserData.firstName,
-          last_name: clerkUserData.lastName,
-          created_at: new Date(clerkUserData.createdAt).toISOString(),
-        }),
+        body: JSON.stringify(payload),
       }
     )
 
     if (!response.ok) {
-      console.error('Failed to create user in database:', response.statusText)
+      const errorText = await response.text()
+      console.error('❌ Failed to create user in database')
+      console.error('Status:', response.status, response.statusText)
+      console.error('Error:', errorText)
       return null
     }
 
     const result = await response.json()
+    console.log('✅ User created successfully:', result.data?.id)
     return result.data
   } catch (error) {
-    console.error('Error creating user in database:', error)
+    console.error('💥 Exception creating user in database:', error)
     return null
   }
 }
