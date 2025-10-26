@@ -35,7 +35,7 @@ function UsersPageContent() {
     if (!user) return
 
     try {
-      const authUrl = await getCalendarAuthURL(user.clerk_user_id)
+      const authUrl = await getCalendarAuthURL()
       window.location.href = authUrl
     } catch (error) {
       console.error('Failed to get calendar auth URL:', error)
