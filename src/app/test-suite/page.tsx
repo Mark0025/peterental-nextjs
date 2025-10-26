@@ -12,7 +12,6 @@ import {
     checkCalendarAuth,
     getCalendarEvents,
     getAvailability,
-    checkTimeConflict,
 } from '@/actions/calendar-actions'
 import {
     vapiGetAvailability,
@@ -29,8 +28,7 @@ interface TestResult {
 }
 
 export default function TestSuitePage() {
-    const { userId } = useUser()
-    const [testUserId, setTestUserId] = useState(userId || 'mark@peterei.com')
+    const { userId, calendarConnected } = useUser()
     const [testResults, setTestResults] = useState<TestResult[]>([])
     const [isRunning, setIsRunning] = useState(false)
     const [summary, setSummary] = useState<{
@@ -83,8 +81,8 @@ export default function TestSuitePage() {
     }
 
     const runAllTests = async () => {
-        if (!testUserId) {
-            alert('Please enter a test user ID (email)')
+        if (!userId) {
+            alert('Please sign in to run tests')
             return
         }
 
@@ -95,7 +93,7 @@ export default function TestSuitePage() {
         const startTime = Date.now()
         let passed = 0
         let failed = 0
-        const skipped = 0
+        let skipped = 0
 
         // Test 1: Backend Health
         if (
@@ -117,9 +115,9 @@ export default function TestSuitePage() {
         // Test 2: Calendar Auth Status
         if (
             await runTest('2. Calendar Auth Status', async () => {
-                const status = await checkCalendarAuth(testUserId)
-                if (!status.user_id) {
-                    throw new Error('No user_id in response')
+                const status = await checkCalendarAuth()
+                if (!status.user_email) {
+                    throw new Error('No user_email in response')
                 }
                 if (typeof status.authorized !== 'boolean') {
                     throw new Error('Invalid authorized field')
@@ -134,7 +132,7 @@ export default function TestSuitePage() {
         // Test 3: Get Calendar Events
         if (
             await runTest('3. Get Calendar Events', async () => {
-                const response = await getCalendarEvents(testUserId, 14)
+                const response = await getCalendarEvents(14)
                 if (!Array.isArray(response.events)) {
                     throw new Error('Events not an array')
                 }
@@ -149,7 +147,10 @@ export default function TestSuitePage() {
         // Test 4: Get Availability
         if (
             await runTest('4. Get Available Time Slots', async () => {
-                const response = await getAvailability(testUserId, 7, 9, 17)
+                if (!calendarConnected) {
+                    throw new Error('Calendar not connected - connect your calendar first')
+                }
+                const response = await getAvailability(7, 9, 17)
                 if (!Array.isArray(response.available_slots)) {
                     throw new Error('Available slots not an array')
                 }
@@ -166,7 +167,10 @@ export default function TestSuitePage() {
         // Test 5: VAPI Get Availability
         if (
             await runTest('5. VAPI Get Availability Function', async () => {
-                const result = await vapiGetAvailability(testUserId, 3)
+                if (!userId) {
+                    throw new Error('User not authenticated')
+                }
+                const result = await vapiGetAvailability(userId, 3)
                 if (!result || typeof result !== 'string') {
                     throw new Error('No response from VAPI')
                 }
@@ -180,42 +184,19 @@ export default function TestSuitePage() {
             failed++
         }
 
-        // Test 6: Conflict Detection
+        // Test 6: VAPI Set Appointment (Dry Run)
         if (
-            await runTest('6. Time Conflict Detection', async () => {
-                // Test with a time in the past (should have no conflict)
-                const pastTime = new Date()
-                pastTime.setDate(pastTime.getDate() + 30)
-                const isoTime = pastTime.toISOString().split('.')[0]
-
-                const result = await checkTimeConflict(
-                    testUserId,
-                    isoTime,
-                    'America/Chicago'
-                )
-                if (typeof result.has_conflict !== 'boolean') {
-                    throw new Error('Invalid conflict response')
+            await runTest('6. VAPI Set Appointment (Dry Run)', async () => {
+                if (!userId) {
+                    throw new Error('User not authenticated')
                 }
-                if (!result.message) {
-                    throw new Error('No message in conflict response')
-                }
-            })
-        ) {
-            passed++
-        } else {
-            failed++
-        }
-
-        // Test 7: VAPI Set Appointment (Dry Run)
-        if (
-            await runTest('7. VAPI Set Appointment (Dry Run)', async () => {
                 // Use a far future date to avoid actual conflicts
                 const futureDate = new Date()
                 futureDate.setDate(futureDate.getDate() + 60)
                 const startTime = futureDate.toISOString().split('.')[0] + '-05:00'
 
                 const result = await vapiSetAppointment(
-                    testUserId,
+                    userId,
                     'Test Property - 123 Test St',
                     startTime,
                     'Test User',
@@ -225,35 +206,6 @@ export default function TestSuitePage() {
                 if (!result || typeof result !== 'string') {
                     throw new Error('No appointment response')
                 }
-            })
-        ) {
-            passed++
-        } else {
-            failed++
-        }
-
-        // Test 8: Timezone Handling
-        if (
-            await runTest('8. Timezone Handling Verification', async () => {
-                const futureTime = new Date()
-                futureTime.setDate(futureTime.getDate() + 45)
-                const isoTime = futureTime.toISOString().split('.')[0]
-
-                const resultCST = await checkTimeConflict(
-                    testUserId,
-                    isoTime,
-                    'America/Chicago'
-                )
-                const resultEST = await checkTimeConflict(
-                    testUserId,
-                    isoTime,
-                    'America/New_York'
-                )
-
-                if (!resultCST.timezone || !resultEST.timezone) {
-                    throw new Error('Timezone not in response')
-                }
-                // Both should process successfully with their respective timezones
             })
         ) {
             passed++
@@ -327,56 +279,57 @@ export default function TestSuitePage() {
                     <CardHeader>
                         <CardTitle>Test Configuration</CardTitle>
                         <CardDescription>
-                            Configure and run comprehensive backend integration tests
+                            Run comprehensive backend integration tests as the currently authenticated user
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex gap-4 items-end">
-                            <div className="flex-1">
-                                <label className="block text-sm font-medium mb-2">
-                                    Test User ID (Email)
-                                </label>
-                                <Input
-                                    type="email"
-                                    value={testUserId}
-                                    onChange={(e) => setTestUserId(e.target.value)}
-                                    placeholder="user@example.com"
-                                    disabled={isRunning}
-                                />
-                            </div>
-                            <Button
-                                onClick={runAllTests}
-                                disabled={isRunning || !testUserId}
-                                className="bg-blue-600 hover:bg-blue-700"
-                            >
-                                {isRunning ? (
-                                    <>
-                                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                        Running Tests...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Play className="h-4 w-4 mr-2" />
-                                        Run All Tests
-                                    </>
-                                )}
-                            </Button>
-                            {testResults.length > 0 && !isRunning && (
-                                <Button onClick={resetTests} variant="outline">
-                                    <RotateCcw className="h-4 w-4 mr-2" />
-                                    Reset
-                                </Button>
+                        <div className="space-y-4">
+                            {userId ? (
+                                <Alert className="bg-blue-50 border-blue-200">
+                                    <AlertDescription>
+                                        Running tests as: <strong>{userId}</strong>
+                                        {calendarConnected && (
+                                            <span className="ml-2 text-green-600">✓ Calendar Connected</span>
+                                        )}
+                                        {!calendarConnected && (
+                                            <span className="ml-2 text-yellow-600">⚠ Calendar Not Connected</span>
+                                        )}
+                                    </AlertDescription>
+                                </Alert>
+                            ) : (
+                                <Alert variant="destructive">
+                                    <AlertDescription>
+                                        Please sign in to run tests
+                                    </AlertDescription>
+                                </Alert>
                             )}
-                        </div>
 
-                        {userId !== testUserId && testUserId && (
-                            <Alert className="mt-4">
-                                <AlertDescription>
-                                    Testing with <strong>{testUserId}</strong> (different from your
-                                    current user)
-                                </AlertDescription>
-                            </Alert>
-                        )}
+                            <div className="flex gap-4">
+                                <Button
+                                    onClick={runAllTests}
+                                    disabled={isRunning || !userId}
+                                    className="bg-blue-600 hover:bg-blue-700"
+                                >
+                                    {isRunning ? (
+                                        <>
+                                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                            Running Tests...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Play className="h-4 w-4 mr-2" />
+                                            Run All Tests
+                                        </>
+                                    )}
+                                </Button>
+                                {testResults.length > 0 && !isRunning && (
+                                    <Button onClick={resetTests} variant="outline">
+                                        <RotateCcw className="h-4 w-4 mr-2" />
+                                        Reset
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -514,7 +467,7 @@ export default function TestSuitePage() {
                         <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>
                                 <div className="font-medium text-gray-600">API URL</div>
-                                <div className="font-mono text-xs">
+                                <div className="font-mono text-xs break-all">
                                     {process.env.NEXT_PUBLIC_API_URL}
                                 </div>
                             </div>
@@ -523,12 +476,12 @@ export default function TestSuitePage() {
                                 <div className="font-mono text-xs">Next.js 15.4 + Server Actions</div>
                             </div>
                             <div>
-                                <div className="font-medium text-gray-600">Test User</div>
-                                <div className="font-mono text-xs">{testUserId}</div>
+                                <div className="font-medium text-gray-600">Current User</div>
+                                <div className="font-mono text-xs break-all">{userId || 'Not signed in'}</div>
                             </div>
                             <div>
-                                <div className="font-medium text-gray-600">Timezone</div>
-                                <div className="font-mono text-xs">America/Chicago (CST)</div>
+                                <div className="font-medium text-gray-600">Authentication</div>
+                                <div className="font-mono text-xs">Clerk JWT (Multi-Tenant)</div>
                             </div>
                         </div>
                     </CardContent>
