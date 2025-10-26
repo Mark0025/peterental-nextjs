@@ -38,15 +38,13 @@ export default function AppointmentsPage() {
     }, [userId, calendarConnected])
 
     const loadData = async () => {
-        if (!userId) return
-
         setLoading(true)
         setError(null)
 
         try {
             const [eventsResponse, availabilityResponse] = await Promise.all([
-                getCalendarEvents(userId, 30),
-                getAvailability(userId, 7, 9, 17),
+                getCalendarEvents(30),
+                getAvailability(7, 9, 17),
             ])
 
             setAppointments(eventsResponse.events || [])
@@ -59,7 +57,7 @@ export default function AppointmentsPage() {
     }
 
     const handleBookAppointment = async () => {
-        if (!userId || !propertyAddress || !selectedSlot || !attendeeName || !attendeeEmail) {
+        if (!propertyAddress || !selectedSlot || !attendeeName || !attendeeEmail) {
             setError('Please fill in all required fields')
             return
         }
@@ -69,19 +67,11 @@ export default function AppointmentsPage() {
 
         try {
             await createCalendarEvent({
-                user_id: userId,
                 subject: `Property Viewing - ${propertyAddress}`,
                 start_time: selectedSlot.start_time,
                 end_time: selectedSlot.end_time,
-                location: propertyAddress,
-                body: `Property viewing appointment for ${propertyAddress}`,
-                attendees: [
-                    {
-                        name: attendeeName,
-                        email: attendeeEmail,
-                    },
-                ],
-                is_online_meeting: false,
+                body: `Property viewing appointment for ${propertyAddress}\n\nAttendee: ${attendeeName} (${attendeeEmail})`,
+                attendee_email: attendeeEmail,
             })
 
             setBookingSuccess(true)

@@ -113,20 +113,16 @@ export function UserProvider({ children }: UserProviderProps) {
 
   /**
    * Check calendar authorization status
+   * Backend gets user from JWT token automatically
    */
   const checkAuthStatus = useCallback(async () => {
-    if (!userId) {
-      setIsLoading(false)
-      return
-    }
-
     setIsCheckingAuth(true)
     setError(null)
 
     try {
-      // Use server action to bypass CORS
+      // Use server action - uses Clerk JWT authentication
       const { checkCalendarAuth } = await import('@/actions/calendar-actions')
-      const authStatus = await checkCalendarAuth(userId)
+      const authStatus = await checkCalendarAuth()
 
       setCalendarConnected(authStatus.authorized)
       setCalendarExpiresAt(authStatus.expires_at || null)
@@ -136,9 +132,9 @@ export function UserProvider({ children }: UserProviderProps) {
 
       // Log for debugging
       console.log('[UserProvider] Auth status checked:', {
-        userId,
         authorized: authStatus.authorized,
         expiresAt: authStatus.expires_at,
+        userEmail: authStatus.user_email,
       })
     } catch (err) {
       console.error('[UserProvider] Failed to check auth status:', err)
@@ -148,7 +144,7 @@ export function UserProvider({ children }: UserProviderProps) {
       setIsCheckingAuth(false)
       setIsLoading(false)
     }
-  }, [userId])
+  }, [])
 
   /**
    * Force refresh auth status
