@@ -3,12 +3,11 @@
 /**
  * Calendar Server Actions for PeteRental
  * Next.js 15.4 best practice - all API calls server-side
- * Keeps API URLs and credentials secure
+ * Uses Clerk JWT authentication - backend extracts user_id from token
  */
 
+import { auth } from '@clerk/nextjs/server'
 import type {
-  // CalendarEvent,
-  // AvailabilitySlot,
   CalendarAuthStatus,
   CreateEventRequest,
   CreateEventResponse,
@@ -23,16 +22,40 @@ if (!API_URL) {
 }
 
 /**
- * Check if user has authorized calendar access
+ * Get authenticated headers with Clerk JWT token
  */
-export async function checkCalendarAuth(
-  userId: string
-): Promise<CalendarAuthStatus> {
+async function getAuthHeaders(): Promise<HeadersInit> {
+  const { getToken } = await auth()
+  const token = await getToken()
+
+  if (!token) {
+    throw new Error('Not authenticated - please sign in')
+  }
+
+  return {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+  }
+}
+
+/**
+ * Check if user has authorized calendar access
+ * Backend gets user_id from JWT token automatically
+ */
+export async function checkCalendarAuth(): Promise<CalendarAuthStatus> {
   try {
+    const headers = await getAuthHeaders()
     const response = await fetch(
-      `${API_URL}/calendar/auth/status?user_id=${encodeURIComponent(userId)}`,
-      { cache: 'no-store' }
+      `${API_URL}/calendar/auth/status`,
+      {
+        headers,
+        cache: 'no-store'
+      }
     )
+
+    if (response.status === 401) {
+      throw new Error('Unauthorized - please sign in again')
+    }
 
     if (!response.ok) {
       throw new Error(`Failed to check auth status: ${response.statusText}`)
@@ -47,25 +70,36 @@ export async function checkCalendarAuth(
 
 /**
  * Get OAuth authorization URL
+ * Backend gets user_id from JWT token automatically
  */
-export async function getCalendarAuthURL(userId: string): Promise<string> {
-  return `${API_URL}/calendar/auth/start?user_id=${encodeURIComponent(userId)}`
+export async function getCalendarAuthURL(): Promise<string> {
+  return `${API_URL}/calendar/auth/start`
 }
 
 /**
  * Get user's calendar events
+ * Backend gets user_id from JWT token automatically
  */
 export async function getCalendarEvents(
-  userId: string,
   daysAhead: number = 14
 ): Promise<GetEventsResponse> {
   try {
+    const headers = await getAuthHeaders()
+    const params = new URLSearchParams({
+      days_ahead: daysAhead.toString(),
+    })
+
     const response = await fetch(
-      `${API_URL}/calendar/events?user_id=${encodeURIComponent(
-        userId
-      )}&days_ahead=${daysAhead}`,
-      { cache: 'no-store' }
+      `${API_URL}/calendar/events?${params}`,
+      {
+        headers,
+        cache: 'no-store'
+      }
     )
+
+    if (response.status === 401) {
+      throw new Error('Unauthorized - please sign in again')
+    }
 
     if (!response.ok) {
       throw new Error(`Failed to get events: ${response.statusText}`)
@@ -80,24 +114,32 @@ export async function getCalendarEvents(
 
 /**
  * Get available time slots
+ * Backend gets user_id from JWT token automatically
  */
 export async function getAvailability(
-  userId: string,
   daysAhead: number = 7,
   startHour: number = 9,
   endHour: number = 17
 ): Promise<GetAvailabilityResponse> {
   try {
+    const headers = await getAuthHeaders()
     const params = new URLSearchParams({
-      user_id: userId,
       days_ahead: daysAhead.toString(),
       start_hour: startHour.toString(),
       end_hour: endHour.toString(),
     })
 
-    const response = await fetch(`${API_URL}/calendar/availability?${params}`, {
-      cache: 'no-store',
-    })
+    const response = await fetch(
+      `${API_URL}/calendar/availability?${params}`,
+      {
+        headers,
+        cache: 'no-store'
+      }
+    )
+
+    if (response.status === 401) {
+      throw new Error('Unauthorized - please sign in again')
+    }
 
     if (!response.ok) {
       throw new Error(`Failed to get availability: ${response.statusText}`)
@@ -112,19 +154,35 @@ export async function getAvailability(
 
 /**
  * Create a new calendar event (appointment)
+ * Backend gets user_id from JWT token automatically
  */
 export async function createCalendarEvent(
-  request: CreateEventRequest
+  request: Omit<CreateEventRequest, 'user_id'>
 ): Promise<CreateEventResponse> {
   try {
-    const response = await fetch(`${API_URL}/calendar/events`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(request),
-      cache: 'no-store',
+    const headers = await getAuthHeaders()
+
+    // Convert request to query params (backend expects query params)
+    const params = new URLSearchParams({
+      subject: request.subject,
+      start_time: request.start_time,
+      end_time: request.end_time,
+      ...(request.body && { body: request.body }),
+      ...(request.attendee_email && { attendee_email: request.attendee_email }),
     })
+
+    const response = await fetch(
+      `${API_URL}/calendar/events?${params}`,
+      {
+        method: 'POST',
+        headers,
+        cache: 'no-store',
+      }
+    )
+
+    if (response.status === 401) {
+      throw new Error('Unauthorized - please sign in again')
+    }
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
@@ -141,46 +199,10 @@ export async function createCalendarEvent(
 }
 
 /**
- * Check if time slot has conflict (for testing/validation)
+ * Get calendar statistics for current user
+ * Backend gets user_id from JWT token automatically
  */
-export async function checkTimeConflict(
-  userId: string,
-  startTime: string,
-  timezone: string = 'America/Chicago'
-): Promise<{
-  user_id: string
-  checking_time: string
-  timezone: string
-  has_conflict: boolean
-  result: string
-  message: string
-}> {
-  try {
-    const params = new URLSearchParams({
-      user_id: userId,
-      start_time: startTime,
-      timezone: timezone,
-    })
-
-    const response = await fetch(`${API_URL}/debug/check-conflict?${params}`, {
-      cache: 'no-store',
-    })
-
-    if (!response.ok) {
-      throw new Error(`Failed to check conflict: ${response.statusText}`)
-    }
-
-    return response.json()
-  } catch (error) {
-    console.error('[Server Action] checkTimeConflict error:', error)
-    throw error
-  }
-}
-
-/**
- * Get calendar statistics for a user
- */
-export async function getCalendarStats(userId: string): Promise<{
+export async function getCalendarStats(): Promise<{
   total_events: number
   upcoming_events: number
   past_events: number
@@ -188,8 +210,8 @@ export async function getCalendarStats(userId: string): Promise<{
 }> {
   try {
     const [events, availability] = await Promise.all([
-      getCalendarEvents(userId, 30),
-      getAvailability(userId, 7),
+      getCalendarEvents(30),
+      getAvailability(7),
     ])
 
     const eventList = events.events || []
