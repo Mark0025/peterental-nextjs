@@ -3,7 +3,9 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
+import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton, useUser as useClerkUser } from '@clerk/nextjs'
+import { useUser } from '@/lib/hooks/use-user'
+import { Calendar, CheckCircle2, XCircle } from 'lucide-react'
 
 interface NavItem {
   href: string
@@ -26,6 +28,12 @@ const navItems: NavItem[] = [
 
 export default function Navigation() {
   const pathname = usePathname()
+  const { user: clerkUser } = useClerkUser()
+  const { calendarConnected, isLoading: isUserLoading } = useUser()
+
+  // Check if user is admin
+  const isAdmin = clerkUser?.primaryEmailAddress?.emailAddress === 'mark@peterei.com' ||
+                  clerkUser?.primaryEmailAddress?.emailAddress === 'jon@ihbuyers.com'
 
   const isActive = (item: NavItem): boolean => {
     if (item.matchExact) {
@@ -68,7 +76,7 @@ export default function Navigation() {
         </div>
 
         {/* Authentication Section */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <SignedOut>
             <div className="flex items-center gap-2">
               <SignInButton mode="modal">
@@ -84,15 +92,53 @@ export default function Navigation() {
             </div>
           </SignedOut>
           <SignedIn>
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "w-8 h-8",
-                  userButtonPopoverCard: "bg-white shadow-lg border border-gray-200",
-                  userButtonPopoverActionButton: "text-gray-700 hover:bg-gray-100",
-                }
-              }}
-            />
+            {/* User Status Indicators */}
+            <div className="flex items-center gap-3">
+              {/* Calendar Status */}
+              {!isUserLoading && (
+                <Link
+                  href="/users"
+                  className={cn(
+                    "flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-200",
+                    calendarConnected
+                      ? "bg-green-500/20 text-white hover:bg-green-500/30"
+                      : "bg-yellow-500/20 text-white hover:bg-yellow-500/30"
+                  )}
+                  title={calendarConnected ? "Calendar connected" : "Connect your calendar"}
+                >
+                  <Calendar className="h-3.5 w-3.5" />
+                  {calendarConnected ? (
+                    <>
+                      <CheckCircle2 className="h-3 w-3" />
+                      <span className="hidden sm:inline">Connected</span>
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="h-3 w-3" />
+                      <span className="hidden sm:inline">Connect</span>
+                    </>
+                  )}
+                </Link>
+              )}
+
+              {/* Admin Badge */}
+              {isAdmin && (
+                <div className="rounded-lg bg-yellow-400 px-3 py-1.5 text-xs font-bold text-gray-900">
+                  ADMIN
+                </div>
+              )}
+
+              {/* User Button */}
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8 ring-2 ring-white/30",
+                    userButtonPopoverCard: "bg-white shadow-lg border border-gray-200",
+                    userButtonPopoverActionButton: "text-gray-700 hover:bg-gray-100",
+                  }
+                }}
+              />
+            </div>
           </SignedIn>
         </div>
       </div>
