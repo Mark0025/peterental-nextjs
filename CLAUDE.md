@@ -44,7 +44,7 @@ pnpm test:coverage
 Required environment variables (see `.env.example` and `.env.local`):
 
 **Backend API:**
-- `NEXT_PUBLIC_API_URL` - Backend API URL (http://localhost:8000 for dev, https://peterentalvapi-latest.onrender.com for prod)
+- `NEXT_PUBLIC_API_URL` - Backend API URL (http://localhost:8000 for dev, https://peterental-vapi-github-newer.onrender.com for prod)
 
 **VAPI Configuration:**
 - `NEXT_PUBLIC_VAPI_PUBLIC_KEY` - VAPI public key for voice agent
@@ -251,7 +251,7 @@ pnpm test:coverage     # Generate coverage report
 ## Backend Integration
 
 **Backend Repository**: Separate Python FastAPI project
-- Production URL: https://peterentalvapi-latest.onrender.com
+- Production URL: https://peterental-vapi-github-newer.onrender.com
 - Local dev: http://localhost:8000
 
 **CORS**: Backend must allow frontend domain in CORS settings
