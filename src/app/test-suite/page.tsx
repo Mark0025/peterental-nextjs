@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useUser } from '@/lib/hooks/use-user'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Loader2, CheckCircle2, XCircle, Clock, Play, RotateCcw } from 'lucide-react'
@@ -93,7 +92,7 @@ export default function TestSuitePage() {
         const startTime = Date.now()
         let passed = 0
         let failed = 0
-        let skipped = 0
+        const skipped = 0 // Not currently used, but reserved for future
 
         // Test 1: Backend Health
         if (

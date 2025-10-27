@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton, useUser as useClerkUser } from '@clerk/nextjs'
+import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
+// TODO: Uncomment when implementing RBAC: import { useUser as useClerkUser } from '@clerk/nextjs'
 import { useUser } from '@/lib/hooks/use-user'
 import { Calendar, CheckCircle2, XCircle } from 'lucide-react'
 
@@ -28,12 +29,12 @@ const navItems: NavItem[] = [
 
 export default function Navigation() {
   const pathname = usePathname()
-  const { user: clerkUser } = useClerkUser()
+  // const { user: clerkUser } = useClerkUser() // TODO: Use when implementing proper RBAC
   const { calendarConnected, isLoading: isUserLoading } = useUser()
 
-  // Check if user is admin
-  const isAdmin = clerkUser?.primaryEmailAddress?.emailAddress === 'mark@peterei.com' ||
-                  clerkUser?.primaryEmailAddress?.emailAddress === 'jon@ihbuyers.com'
+  // Check if user is admin (TODO: Get from backend user data via /users/me endpoint)
+  // For now, hide admin badge until proper RBAC is implemented
+  const isAdmin = false
 
   const isActive = (item: NavItem): boolean => {
     if (item.matchExact) {

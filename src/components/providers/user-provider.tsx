@@ -92,13 +92,8 @@ export function UserProvider({ children }: UserProviderProps) {
             setIsLoading(false)
           }
         } else {
-          // Try default user from env
-          const defaultUser = process.env.NEXT_PUBLIC_DEFAULT_USER_ID
-          if (defaultUser) {
-            setUser(defaultUser)
-          } else {
-            setIsLoading(false)
-          }
+          // No stored user - user must authenticate via Clerk
+          setIsLoading(false)
         }
       } catch (err) {
         console.error('Error loading user from storage:', err)
