@@ -70,10 +70,17 @@ export async function checkCalendarAuth(): Promise<CalendarAuthStatus> {
 
 /**
  * Get OAuth authorization URL
- * Backend gets user_id from JWT token automatically
+ * NOTE: OAuth flows use browser redirects, so we can't use JWT tokens.
+ * Backend requires user_id as query parameter for OAuth start endpoint.
  */
 export async function getCalendarAuthURL(): Promise<string> {
-  return `${API_URL}/calendar/auth/start`
+  const { userId } = await auth()
+
+  if (!userId) {
+    throw new Error('Not authenticated - please sign in')
+  }
+
+  return `${API_URL}/calendar/auth/start?user_id=${encodeURIComponent(userId)}`
 }
 
 /**
@@ -231,6 +238,46 @@ export async function getCalendarStats(): Promise<{
     }
   } catch (error) {
     console.error('[Server Action] getCalendarStats error:', error)
+    throw error
+  }
+}
+
+/**
+ * Disconnect Microsoft Calendar
+ * Deletes OAuth tokens and updates connection flag
+ * Backend gets user_id from JWT token automatically
+ */
+export async function disconnectCalendar(): Promise<{
+  success: boolean
+  message: string
+}> {
+  try {
+    const headers = await getAuthHeaders()
+    const response = await fetch(
+      `${API_URL}/calendar/auth/disconnect`,
+      {
+        method: 'DELETE',
+        headers,
+        cache: 'no-store',
+      }
+    )
+
+    if (response.status === 401) {
+      throw new Error('Unauthorized - please sign in again')
+    }
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(
+        errorData.message || `Failed to disconnect calendar: ${response.statusText}`
+      )
+    }
+
+    const result = await response.json()
+    console.log('[Server Action] Calendar disconnected successfully:', result)
+    return result
+  } catch (error) {
+    console.error('[Server Action] disconnectCalendar error:', error)
     throw error
   }
 }

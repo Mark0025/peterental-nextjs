@@ -18,6 +18,7 @@ export interface DatabaseUser {
   created_at: string
   updated_at: string
   microsoft_calendar_connected: boolean
+  microsoft_calendar_email?: string | null // Which Microsoft account is connected
   google_calendar_connected: boolean
   // Add other fields as needed
 }

@@ -60,6 +60,7 @@ export interface AvailabilitySlot {
 
 export interface CalendarAuthStatus {
   user_id: string
+  user_email?: string
   authorized: boolean
   token_valid?: boolean
   authorization_url?: string

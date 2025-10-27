@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useCurrentUser } from '@/hooks/use-current-user'
-import { getCalendarAuthURL } from '@/actions/calendar-actions'
+import { getCalendarAuthURL, disconnectCalendar } from '@/actions/calendar-actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -35,14 +35,52 @@ function UsersPageContent() {
     if (!user) return
 
     try {
+      console.log('🔗 Starting calendar connection for user:', user.clerk_user_id)
       const authUrl = await getCalendarAuthURL()
+      console.log('🌐 Redirecting to OAuth URL:', authUrl)
       window.location.href = authUrl
     } catch (error) {
-      console.error('Failed to get calendar auth URL:', error)
+      console.error('❌ Failed to get calendar auth URL:', error)
       setOauthResult({
         type: 'error',
         message: 'Failed to start calendar connection'
       })
+    }
+  }
+
+  const handleDisconnectCalendar = async () => {
+    if (!user) return
+
+    const confirmed = window.confirm(
+      `Are you sure you want to disconnect your Microsoft Calendar (${user.microsoft_calendar_email || 'connected account'})?\n\nThis will remove your calendar access and you'll need to reconnect to use calendar features.`
+    )
+
+    if (!confirmed) return
+
+    try {
+      console.log('🔌 Disconnecting calendar for user:', user.clerk_user_id)
+      setRefreshing(true)
+
+      const result = await disconnectCalendar()
+
+      console.log('✅ Disconnect result:', result)
+      setOauthResult({
+        type: 'success',
+        message: result.message || 'Calendar disconnected successfully'
+      })
+
+      // Refresh user data to update UI
+      setTimeout(() => {
+        refetch()
+      }, 1000)
+    } catch (error) {
+      console.error('❌ Failed to disconnect calendar:', error)
+      setOauthResult({
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Failed to disconnect calendar'
+      })
+    } finally {
+      setRefreshing(false)
     }
   }
 
@@ -302,13 +340,25 @@ function UsersPageContent() {
                     </Badge>
                   </div>
                   {user.microsoft_calendar_connected ? (
-                    <div className="space-y-2">
-                      <p className="text-sm text-green-600">
+                    <div className="space-y-3">
+                      <p className="text-sm text-green-600 font-medium">
                         ✅ Calendar is connected and ready for VAPI integration
                       </p>
-                      <Button variant="outline" size="sm">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Manage Permissions
+                      {user.microsoft_calendar_email && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="text-muted-foreground">Connected account:</span>
+                          <span className="font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded">
+                            {user.microsoft_calendar_email}
+                          </span>
+                        </div>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleDisconnectCalendar}
+                        className="w-full"
+                      >
+                        Disconnect Calendar
                       </Button>
                     </div>
                   ) : (

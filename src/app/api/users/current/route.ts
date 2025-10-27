@@ -60,19 +60,33 @@ export async function GET() {
       )
     }
 
-    // Check calendar auth status using the user's actual email
+    // Check calendar auth status - this is the REAL source of truth
+    // Backend database field 'has_microsoft_calendar' is not being updated properly
+    console.log('🔍 Checking calendar auth status for user:', userId);
     let calendarConnected = false;
+    let calendarEmail: string | null = null;
     try {
       const calendarResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/calendar/auth/status?user_id=${result.data.email}`,
-        { cache: 'no-store' }
+        `${process.env.NEXT_PUBLIC_API_URL}/calendar/auth/status`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store'
+        }
       );
       if (calendarResponse.ok) {
         const calendarData = await calendarResponse.json();
+        console.log('📅 Calendar auth status response:', JSON.stringify(calendarData, null, 2));
         calendarConnected = calendarData.authorized || false;
+        calendarEmail = calendarData.user_email || null;
+        console.log(`✅ Calendar connected: ${calendarConnected}, Email: ${calendarEmail}`);
+      } else {
+        console.log('❌ Calendar status check failed:', calendarResponse.status);
       }
     } catch (error) {
-      console.error('Error checking calendar status:', error);
+      console.error('💥 Error checking calendar status:', error);
     }
 
     // Map backend response to frontend format
@@ -84,7 +98,8 @@ export async function GET() {
       last_name: result.data.full_name?.split(' ')[1] || null,
       created_at: result.data.created_at,
       updated_at: result.data.created_at, // Use created_at as fallback
-      microsoft_calendar_connected: calendarConnected,
+      microsoft_calendar_connected: calendarConnected, // Use auth status, NOT database field
+      microsoft_calendar_email: calendarEmail, // Which Microsoft account is connected
       google_calendar_connected: false // Not implemented yet
     }
 
