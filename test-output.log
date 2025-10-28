@@ -1,0 +1,969 @@
+
+> peterental-nextjs@0.1.0 test:e2e /Users/markcarpenter/Desktop/pete/peterental-nextjs
+> playwright test
+
+[dotenv@17.2.3] injecting env (4) from .env.test -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+[2mRunning [22m29[2m tests using [22m1[2m worker[22m
+
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m 1 [22m[31m[chromium] › tests/e2e/01-authentication.spec.ts:25:7 › Authentication Flow › should sign in with valid credentials[39m[2m (17.3s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  enable debug logging with { debug: true }
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m 2 [22m[31m[chromium] › tests/e2e/01-authentication.spec.ts:37:7 › Authentication Flow › should access protected routes when authenticated[39m[2m (15.5s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m 3 [22m[31m[chromium] › tests/e2e/01-authentication.spec.ts:55:7 › Authentication Flow › should sign out successfully[39m[2m (14.9s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+  [31m✘[39m  [2m 4 [22m[31m[chromium] › tests/e2e/01-authentication.spec.ts:63:7 › Authentication Flow › should redirect to sign-in for protected routes when not authenticated[39m[2m (4.3s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  suppress all logs with { quiet: true }
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m 5 [22m[31m[chromium] › tests/e2e/01-authentication.spec.ts:77:7 › Authentication Flow › should persist session across page reloads[39m[2m (14.0s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  enable debug logging with { debug: true }
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m 6 [22m[31m[chromium] › tests/e2e/01-authentication.spec.ts:88:7 › Authentication Flow › should display correct user email in navigation[39m[2m (15.3s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m 7 [22m[31m[chromium] › tests/e2e/02-user-profile-calendar.spec.ts:26:7 › User Profile and Calendar › should display user profile page with correct email[39m[2m (15.5s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m 8 [22m[31m[chromium] › tests/e2e/02-user-profile-calendar.spec.ts:34:7 › User Profile and Calendar › should show calendar connection status[39m[2m (15.9s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m 9 [22m[31m[chromium] › tests/e2e/02-user-profile-calendar.spec.ts:49:7 › User Profile and Calendar › should display connected Microsoft account email if calendar is connected[39m[2m (15.0s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m10 [22m[31m[chromium] › tests/e2e/02-user-profile-calendar.spec.ts:69:7 › User Profile and Calendar › should show disconnect button when calendar is connected[39m[2m (15.5s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m11 [22m[31m[chromium] › tests/e2e/02-user-profile-calendar.spec.ts:84:7 › User Profile and Calendar › should show connect button when calendar is not connected[39m[2m (16.6s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m12 [22m[31m[chromium] › tests/e2e/02-user-profile-calendar.spec.ts:99:7 › User Profile and Calendar › should open confirmation dialog when clicking disconnect[39m[2m (19.0s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  suppress all logs with { quiet: true }
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m13 [22m[31m[chromium] › tests/e2e/02-user-profile-calendar.spec.ts:123:7 › User Profile and Calendar › should display user profile information[39m[2m (16.7s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m14 [22m[31m[chromium] › tests/e2e/02-user-profile-calendar.spec.ts:143:7 › User Profile and Calendar › should load without errors[39m[2m (14.8s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m15 [22m[31m[chromium] › tests/e2e/03-dashboard-rentals.spec.ts:26:7 › Dashboard and Rentals › should load dashboard page[39m[2m (14.5s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m16 [22m[31m[chromium] › tests/e2e/03-dashboard-rentals.spec.ts:35:7 › Dashboard and Rentals › should display rental statistics[39m[2m (14.6s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m17 [22m[31m[chromium] › tests/e2e/03-dashboard-rentals.spec.ts:55:7 › Dashboard and Rentals › should display rental property listings[39m[2m (15.1s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m18 [22m[31m[chromium] › tests/e2e/03-dashboard-rentals.spec.ts:67:7 › Dashboard and Rentals › should show loading state while fetching data[39m[2m (14.7s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m19 [22m[31m[chromium] › tests/e2e/03-dashboard-rentals.spec.ts:82:7 › Dashboard and Rentals › should display property details when available[39m[2m (16.0s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m20 [22m[31m[chromium] › tests/e2e/03-dashboard-rentals.spec.ts:96:7 › Dashboard and Rentals › should handle empty state if no rentals[39m[2m (15.7s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ✅ audit secrets and track compliance: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m21 [22m[31m[chromium] › tests/e2e/03-dashboard-rentals.spec.ts:107:7 › Dashboard and Rentals › should navigate back to home from dashboard[39m[2m (15.2s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m22 [22m[31m[chromium] › tests/e2e/03-dashboard-rentals.spec.ts:120:7 › Dashboard and Rentals › should load without console errors[39m[2m (16.6s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔄 add secrets lifecycle management: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m23 [22m[31m[chromium] › tests/e2e/04-multi-tenant.spec.ts:24:7 › Multi-Tenant Isolation › should display correct user email in profile[39m[2m (14.5s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m24 [22m[31m[chromium] › tests/e2e/04-multi-tenant.spec.ts:43:7 › Multi-Tenant Isolation › should not show admin badge for non-admin users[39m[2m (14.5s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m25 [22m[31m[chromium] › tests/e2e/04-multi-tenant.spec.ts:58:7 › Multi-Tenant Isolation › should use Clerk authentication for all requests[39m[2m (14.7s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔑 add access controls to secrets: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m26 [22m[31m[chromium] › tests/e2e/04-multi-tenant.spec.ts:94:7 › Multi-Tenant Isolation › should not have hardcoded user IDs in console logs[39m[2m (13.5s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m27 [22m[31m[chromium] › tests/e2e/04-multi-tenant.spec.ts:119:7 › Multi-Tenant Isolation › should show user-specific calendar connection[39m[2m (12.9s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: ⚙️  suppress all logs with { quiet: true }
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m28 [22m[31m[chromium] › tests/e2e/04-multi-tenant.spec.ts:144:7 › Multi-Tenant Isolation › should handle multiple sessions correctly[39m[2m (12.8s)[22m
+[dotenv@17.2.3] injecting env (0) from .env.test -- tip: 👥 sync secrets across teammates & machines: https://dotenvx.com/ops
+🔐 Signing in as: mark@localhousebuyers.net
+  [31m✘[39m  [2m29 [22m[31m[chromium] › tests/e2e/04-multi-tenant.spec.ts:167:7 › Multi-Tenant Isolation › should display correct data after page refresh[39m[2m (12.9s)[22m
+
+
+[31m  1) [chromium] › tests/e2e/01-authentication.spec.ts:25:7 › Authentication Flow › should sign in with valid credentials [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/01-authentication.spec.ts:26:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-6af99-n-in-with-valid-credentials-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-6af99-n-in-with-valid-credentials-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/01-authentication-Authenti-6af99-n-in-with-valid-credentials-chromium/error-context.md[22m
+
+[31m  2) [chromium] › tests/e2e/01-authentication.spec.ts:37:7 › Authentication Flow › should access protected routes when authenticated [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/01-authentication.spec.ts:38:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-be0e3-d-routes-when-authenticated-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-be0e3-d-routes-when-authenticated-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/01-authentication-Authenti-be0e3-d-routes-when-authenticated-chromium/error-context.md[22m
+
+[31m  3) [chromium] › tests/e2e/01-authentication.spec.ts:55:7 › Authentication Flow › should sign out successfully [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/01-authentication.spec.ts:56:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-2c557-hould-sign-out-successfully-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-2c557-hould-sign-out-successfully-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/01-authentication-Authenti-2c557-hould-sign-out-successfully-chromium/error-context.md[22m
+
+[31m  4) [chromium] › tests/e2e/01-authentication.spec.ts:63:7 › Authentication Flow › should redirect to sign-in for protected routes when not authenticated [39m
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeTruthy[2m()[22m
+
+    Received: [31mfalse[39m
+
+    [0m [90m 72 |[39m     [36mconst[39m hasClerkForm [33m=[39m [36mawait[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39misVisible()[33m.[39m[36mcatch[39m(() [33m=>[39m [36mfalse[39m)
+     [90m 73 |[39m
+    [31m[1m>[22m[39m[90m 74 |[39m     expect(hasSignInButton [33m||[39m hasClerkForm)[33m.[39mtoBeTruthy()
+     [90m    |[39m                                             [31m[1m^[22m[39m
+     [90m 75 |[39m   })
+     [90m 76 |[39m
+     [90m 77 |[39m   test([32m'should persist session across page reloads'[39m[33m,[39m [36masync[39m ({ page }) [33m=>[39m {[0m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/01-authentication.spec.ts:74:45[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-b3c7c-utes-when-not-authenticated-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-b3c7c-utes-when-not-authenticated-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/01-authentication-Authenti-b3c7c-utes-when-not-authenticated-chromium/error-context.md[22m
+
+[31m  5) [chromium] › tests/e2e/01-authentication.spec.ts:77:7 › Authentication Flow › should persist session across page reloads [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/01-authentication.spec.ts:78:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-b1a25-session-across-page-reloads-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-b1a25-session-across-page-reloads-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/01-authentication-Authenti-b1a25-session-across-page-reloads-chromium/error-context.md[22m
+
+[31m  6) [chromium] › tests/e2e/01-authentication.spec.ts:88:7 › Authentication Flow › should display correct user email in navigation [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/01-authentication.spec.ts:89:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-68e4c-ct-user-email-in-navigation-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/01-authentication-Authenti-68e4c-ct-user-email-in-navigation-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/01-authentication-Authenti-68e4c-ct-user-email-in-navigation-chromium/error-context.md[22m
+
+[31m  7) [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:26:7 › User Profile and Calendar › should display user profile page with correct email [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/02-user-profile-calendar.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-41f4e-ile-page-with-correct-email-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-41f4e-ile-page-with-correct-email-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/02-user-profile-calendar-U-41f4e-ile-page-with-correct-email-chromium/error-context.md[22m
+
+[31m  8) [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:34:7 › User Profile and Calendar › should show calendar connection status [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/02-user-profile-calendar.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-c38f5--calendar-connection-status-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-c38f5--calendar-connection-status-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/02-user-profile-calendar-U-c38f5--calendar-connection-status-chromium/error-context.md[22m
+
+[31m  9) [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:49:7 › User Profile and Calendar › should display connected Microsoft account email if calendar is connected [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/02-user-profile-calendar.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-38f22-il-if-calendar-is-connected-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-38f22-il-if-calendar-is-connected-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/02-user-profile-calendar-U-38f22-il-if-calendar-is-connected-chromium/error-context.md[22m
+
+[31m  10) [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:69:7 › User Profile and Calendar › should show disconnect button when calendar is connected [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/02-user-profile-calendar.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-255fb--when-calendar-is-connected-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-255fb--when-calendar-is-connected-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/02-user-profile-calendar-U-255fb--when-calendar-is-connected-chromium/error-context.md[22m
+
+[31m  11) [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:84:7 › User Profile and Calendar › should show connect button when calendar is not connected [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/02-user-profile-calendar.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-fe706-n-calendar-is-not-connected-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-fe706-n-calendar-is-not-connected-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/02-user-profile-calendar-U-fe706-n-calendar-is-not-connected-chromium/error-context.md[22m
+
+[31m  12) [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:99:7 › User Profile and Calendar › should open confirmation dialog when clicking disconnect [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/02-user-profile-calendar.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-78ed8-og-when-clicking-disconnect-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-78ed8-og-when-clicking-disconnect-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/02-user-profile-calendar-U-78ed8-og-when-clicking-disconnect-chromium/error-context.md[22m
+
+[31m  13) [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:123:7 › User Profile and Calendar › should display user profile information [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/02-user-profile-calendar.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-9a9fa-ay-user-profile-information-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-9a9fa-ay-user-profile-information-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/02-user-profile-calendar-U-9a9fa-ay-user-profile-information-chromium/error-context.md[22m
+
+[31m  14) [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:143:7 › User Profile and Calendar › should load without errors [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/02-user-profile-calendar.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-b4b78--should-load-without-errors-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/02-user-profile-calendar-U-b4b78--should-load-without-errors-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/02-user-profile-calendar-U-b4b78--should-load-without-errors-chromium/error-context.md[22m
+
+[31m  15) [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:26:7 › Dashboard and Rentals › should load dashboard page [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/03-dashboard-rentals.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-034b9--should-load-dashboard-page-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-034b9--should-load-dashboard-page-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/03-dashboard-rentals-Dashb-034b9--should-load-dashboard-page-chromium/error-context.md[22m
+
+[31m  16) [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:35:7 › Dashboard and Rentals › should display rental statistics [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/03-dashboard-rentals.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-f5647-d-display-rental-statistics-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-f5647-d-display-rental-statistics-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/03-dashboard-rentals-Dashb-f5647-d-display-rental-statistics-chromium/error-context.md[22m
+
+[31m  17) [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:55:7 › Dashboard and Rentals › should display rental property listings [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/03-dashboard-rentals.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-bdef6-ay-rental-property-listings-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-bdef6-ay-rental-property-listings-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/03-dashboard-rentals-Dashb-bdef6-ay-rental-property-listings-chromium/error-context.md[22m
+
+[31m  18) [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:67:7 › Dashboard and Rentals › should show loading state while fetching data [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/03-dashboard-rentals.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-e99ae-g-state-while-fetching-data-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-e99ae-g-state-while-fetching-data-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/03-dashboard-rentals-Dashb-e99ae-g-state-while-fetching-data-chromium/error-context.md[22m
+
+[31m  19) [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:82:7 › Dashboard and Rentals › should display property details when available [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/03-dashboard-rentals.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-c24b7-erty-details-when-available-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-c24b7-erty-details-when-available-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/03-dashboard-rentals-Dashb-c24b7-erty-details-when-available-chromium/error-context.md[22m
+
+[31m  20) [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:96:7 › Dashboard and Rentals › should handle empty state if no rentals [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/03-dashboard-rentals.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-0b2cf-e-empty-state-if-no-rentals-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-0b2cf-e-empty-state-if-no-rentals-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/03-dashboard-rentals-Dashb-0b2cf-e-empty-state-if-no-rentals-chromium/error-context.md[22m
+
+[31m  21) [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:107:7 › Dashboard and Rentals › should navigate back to home from dashboard [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/03-dashboard-rentals.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-dd066-back-to-home-from-dashboard-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-dd066-back-to-home-from-dashboard-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/03-dashboard-rentals-Dashb-dd066-back-to-home-from-dashboard-chromium/error-context.md[22m
+
+[31m  22) [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:120:7 › Dashboard and Rentals › should load without console errors [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/03-dashboard-rentals.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-d5f00-load-without-console-errors-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/03-dashboard-rentals-Dashb-d5f00-load-without-console-errors-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/03-dashboard-rentals-Dashb-d5f00-load-without-console-errors-chromium/error-context.md[22m
+
+[31m  23) [chromium] › tests/e2e/04-multi-tenant.spec.ts:24:7 › Multi-Tenant Isolation › should display correct user email in profile [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/04-multi-tenant.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-f829d-rrect-user-email-in-profile-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-f829d-rrect-user-email-in-profile-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/04-multi-tenant-Multi-Tena-f829d-rrect-user-email-in-profile-chromium/error-context.md[22m
+
+[31m  24) [chromium] › tests/e2e/04-multi-tenant.spec.ts:43:7 › Multi-Tenant Isolation › should not show admin badge for non-admin users [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/04-multi-tenant.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-b202e-n-badge-for-non-admin-users-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-b202e-n-badge-for-non-admin-users-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/04-multi-tenant-Multi-Tena-b202e-n-badge-for-non-admin-users-chromium/error-context.md[22m
+
+[31m  25) [chromium] › tests/e2e/04-multi-tenant.spec.ts:58:7 › Multi-Tenant Isolation › should use Clerk authentication for all requests [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/04-multi-tenant.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-f54dc-entication-for-all-requests-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-f54dc-entication-for-all-requests-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/04-multi-tenant-Multi-Tena-f54dc-entication-for-all-requests-chromium/error-context.md[22m
+
+[31m  26) [chromium] › tests/e2e/04-multi-tenant.spec.ts:94:7 › Multi-Tenant Isolation › should not have hardcoded user IDs in console logs [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/04-multi-tenant.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-b3308-ed-user-IDs-in-console-logs-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-b3308-ed-user-IDs-in-console-logs-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/04-multi-tenant-Multi-Tena-b3308-ed-user-IDs-in-console-logs-chromium/error-context.md[22m
+
+[31m  27) [chromium] › tests/e2e/04-multi-tenant.spec.ts:119:7 › Multi-Tenant Isolation › should show user-specific calendar connection [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/04-multi-tenant.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-4607d-pecific-calendar-connection-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-4607d-pecific-calendar-connection-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/04-multi-tenant-Multi-Tena-4607d-pecific-calendar-connection-chromium/error-context.md[22m
+
+[31m  28) [chromium] › tests/e2e/04-multi-tenant.spec.ts:144:7 › Multi-Tenant Isolation › should handle multiple sessions correctly [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/04-multi-tenant.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-00b55-multiple-sessions-correctly-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-00b55-multiple-sessions-correctly-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/04-multi-tenant-Multi-Tena-00b55-multiple-sessions-correctly-chromium/error-context.md[22m
+
+[31m  29) [chromium] › tests/e2e/04-multi-tenant.spec.ts:167:7 › Multi-Tenant Isolation › should display correct data after page refresh [39m
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('input[name="identifier"], input[type="email"]') to be visible[22m
+
+
+    [90m   at [39mhelpers/auth.ts:43
+
+    [0m [90m 41 |[39m
+     [90m 42 |[39m   [90m// Wait for Clerk sign-in form[39m
+    [31m[1m>[22m[39m[90m 43 |[39m   [36mawait[39m page[33m.[39mwaitForSelector([32m'input[name="identifier"], input[type="email"]'[39m[33m,[39m { timeout[33m:[39m [35m10000[39m })
+     [90m    |[39m              [31m[1m^[22m[39m
+     [90m 44 |[39m
+     [90m 45 |[39m   [90m// Enter email[39m
+     [90m 46 |[39m   [36mconst[39m emailInput [33m=[39m page[33m.[39mlocator([32m'input[name="identifier"], input[type="email"]'[39m)[33m.[39mfirst()[0m
+    [2m    at signIn (/Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/helpers/auth.ts:43:14)[22m
+    [2m    at /Users/markcarpenter/Desktop/pete/peterental-nextjs/tests/e2e/04-multi-tenant.spec.ts:21:5[22m
+
+[2m    attachment #1: [1mscreenshot[2m (image/png) [2m──────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-14330-ect-data-after-page-refresh-chromium/test-failed-1.png[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    attachment #2: [1mvideo[2m (video/webm) [2m──────────────────────────────────────────────────────────────[2m[22m
+[2m    test-results/04-multi-tenant-Multi-Tena-14330-ect-data-after-page-refresh-chromium/video.webm[22m
+[2m    [2m────────────────────────────────────────────────────────────────────────────────────────────────[2m[22m
+
+[2m    Error Context: test-results/04-multi-tenant-Multi-Tena-14330-ect-data-after-page-refresh-chromium/error-context.md[22m
+
+[31m  29 failed[39m
+[31m    [chromium] › tests/e2e/01-authentication.spec.ts:25:7 › Authentication Flow › should sign in with valid credentials [39m
+[31m    [chromium] › tests/e2e/01-authentication.spec.ts:37:7 › Authentication Flow › should access protected routes when authenticated [39m
+[31m    [chromium] › tests/e2e/01-authentication.spec.ts:55:7 › Authentication Flow › should sign out successfully [39m
+[31m    [chromium] › tests/e2e/01-authentication.spec.ts:63:7 › Authentication Flow › should redirect to sign-in for protected routes when not authenticated [39m
+[31m    [chromium] › tests/e2e/01-authentication.spec.ts:77:7 › Authentication Flow › should persist session across page reloads [39m
+[31m    [chromium] › tests/e2e/01-authentication.spec.ts:88:7 › Authentication Flow › should display correct user email in navigation [39m
+[31m    [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:26:7 › User Profile and Calendar › should display user profile page with correct email [39m
+[31m    [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:34:7 › User Profile and Calendar › should show calendar connection status [39m
+[31m    [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:49:7 › User Profile and Calendar › should display connected Microsoft account email if calendar is connected [39m
+[31m    [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:69:7 › User Profile and Calendar › should show disconnect button when calendar is connected [39m
+[31m    [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:84:7 › User Profile and Calendar › should show connect button when calendar is not connected [39m
+[31m    [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:99:7 › User Profile and Calendar › should open confirmation dialog when clicking disconnect [39m
+[31m    [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:123:7 › User Profile and Calendar › should display user profile information [39m
+[31m    [chromium] › tests/e2e/02-user-profile-calendar.spec.ts:143:7 › User Profile and Calendar › should load without errors [39m
+[31m    [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:26:7 › Dashboard and Rentals › should load dashboard page [39m
+[31m    [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:35:7 › Dashboard and Rentals › should display rental statistics [39m
+[31m    [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:55:7 › Dashboard and Rentals › should display rental property listings [39m
+[31m    [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:67:7 › Dashboard and Rentals › should show loading state while fetching data [39m
+[31m    [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:82:7 › Dashboard and Rentals › should display property details when available [39m
+[31m    [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:96:7 › Dashboard and Rentals › should handle empty state if no rentals [39m
+[31m    [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:107:7 › Dashboard and Rentals › should navigate back to home from dashboard [39m
+[31m    [chromium] › tests/e2e/03-dashboard-rentals.spec.ts:120:7 › Dashboard and Rentals › should load without console errors [39m
+[31m    [chromium] › tests/e2e/04-multi-tenant.spec.ts:24:7 › Multi-Tenant Isolation › should display correct user email in profile [39m
+[31m    [chromium] › tests/e2e/04-multi-tenant.spec.ts:43:7 › Multi-Tenant Isolation › should not show admin badge for non-admin users [39m
+[31m    [chromium] › tests/e2e/04-multi-tenant.spec.ts:58:7 › Multi-Tenant Isolation › should use Clerk authentication for all requests [39m
+[31m    [chromium] › tests/e2e/04-multi-tenant.spec.ts:94:7 › Multi-Tenant Isolation › should not have hardcoded user IDs in console logs [39m
+[31m    [chromium] › tests/e2e/04-multi-tenant.spec.ts:119:7 › Multi-Tenant Isolation › should show user-specific calendar connection [39m
+[31m    [chromium] › tests/e2e/04-multi-tenant.spec.ts:144:7 › Multi-Tenant Isolation › should handle multiple sessions correctly [39m
+[31m    [chromium] › tests/e2e/04-multi-tenant.spec.ts:167:7 › Multi-Tenant Isolation › should display correct data after page refresh [39m
+
+To open last HTML report run:
+[36m[39m
+[36m  pnpm exec playwright show-report[39m
+[36m[39m
+[41m[30m ELIFECYCLE [39m[49m [31mCommand failed with exit code 1.[39m

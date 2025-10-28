@@ -5,6 +5,7 @@ import Navigation from "@/components/navigation"
 import { Providers } from "./providers"
 import { ClerkProvider } from "@clerk/nextjs"
 import ProtectedRoute from "@/components/auth/protected-route"
+import { BackendWakeupLoader } from "@/components/BackendWakeupLoader"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,10 +34,12 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <Providers>
-            <ProtectedRoute>
-              <Navigation />
-              <main>{children}</main>
-            </ProtectedRoute>
+            <BackendWakeupLoader>
+              <ProtectedRoute>
+                <Navigation />
+                <main>{children}</main>
+              </ProtectedRoute>
+            </BackendWakeupLoader>
           </Providers>
         </body>
       </html>
