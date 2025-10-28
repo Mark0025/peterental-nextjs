@@ -22,7 +22,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    console.log('✅ Frontend API: User ID:', userId);
+    console.log('🚀 Frontend API: User ID:', userId, 'Timestamp:', new Date().toISOString());
 
     // Get Clerk JWT token for user authentication
     const token = await authResult.getToken()
