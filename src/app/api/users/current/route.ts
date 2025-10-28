@@ -25,13 +25,19 @@ export async function GET() {
     console.log('🚀 Frontend API: User ID:', userId, 'Timestamp:', new Date().toISOString());
 
     // Get Clerk JWT token for user authentication
-    const token = await authResult.getToken()
+    // Try different token templates for backend compatibility
+    let token = await authResult.getToken({ template: 'peterental-backend' })
+    if (!token) {
+      // Fallback to default token
+      token = await authResult.getToken()
+    }
     if (!token) {
       console.error('❌ Failed to get JWT token for userId:', userId);
       return NextResponse.json({ error: 'No authentication token' }, { status: 401 })
     }
 
     console.log('✅ JWT token obtained, length:', token.length);
+    console.log('🔍 JWT token preview:', token.substring(0, 50) + '...');
 
     // Get user from your database using the /users/me endpoint
     // This endpoint auto-creates users if they don't exist
