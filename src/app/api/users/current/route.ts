@@ -11,24 +11,33 @@ import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
+  let userId: string | null = null;
+  
   try {
-    const { userId, getToken } = await auth()
+    const authResult = await auth()
+    userId = authResult.userId;
 
     if (!userId) {
+      console.error('❌ No userId found in auth context');
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    console.log('Frontend API: User ID:', userId);
+    console.log('✅ Frontend API: User ID:', userId);
 
     // Get Clerk JWT token for user authentication
-    const token = await getToken()
+    const token = await authResult.getToken()
     if (!token) {
+      console.error('❌ Failed to get JWT token for userId:', userId);
       return NextResponse.json({ error: 'No authentication token' }, { status: 401 })
     }
+
+    console.log('✅ JWT token obtained, length:', token.length);
 
     // Get user from your database using the /users/me endpoint
     // This endpoint auto-creates users if they don't exist
     // Uses Clerk JWT token for user authentication
+    console.log('🔄 Calling backend:', `${process.env.NEXT_PUBLIC_API_URL}/users/me`);
+    
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
       {
@@ -39,12 +48,14 @@ export async function GET() {
       }
     )
 
+    console.log('📡 Backend response status:', response.status, response.statusText);
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Backend response not ok:', response.status, response.statusText);
-      console.error('Backend error response:', errorText);
+      console.error('❌ Backend response not ok:', response.status, response.statusText);
+      console.error('❌ Backend error response:', errorText);
       return NextResponse.json(
-        { error: 'Failed to fetch user from database' },
+        { error: `Backend returned error: ${errorText || 'undefined'}` },
         { status: response.status }
       )
     }
@@ -66,6 +77,7 @@ export async function GET() {
     let calendarConnected = false;
     let calendarEmail: string | null = null;
     try {
+      console.log('🔄 Calling calendar status endpoint:', `${process.env.NEXT_PUBLIC_API_URL}/calendar/auth/status`);
       const calendarResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/calendar/auth/status`,
         {
@@ -76,6 +88,8 @@ export async function GET() {
           cache: 'no-store'
         }
       );
+      console.log('📅 Calendar response status:', calendarResponse.status, calendarResponse.statusText);
+      
       if (calendarResponse.ok) {
         const calendarData = await calendarResponse.json();
         console.log('📅 Calendar auth status response:', JSON.stringify(calendarData, null, 2));
@@ -83,7 +97,8 @@ export async function GET() {
         calendarEmail = calendarData.user_email || null;
         console.log(`✅ Calendar connected: ${calendarConnected}, Email: ${calendarEmail}`);
       } else {
-        console.log('❌ Calendar status check failed:', calendarResponse.status);
+        const calendarErrorText = await calendarResponse.text();
+        console.log('❌ Calendar status check failed:', calendarResponse.status, calendarErrorText);
       }
     } catch (error) {
       console.error('💥 Error checking calendar status:', error);
@@ -103,11 +118,17 @@ export async function GET() {
       google_calendar_connected: false // Not implemented yet
     }
 
+    console.log('✅ Successfully returning user data for userId:', userId);
     return NextResponse.json(userData)
   } catch (error) {
-    console.error('Error fetching current user:', error)
+    console.error('💥 Error fetching current user:', error)
+    console.error('💥 Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      userId: userId || 'unknown'
+    });
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: `Internal server error: ${error instanceof Error ? error.message : 'Unknown error'}` },
       { status: 500 }
     )
   }
