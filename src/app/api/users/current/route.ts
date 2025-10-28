@@ -35,16 +35,15 @@ export async function GET() {
     console.log('✅ JWT token obtained, length:', token.length);
     console.log('🔍 JWT token preview:', token.substring(0, 50) + '...');
 
-    // Get user from your database using the /users/me endpoint
-    // This endpoint auto-creates users if they don't exist
-    // Uses Clerk JWT token for user authentication
-    console.log('🔄 Calling backend:', `${process.env.NEXT_PUBLIC_API_URL}/users/me`);
+    // Get user from your database using the /users/by-clerk-id endpoint
+    // This endpoint works with Clerk user ID directly
+    console.log('🔄 Calling backend:', `${process.env.NEXT_PUBLIC_API_URL}/users/by-clerk-id/${userId}`);
     
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
+      `${process.env.NEXT_PUBLIC_API_URL}/users/by-clerk-id/${userId}`,
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${process.env.CLERK_SECRET_KEY}`,
           'Content-Type': 'application/json',
         },
       }
