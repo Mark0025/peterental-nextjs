@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Vapi from "@vapi-ai/web";
+import { useAuth } from "@clerk/nextjs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,6 +24,7 @@ interface AssistantConfig {
 }
 
 export default function VAPIAgentPage() {
+  const { getToken } = useAuth();
   const [vapi, setVapi] = useState<Vapi | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -42,7 +44,18 @@ export default function VAPIAgentPage() {
         const backendUrl = process.env.NEXT_PUBLIC_API_URL || "https://peterental-vapi-github-newer.onrender.com";
         console.log("Loading assistants from:", backendUrl);
 
-        const response = await fetch(`${backendUrl}/vapi/assistants`);
+        // Get Clerk auth token
+        const token = await getToken();
+        if (!token) {
+          throw new Error("Not authenticated - please sign in");
+        }
+
+        const response = await fetch(`${backendUrl}/vapi/assistants`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
