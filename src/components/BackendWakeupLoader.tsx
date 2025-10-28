@@ -17,7 +17,7 @@ interface BackendWakeupLoaderProps {
 }
 
 export function BackendWakeupLoader({ children }: BackendWakeupLoaderProps) {
-  const { isWakingUp, isReady, error, retryCount } = useBackendWakeup();
+  const { isWakingUp, error, retryCount } = useBackendWakeup();
 
   // Show loading state
   if (isWakingUp) {
@@ -48,7 +48,7 @@ export function BackendWakeupLoader({ children }: BackendWakeupLoaderProps) {
             <div className="text-xs text-gray-500 mt-4">
               <strong>Why is this happening?</strong>
               <br />
-              The backend uses Render's free tier, which spins down after inactivity.
+              The backend uses Render&apos;s free tier, which spins down after inactivity.
               This only happens on the first visit after a period of inactivity.
             </div>
           </CardContent>

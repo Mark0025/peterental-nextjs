@@ -82,7 +82,7 @@ export default function VAPIAgentPage() {
     };
 
     loadAssistants();
-  }, []);
+  }, [getToken]);
 
   useEffect(() => {
     // Initialize VAPI client

@@ -34,7 +34,6 @@ export default function AppointmentsPage() {
         } else {
             setLoading(false)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId, calendarConnected])
 
     const loadData = async () => {

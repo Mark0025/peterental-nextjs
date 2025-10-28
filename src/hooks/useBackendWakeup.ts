@@ -56,7 +56,7 @@ export function useBackendWakeup() {
           }
           return;
         }
-      } catch (error) {
+      } catch {
         console.log(`⚠️ Backend not ready yet (attempt ${retryCount + 1})...`);
       }
 
