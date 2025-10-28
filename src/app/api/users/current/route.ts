@@ -19,7 +19,8 @@ export async function GET() {
 
     if (!userId) {
       console.error('❌ No userId found in auth context');
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+      console.error('❌ Auth result:', JSON.stringify(authResult, null, 2));
+      return NextResponse.json({ error: 'No userId found in auth context' }, { status: 401 })
     }
 
     console.log('🚀 Frontend API: User ID:', userId, 'Timestamp:', new Date().toISOString());
@@ -52,11 +53,30 @@ export async function GET() {
     console.log('📡 Backend response status:', response.status, response.statusText);
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('❌ Backend response not ok:', response.status, response.statusText);
-      console.error('❌ Backend error response:', errorText);
+      let errorMessage = 'Backend error';
+      try {
+        const errorText = await response.text();
+        console.error('❌ Backend response not ok:', response.status, response.statusText);
+        console.error('❌ Backend error response:', errorText);
+        
+        // Check if it's HTML (502 error page)
+        if (errorText.includes('<!DOCTYPE html>') || errorText.includes('<html')) {
+          errorMessage = `Backend service unavailable (${response.status})`;
+        } else {
+          // Try to parse as JSON
+          try {
+            const errorJson = JSON.parse(errorText);
+            errorMessage = errorJson.detail || errorJson.error || errorText;
+          } catch (parseError) {
+            errorMessage = errorText || `Backend returned error: ${response.status} ${response.statusText}`;
+          }
+        }
+      } catch (textError) {
+        errorMessage = `Backend returned error: ${response.status} ${response.statusText}`;
+      }
+      
       return NextResponse.json(
-        { error: `Backend returned error: ${errorText || 'undefined'}` },
+        { error: errorMessage },
         { status: response.status }
       )
     }
