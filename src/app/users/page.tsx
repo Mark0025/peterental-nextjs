@@ -380,7 +380,7 @@ function UsersPageContent() {
                                 <div className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1">
                                   <span>Connected Calendar Account:</span>
                                   {(user as any).calendar_provider === 'microsoft' && <span>🔵</span>}
-                                  {(user as any).calendar_provider === 'google' && <span> essentially</span>}
+                                  {(user as any).calendar_provider === 'google' && <span>🔴</span>}
                                 </div>
                                 <div className="text-sm font-mono bg-green-50 text-green-800 px-2 py-1 rounded border border-green-200 font-semibold">
                                   {(user as any).calendar_email}
@@ -403,7 +403,7 @@ function UsersPageContent() {
 
                           {((user as any).calendar_email || user.microsoft_calendar_email) && 
                            ((user as any).calendar_email === user.email || user.microsoft_calendar_email === user.email) && (
-                            <div className="rounded-md bg-amber-50 border border-amber-200 pexample-2">
+                            <div className="rounded-md bg-amber-50 border border-amber-200 p-2">
                               <p className="text-xs text-amber-800 font-medium">
                                 ⚠️ Warning: Calendar email matches your account email.
                               </p>
