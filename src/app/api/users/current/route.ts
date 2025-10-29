@@ -29,6 +29,10 @@ export async function GET() {
     // Use custom template for backend compatibility
     let token = await authResult.getToken({ template: 'peterental-backend' })
     if (!token) {
+      // Try alternative template names
+      token = await authResult.getToken({ template: 'backend' })
+    }
+    if (!token) {
       // Fallback to default token
       token = await authResult.getToken()
     }
