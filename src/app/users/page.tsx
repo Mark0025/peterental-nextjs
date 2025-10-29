@@ -361,21 +361,68 @@ function UsersPageContent() {
                           )}
                         </div>
                       </div>
-                      {user.microsoft_calendar_email && (
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2 text-sm">
-                            <span className="text-muted-foreground">Connected account:</span>
-                            <Badge variant="outline" className="font-mono bg-blue-50 text-blue-700 border-blue-200">
-                              {user.microsoft_calendar_email}
-                            </Badge>
+                      <div className="space-y-3 rounded-lg border bg-gray-50 p-3">
+                        <div className="space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1">
+                              <div className="text-xs font-medium text-muted-foreground mb-1">
+                                Your Account Email (Clerk):
+                              </div>
+                              <div className="text-sm font-mono bg-white px-2 py-1 rounded border">
+                                {user.email}
+                              </div>
+                            </div>
                           </div>
-                          {user.microsoft_calendar_email === user.email && (
-                            <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
-                              ⚠️ Calendar email matches your account email. Ensure this is a valid Microsoft account.
-                            </p>
+                          
+                          {(user as any).calendar_email ? (
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1">
+                                <div className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1">
+                                  <span>Connected Calendar Account:</span>
+                                  {(user as any).calendar_provider === 'microsoft' && <span>🔵</span>}
+                                  {(user as any).calendar_provider === 'google' && <span> essentially</span>}
+                                </div>
+                                <div className="text-sm font-mono bg-green-50 text-green-800 px-2 py-1 rounded border border-green-200 font-semibold">
+                                  {(user as any).calendar_email}
+                                </div>
+                              </div>
+                            </div>
+                          ) : user.microsoft_calendar_email ? (
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1">
+                                <div className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1">
+                                  <span>Connected Calendar Account:</span>
+                                  <span>🔵</span>
+                                </div>
+                                <div className="text-sm font-mono bg-green-50 text-green-800 px-2 py-1 rounded border border-green-200 font-semibold">
+                                  {user.microsoft_calendar_email}
+                                </div>
+                              </div>
+                            </div>
+                          ) : null}
+
+                          {((user as any).calendar_email || user.microsoft_calendar_email) && 
+                           ((user as any).calendar_email === user.email || user.microsoft_calendar_email === user.email) && (
+                            <div className="rounded-md bg-amber-50 border border-amber-200 pexample-2">
+                              <p className="text-xs text-amber-800 font-medium">
+                                ⚠️ Warning: Calendar email matches your account email.
+                              </p>
+                              <p className="text-xs text-amber-700 mt-1">
+                                This may indicate the calendar is not actually connected. The connected calendar should be a <strong>different</strong> Microsoft/Google account email. If this email doesn't have a Microsoft account, please disconnect and reconnect with a valid Microsoft account.
+                              </p>
+                            </div>
+                          )}
+
+                          {((user as any).calendar_email || user.microsoft_calendar_email) && 
+                           ((user as any).calendar_email !== user.email && user.microsoft_calendar_email !== user.email) && (
+                            <div className="rounded-md bg-green-50 border border-green-200 p-2">
+                              <p className="text-xs text-green-800">
+                                ✅ Calendar connected to a <strong>different account</strong> than your Clerk email. This indicates a valid calendar connection.
+                              </p>
+                            </div>
                           )}
                         </div>
-                      )}
+                      </div>
                       {(user as any).calendar_token_valid === false && (
                         <div className="rounded-md bg-yellow-50 border border-yellow-200 p-2">
                           <p className="text-xs text-yellow-800">
