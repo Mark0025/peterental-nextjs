@@ -131,14 +131,15 @@ export async function GET() {
     }
 
     // Map backend response to frontend format
+    // Backend returns user data directly, not wrapped in 'data' property
     const userData = {
-      id: result.data.user_id.toString(),
+      id: result.user_id.toString(),
       clerk_user_id: userId,
-      email: result.data.email,
-      first_name: result.data.full_name?.split(' ')[0] || null,
-      last_name: result.data.full_name?.split(' ')[1] || null,
-      created_at: result.data.created_at,
-      updated_at: result.data.created_at, // Use created_at as fallback
+      email: result.email,
+      first_name: result.full_name?.split(' ')[0] || null,
+      last_name: result.full_name?.split(' ')[1] || null,
+      created_at: result.created_at,
+      updated_at: result.created_at, // Use created_at as fallback
       microsoft_calendar_connected: calendarConnected, // Use auth status, NOT database field
       microsoft_calendar_email: calendarEmail, // Which Microsoft account is connected
       google_calendar_connected: false // Not implemented yet
