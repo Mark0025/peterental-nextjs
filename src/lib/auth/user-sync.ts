@@ -30,7 +30,9 @@ export interface DatabaseUser {
   calendar_error?: string | null // Error message if verification failed
   calendar_token_valid?: boolean // Token validity status
   calendar_expires_at?: string | null // Token expiry date
+  calendar_expires_at_formatted?: string | null // Human-readable expiry
   calendar_email_matches_account?: boolean // Flag to detect if calendar email = account email
+  calendar_link?: string | null // Link to view calendar in provider's web view
 }
 
 export interface ClerkUserData {

@@ -31,42 +31,45 @@ function UsersPageContent() {
   } | null>(null)
   const [refreshing, setRefreshing] = useState(false)
 
-  const handleConnectCalendar = async () => {
+  const handleConnectCalendar = async (provider: 'microsoft' | 'google' = 'microsoft') => {
     if (!user) return
 
     try {
-      console.log('🔗 Starting calendar connection for user:', user.clerk_user_id)
-      const authUrl = await getCalendarAuthURL()
+      console.log(`🔗 Starting ${provider} calendar connection for user:`, user.clerk_user_id)
+      const authUrl = await getCalendarAuthURL(provider)
       console.log('🌐 Redirecting to OAuth URL:', authUrl)
       window.location.href = authUrl
     } catch (error) {
-      console.error('❌ Failed to get calendar auth URL:', error)
+      console.error(`❌ Failed to get ${provider} calendar auth URL:`, error)
       setOauthResult({
         type: 'error',
-        message: 'Failed to start calendar connection'
+        message: `Failed to start ${provider} calendar connection`
       })
     }
   }
 
-  const handleDisconnectCalendar = async () => {
+  const handleDisconnectCalendar = async (provider: 'microsoft' | 'google' = 'microsoft') => {
     if (!user) return
 
+    const providerName = provider === 'google' ? 'Google' : 'Microsoft';
+    const email = provider === 'google' ? user.google_calendar_email : user.microsoft_calendar_email;
+
     const confirmed = window.confirm(
-      `Are you sure you want to disconnect your Microsoft Calendar (${user.microsoft_calendar_email || 'connected account'})?\n\nThis will remove your calendar access and you'll need to reconnect to use calendar features.`
+      `Are you sure you want to disconnect your ${providerName} Calendar (${email || 'connected account'})?\n\nThis will remove your calendar access and you'll need to reconnect to use calendar features.`
     )
 
     if (!confirmed) return
 
     try {
-      console.log('🔌 Disconnecting calendar for user:', user.clerk_user_id)
+      console.log(`🔌 Disconnecting ${provider} calendar for user:`, user.clerk_user_id)
       setRefreshing(true)
 
-      const result = await disconnectCalendar()
+      const result = await disconnectCalendar(provider)
 
       console.log('✅ Disconnect result:', result)
       setOauthResult({
         type: 'success',
-        message: result.message || 'Calendar disconnected successfully'
+        message: result.message || `${providerName} Calendar disconnected successfully`
       })
 
       // Refresh user data to update UI
@@ -74,10 +77,10 @@ function UsersPageContent() {
         refetch()
       }, 1000)
     } catch (error) {
-      console.error('❌ Failed to disconnect calendar:', error)
+      console.error(`❌ Failed to disconnect ${provider} calendar:`, error)
       setOauthResult({
         type: 'error',
-        message: error instanceof Error ? error.message : 'Failed to disconnect calendar'
+        message: error instanceof Error ? error.message : `Failed to disconnect ${providerName} calendar`
       })
     } finally {
       setRefreshing(false)
@@ -488,7 +491,7 @@ function UsersPageContent() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={handleDisconnectCalendar}
+                        onClick={() => handleDisconnectCalendar('microsoft')}
                         className="w-full"
                       >
                         Disconnect Calendar
@@ -499,7 +502,7 @@ function UsersPageContent() {
                       <p className="text-sm text-gray-600">
                         Connect your Microsoft Calendar to enable appointment booking
                       </p>
-                      <Button className="w-full" onClick={handleConnectCalendar}>
+                      <Button className="w-full" onClick={() => handleConnectCalendar('microsoft')}>
                         <Calendar className="h-4 w-4 mr-2" />
                         Connect Microsoft Calendar
                       </Button>
@@ -515,23 +518,55 @@ function UsersPageContent() {
                     Google Calendar
                   </CardTitle>
                   <CardDescription>
-                    Connect your Google Calendar (coming soon)
+                    Connect your Google Calendar for appointment booking
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Status:</span>
-                    <Badge variant="secondary" className="bg-gray-100 text-gray-800">
-                      Not Available
+                    <Badge
+                      variant={user.google_calendar_connected ? "default" : "secondary"}
+                      className={user.google_calendar_connected
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-800"
+                      }
+                    >
+                      {user.google_calendar_connected ? 'Connected' : 'Not Connected'}
                     </Badge>
                   </div>
-                  <p className="text-sm text-gray-600">
-                    Google Calendar integration will be available soon
-                  </p>
-                  <Button variant="outline" size="sm" disabled>
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Coming Soon
-                  </Button>
+                  {user.google_calendar_connected ? (
+                    <div className="space-y-2">
+                      <p className="text-sm text-green-600">
+                        ✓ Google Calendar connected
+                      </p>
+                      {user.google_calendar_email && (
+                        <div className="text-sm">
+                          <span className="text-muted-foreground">Connected:</span>
+                          <Badge variant="outline" className="ml-2 font-mono bg-green-50 text-green-700">
+                            {user.google_calendar_email}
+                          </Badge>
+                        </div>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDisconnectCalendar('google')}
+                        className="w-full"
+                      >
+                        Disconnect Google Calendar
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-sm text-gray-600">
+                        Connect your Google Calendar to enable appointment booking
+                      </p>
+                      <Button className="w-full" onClick={() => handleConnectCalendar('google')}>
+                        <Calendar className="h-4 w-4 mr-2" />
+                        Connect Google Calendar
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

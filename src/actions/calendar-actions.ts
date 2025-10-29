@@ -74,17 +74,21 @@ export async function checkCalendarAuth(): Promise<CalendarAuthStatus> {
 }
 
 /**
- * Get OAuth authorization URL
+ * Get OAuth authorization URL for Microsoft or Google Calendar
  * Backend requires Clerk JWT authentication and extracts user_id from token.
- * Backend generates Microsoft OAuth URL and returns redirect (307).
- * We fetch it first, extract the Location header, then redirect browser to Microsoft.
+ * Backend generates OAuth URL and returns redirect (307).
+ * We fetch it first, extract the Location header, then redirect browser to provider.
  */
-export async function getCalendarAuthURL(): Promise<string> {
+export async function getCalendarAuthURL(provider: 'microsoft' | 'google' = 'microsoft'): Promise<string> {
   const headers = await getAuthHeaders()
   
   // Backend expects JWT in Authorization header
   // Backend will generate OAuth URL and return redirect (307)
-  const response = await fetch(`${API_URL}/calendar/auth/start`, {
+  const endpoint = provider === 'google'
+    ? `${API_URL}/calendar/google/auth/start`
+    : `${API_URL}/calendar/auth/start`;
+    
+  const response = await fetch(endpoint, {
     method: 'GET',
     headers,
     redirect: 'manual', // Don't follow redirect automatically, we need the Location header
@@ -99,15 +103,15 @@ export async function getCalendarAuthURL(): Promise<string> {
     throw new Error(`Failed to start OAuth flow: ${response.status} - ${errorText}`)
   }
 
-  // Backend returns a redirect (307) to Microsoft OAuth URL
-  // Extract the Location header which contains the Microsoft OAuth URL
+  // Backend returns a redirect (307) to OAuth URL
+  // Extract the Location header which contains the OAuth URL
   const location = response.headers.get('location')
   
   if (!location) {
     throw new Error('Backend did not return OAuth redirect URL (no Location header)')
   }
 
-  // Return the Microsoft OAuth URL to redirect to
+  // Return the OAuth URL to redirect to
   return location
 }
 
@@ -271,18 +275,22 @@ export async function getCalendarStats(): Promise<{
 }
 
 /**
- * Disconnect Microsoft Calendar
+ * Disconnect calendar (Microsoft or Google)
  * Deletes OAuth tokens and updates connection flag
  * Backend gets user_id from JWT token automatically
  */
-export async function disconnectCalendar(): Promise<{
+export async function disconnectCalendar(provider: 'microsoft' | 'google' = 'microsoft'): Promise<{
   success: boolean
   message: string
 }> {
   try {
     const headers = await getAuthHeaders()
+    const endpoint = provider === 'google'
+      ? `${API_URL}/calendar/google/auth/disconnect`
+      : `${API_URL}/calendar/auth/disconnect`;
+      
     const response = await fetch(
-      `${API_URL}/calendar/auth/disconnect`,
+      endpoint,
       {
         method: 'DELETE',
         headers,
@@ -302,10 +310,10 @@ export async function disconnectCalendar(): Promise<{
     }
 
     const result = await response.json()
-    console.log('[Server Action] Calendar disconnected successfully:', result)
+    console.log(`[Server Action] ${provider} calendar disconnected successfully:`, result)
     return result
   } catch (error) {
-    console.error('[Server Action] disconnectCalendar error:', error)
+    console.error(`[Server Action] disconnect${provider}Calendar error:`, error)
     throw error
   }
 }

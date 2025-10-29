@@ -11,17 +11,20 @@ This document explains how users, VAPI agents, and calendar connections work tog
 ### **1. User Identity (Clerk)**
 
 When a user signs up:
+
 ```
 User signs up → Clerk creates account → Webhook fires → Backend creates user in database
 ```
 
 **Clerk provides:**
+
 - `clerk_user_id`: `"user_34Qq8GSCZfnEvFffTzIhx1hXJR8"` ← **Universal ID**
 - `email`: `"mark@localhousebuyers.net"`
 - `first_name`: `"Mark"`
 - `last_name`: `"Carpenter"`
 
 **Backend creates:**
+
 ```sql
 INSERT INTO users (clerk_user_id, email, full_name, created_at)
 VALUES ('user_34Qq8GSCZfnEvFffTzIhx1hXJR8', 'mark@localhousebuyers.net', 'Mark Carpenter', NOW());
@@ -32,6 +35,7 @@ VALUES ('user_34Qq8GSCZfnEvFffTzIhx1hXJR8', 'mark@localhousebuyers.net', 'Mark C
 ### **2. User Database Record**
 
 **Table: `users`**
+
 ```sql
 CREATE TABLE users (
   id UUID PRIMARY KEY,                          -- Internal DB ID
@@ -44,6 +48,7 @@ CREATE TABLE users (
 ```
 
 **Example:**
+
 ```
 id: "550e8400-e29b-41d4-a716-446655440000"
 clerk_user_id: "user_34Qq8GSCZfnEvFffTzIhx1hXJR8"  ← Links everything
@@ -58,7 +63,7 @@ full_name: "Mark Carpenter"
 When user connects Microsoft Calendar:
 
 ```
-User clicks "Connect Calendar" 
+User clicks "Connect Calendar"
 → Frontend calls `/calendar/auth/start` with JWT
 → Backend redirects to Microsoft OAuth
 → User authorizes
@@ -68,6 +73,7 @@ User clicks "Connect Calendar"
 ```
 
 **Table: `oauth_tokens`**
+
 ```sql
 CREATE TABLE oauth_tokens (
   id SERIAL PRIMARY KEY,
@@ -83,6 +89,7 @@ CREATE TABLE oauth_tokens (
 ```
 
 **Example:**
+
 ```
 user_id: "550e8400-e29b-41d4-a716-446655440000"
 clerk_user_id: "user_34Qq8GSCZfnEvFffTzIhx1hXJR8"
@@ -99,13 +106,14 @@ expires_at: "2025-11-29T10:30:00Z"
 When user creates a VAPI agent:
 
 ```
-User creates agent 
+User creates agent
 → Frontend calls `/vapi/agents` with JWT
 → Backend creates VAPI agent via VAPI API
 → Backend stores mapping in database
 ```
 
 **Table: `vapi_agents`** (hypothetical - check your backend)
+
 ```sql
 CREATE TABLE vapi_agents (
   id SERIAL PRIMARY KEY,
@@ -119,6 +127,7 @@ CREATE TABLE vapi_agents (
 ```
 
 **Example:**
+
 ```
 user_id: "550e8400-e29b-41d4-a716-446655440000"
 clerk_user_id: "user_34Qq8GSCZfnEvFffTzIhx1hXJR8"
@@ -153,6 +162,7 @@ Step 7: VAPI agent confirms to user
 ### **Detailed Step-by-Step**
 
 #### **Step 1-3: VAPI Call Initiation**
+
 ```
 User: "Hey, I want to book an appointment for tomorrow at 2pm"
 VAPI: (recognizes intent, prepares to call function)
@@ -161,6 +171,7 @@ VAPI: (recognizes intent, prepares to call function)
 #### **Step 4: VAPI Function Call**
 
 VAPI sends webhook to your backend:
+
 ```json
 POST https://peterental-vapi-github-newer.onrender.com/vapi/function-call
 {
@@ -184,6 +195,7 @@ POST https://peterental-vapi-github-newer.onrender.com/vapi/function-call
 #### **Step 5: Backend Identifies User**
 
 **Backend does:**
+
 ```python
 # 1. Get assistant_id from VAPI webhook
 assistant_id = webhook_data["message"]["call"]["assistantId"]
@@ -236,7 +248,7 @@ Backend → VAPI:
   }
 
 VAPI → User:
-  "Great! I've booked your appointment for tomorrow at 2pm at 123 Main St. 
+  "Great! I've booked your appointment for tomorrow at 2pm at 123 Main St.
    You'll receive a calendar invite at mark@outlook.com"
 ```
 
@@ -270,13 +282,14 @@ Backend uses: oauth_token → Microsoft Graph API
 ### **3. Multi-Tenant Isolation**
 
 Every query includes `clerk_user_id` or `user_id`:
+
 ```sql
 -- Get user's calendar token
-SELECT * FROM oauth_tokens 
+SELECT * FROM oauth_tokens
 WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8';
 
 -- Get user's VAPI agents
-SELECT * FROM vapi_agents 
+SELECT * FROM vapi_agents
 WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8';
 
 -- Create event for user's calendar
@@ -290,6 +303,7 @@ WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8';
 ### **Frontend Support**
 
 **Microsoft Calendar:**
+
 ```typescript
 // ✅ FULLY IMPLEMENTED
 - OAuth flow: ✅ `/calendar/auth/start`
@@ -301,6 +315,7 @@ WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8';
 ```
 
 **Google Calendar:**
+
 ```typescript
 // ⚠️ BACKEND READY, FRONTEND PENDING
 - OAuth flow: ⚠️ Backend supports, frontend shows "Coming Soon"
@@ -316,6 +331,7 @@ WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8';
 **Frontend changes:**
 
 1. **Add Google Calendar connection button** in `src/app/users/page.tsx`:
+
 ```typescript
 // Change this:
 <Button variant="outline" size="sm" disabled>
@@ -331,6 +347,7 @@ WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8';
 ```
 
 2. **Add handler function**:
+
 ```typescript
 const handleConnectGoogleCalendar = async () => {
   try {
@@ -340,19 +357,25 @@ const handleConnectGoogleCalendar = async () => {
   } catch (error) {
     console.error('Failed to get Google OAuth URL:', error);
   }
-}
+};
 ```
 
 3. **Update `getCalendarAuthURL` in `src/actions/calendar-actions.ts`**:
+
 ```typescript
-export async function getCalendarAuthURL(provider: 'microsoft' | 'google' = 'microsoft'): Promise<string> {
+export async function getCalendarAuthURL(
+  provider: 'microsoft' | 'google' = 'microsoft'
+): Promise<string> {
   const headers = await getAuthHeaders();
-  
-  const response = await fetch(`${API_URL}/calendar/auth/start?provider=${provider}`, {
-    method: 'GET',
-    headers,
-    redirect: 'manual',
-  });
+
+  const response = await fetch(
+    `${API_URL}/calendar/auth/start?provider=${provider}`,
+    {
+      method: 'GET',
+      headers,
+      redirect: 'manual',
+    }
+  );
 
   const location = response.headers.get('location');
   return location;
@@ -360,6 +383,7 @@ export async function getCalendarAuthURL(provider: 'microsoft' | 'google' = 'mic
 ```
 
 **That's it!** The backend already handles:
+
 - Google OAuth flow
 - Google Calendar API
 - Token storage
@@ -409,11 +433,13 @@ export async function getCalendarAuthURL(provider: 'microsoft' | 'google' = 'mic
 ## 🚀 To Enable Google Calendar
 
 **3 simple changes:**
+
 1. Enable button in UI (remove `disabled`)
 2. Add `provider` parameter to `getCalendarAuthURL('google')`
 3. Backend already supports it!
 
 **Backend handles:**
+
 - ✅ Google OAuth flow
 - ✅ Token storage
 - ✅ Calendar API calls
@@ -426,4 +452,3 @@ export async function getCalendarAuthURL(provider: 'microsoft' | 'google' = 'mic
 
 _Last Updated: 2025-10-29_  
 _Status: Microsoft ✅ | Google ⚠️ (backend ready, frontend needs 3 lines)_
-
