@@ -260,7 +260,7 @@ function UsersPageContent() {
                     <span className="text-sm">
                       {user.first_name
                         ? user.last_name
-                          ? `${user.first_name} ${user.last_name}`
+                        ? `${user.first_name} ${user.last_name}`
                           : user.first_name
                         : 'Name not provided'
                       }
@@ -349,7 +349,7 @@ function UsersPageContent() {
                       <div className="flex items-start gap-2">
                         <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
                         <div className="flex-1 space-y-2">
-                          <p className="text-sm text-green-600 font-medium">
+                      <p className="text-sm text-green-600 font-medium">
                             Calendar is connected and ready for VAPI integration
                           </p>
                           {user.calendar_provider && (
@@ -425,6 +425,24 @@ function UsersPageContent() {
                                   Calendar ID: <span className="font-mono">{String(user.calendar_id).substring(0, 20)}...</span>
                                 </div>
                               )}
+
+                              {/* View Calendar Button */}
+                              {user.calendar_link && (
+                                <div className="mt-2">
+                                  <a
+                                    href={user.calendar_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-300 rounded-lg hover:bg-blue-100 transition-colors"
+                                  >
+                                    <Calendar className="h-4 w-4" />
+                                    View Calendar in {user.calendar_provider === 'google' ? 'Google' : 'Outlook'}
+                                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                  </a>
+                                </div>
+                              )}
                             </div>
                           ) : null}
 
@@ -483,11 +501,16 @@ function UsersPageContent() {
                           </p>
                         </div>
                       )}
-                       {user.calendar_expires_at && (
-                          <div className="text-xs text-muted-foreground">
-                           Token expires: {new Date(user.calendar_expires_at).toLocaleString()}
-                          </div>
-                        )}
+                          {/* Token Expiration - use formatted version if available */}
+                          {user.calendar_expires_at_formatted ? (
+                            <div className="text-xs text-muted-foreground">
+                              Token expires: <span className="font-medium">{user.calendar_expires_at_formatted}</span>
+                            </div>
+                          ) : user.calendar_expires_at ? (
+                            <div className="text-xs text-muted-foreground">
+                              Token expires: {new Date(user.calendar_expires_at).toLocaleString()}
+                            </div>
+                          ) : null}
                       <Button
                         variant="outline"
                         size="sm"
@@ -558,13 +581,13 @@ function UsersPageContent() {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600">
                         Connect your Google Calendar to enable appointment booking
-                      </p>
+                  </p>
                       <Button className="w-full" onClick={() => handleConnectCalendar('google')}>
-                        <Calendar className="h-4 w-4 mr-2" />
+                    <Calendar className="h-4 w-4 mr-2" />
                         Connect Google Calendar
-                      </Button>
+                  </Button>
                     </div>
                   )}
                 </CardContent>

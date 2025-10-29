@@ -159,10 +159,12 @@ export async function GET() {
       calendar_email: calendarEmail, // Actual calendar email (not Clerk email) - the REAL connected account
       calendar_name: calendarData.calendar_name || null, // ✨ Actual calendar name from Microsoft Graph API
       calendar_id: calendarData.calendar_id || null, // ✨ Microsoft calendar ID
+      calendar_link: calendarData.calendar_link || null, // ✨ Clickable link to view calendar
       calendar_verified: calendarData.calendar_verified || false, // ✨ Verification status - can we actually access the calendar?
       calendar_error: calendarData.calendar_error || null, // Error message if verification failed
       calendar_token_valid: calendarData.token_valid || false,
       calendar_expires_at: calendarData.expires_at || null,
+      calendar_expires_at_formatted: calendarData.expires_at_formatted || null, // ✨ Human-readable expiry time
       // Add flag to detect if calendar_email matches user email (potential issue)
       calendar_email_matches_account: calendarEmail === result.email
     }

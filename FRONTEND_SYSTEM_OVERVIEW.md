@@ -1,4 +1,5 @@
 # Complete Frontend System Overview
+
 **Last Updated:** 2025-10-29  
 **Status:** Production Ready with Multi-Tenant Architecture  
 **Framework:** Next.js 15.5.4 (App Router) + React 19.1.0 + TypeScript 5.x
@@ -25,18 +26,21 @@ This frontend is a **multi-tenant Next.js 15** application that provides:
 ### 🔐 Authentication & User Management
 
 **Pages:**
+
 - ✅ `/users` - User profile page with calendar integration
 - ✅ `/users/[userId]` - Individual user pages
 - ✅ `/dashboard` - User dashboard with stats
 - ✅ `/debug-clerk` - Clerk authentication debugging
 
 **Components:**
+
 - ✅ `ClerkProvider` wrapper with custom appearance
 - ✅ `<SignInButton>`, `<SignUpButton>`, `<UserButton>`
 - ✅ Middleware protection (`src/middleware.ts`)
 - ✅ Public/protected route handling
 
 **Features:**
+
 - ✅ Clerk JWT token generation with custom template (`pete-next`)
 - ✅ Automatic token refresh
 - ✅ User profile display (name, email, Clerk ID, database ID)
@@ -44,6 +48,7 @@ This frontend is a **multi-tenant Next.js 15** application that provides:
 - ✅ Server-side authentication via `auth()` from `@clerk/nextjs/server`
 
 **API Routes:**
+
 - ✅ `GET /api/users/current` - Proxy to backend `/users/me`
   - Handles Clerk JWT extraction
   - Maps backend response to frontend types
@@ -51,6 +56,7 @@ This frontend is a **multi-tenant Next.js 15** application that provides:
   - Enhanced error logging and handling
 
 **Hooks:**
+
 - ✅ `useCurrentUser()` - Fetch current user with auto-refresh
 - ✅ Custom authentication context
 
@@ -61,10 +67,12 @@ This frontend is a **multi-tenant Next.js 15** application that provides:
 ### 📅 Microsoft Calendar Integration
 
 **Pages:**
+
 - ✅ `/users` - Calendar connection tab
 - ✅ OAuth callback handling via `useEffect`
 
 **Features:**
+
 - ✅ Connect Microsoft Calendar button
 - ✅ OAuth 2.0 flow (JWT-authenticated)
 - ✅ Real-time calendar verification display
@@ -78,6 +86,7 @@ This frontend is a **multi-tenant Next.js 15** application that provides:
 - ✅ Verification badge (✓ Verified / ✗ Not Verified)
 
 **Server Actions:** (`src/actions/calendar-actions.ts`)
+
 - ✅ `getCalendarAuthURL(provider)` - Get OAuth URL (Microsoft/Google)
 - ✅ `checkCalendarAuth()` - Check connection status
 - ✅ `disconnectCalendar(provider)` - Disconnect calendar
@@ -87,6 +96,7 @@ This frontend is a **multi-tenant Next.js 15** application that provides:
 - ✅ `getCalendarStats()` - Get calendar statistics
 
 **UI Components:**
+
 - ✅ Calendar connection card with status badge
 - ✅ Connected account email display
 - ✅ Calendar name display (blue highlighted box)
@@ -98,6 +108,7 @@ This frontend is a **multi-tenant Next.js 15** application that provides:
 **Status:** 100% Working ✅
 
 **Example UI Display:**
+
 ```
 Calendar Name:
 📅 Calendar                          ✓ Verified
@@ -117,9 +128,11 @@ Token expires: 9:30 AM on Wednesday, November 26
 **Status:** ✅ **JUST ENABLED** (2025-10-29)
 
 **Pages:**
+
 - ✅ `/users` - Google Calendar connection card
 
 **Features:**
+
 - ✅ Connect Google Calendar button (active)
 - ✅ OAuth 2.0 flow (JWT-authenticated)
 - ✅ Shows connection status
@@ -127,10 +140,12 @@ Token expires: 9:30 AM on Wednesday, November 26
 - ✅ Disconnect functionality
 
 **Server Actions:**
+
 - ✅ `getCalendarAuthURL('google')` - Start Google OAuth
 - ✅ `disconnectCalendar('google')` - Disconnect Google
 
 **UI Components:**
+
 - ✅ Google Calendar connection card
 - ✅ Status badge (Connected/Not Connected)
 - ✅ Connected email display
@@ -143,6 +158,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 ### 🎨 UI Components (shadcn/ui)
 
 **Fully Implemented:**
+
 - ✅ `Button` - All variants (default, destructive, outline, ghost, link)
 - ✅ `Card`, `CardHeader`, `CardTitle`, `CardContent`, `CardDescription`
 - ✅ `Badge` - All variants (default, secondary, destructive, outline)
@@ -153,6 +169,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 - ✅ `Skeleton` - Loading states
 
 **Tailwind CSS 4:**
+
 - ✅ 100% utility-first styling
 - ✅ Zero inline styles
 - ✅ Responsive design (mobile, tablet, desktop)
@@ -160,6 +177,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 - ✅ Custom `cn()` utility for conditional classes
 
 **Icons:**
+
 - ✅ Lucide React icons throughout
 - ✅ Consistent icon sizing (h-4 w-4, h-5 w-5)
 
@@ -170,12 +188,14 @@ Token expires: 9:30 AM on Wednesday, November 26
 ### 🏠 Navigation & Layouts
 
 **Components:**
+
 - ✅ `<Navigation>` - Main nav with user button
 - ✅ Root layout with Clerk provider
 - ✅ Error boundaries (`error.tsx` in routes)
 - ✅ Loading states (`loading.tsx` in routes)
 
 **Routes Structure:**
+
 ```
 /                    → Landing page
 /dashboard           → User dashboard
@@ -197,24 +217,28 @@ Token expires: 9:30 AM on Wednesday, November 26
 ### 🔄 Data Fetching & State Management
 
 **Server Components:**
+
 - ✅ Default for all pages
 - ✅ Direct `fetch()` calls with cache control
 - ✅ Automatic request deduplication
 - ✅ Loading states with `<Suspense>`
 
 **Server Actions:**
+
 - ✅ `'use server'` for backend API calls
 - ✅ Type-safe with Zod validation
 - ✅ Error handling with try/catch
 - ✅ `revalidatePath()` for cache invalidation
 
 **Client Components:**
+
 - ✅ `'use client'` only when necessary
 - ✅ `useCurrentUser()` hook for user data
 - ✅ React Query patterns (via hooks)
 - ✅ Form handling with state management
 
 **Context Providers:**
+
 - ✅ Clerk authentication context
 - ✅ User provider (custom)
 
@@ -225,6 +249,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 ### 📦 Type System
 
 **Complete Types:** (`src/types/`)
+
 - ✅ `DatabaseUser` - User profile with calendar fields
 - ✅ `CalendarAuthStatus` - Calendar connection status
 - ✅ `CreateEventRequest` / `CreateEventResponse` - Calendar events
@@ -234,6 +259,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 - ✅ `RentalProperty` - Rental listings
 
 **Type Safety:**
+
 - ✅ TypeScript strict mode enabled
 - ✅ No `any` types (all fixed)
 - ✅ Proper type inference
@@ -250,6 +276,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 **Status:** 60% Complete ⚠️
 
 **What Works:**
+
 - ✅ Agent builder page (`/agent-builder`)
 - ✅ Agent list and creation UI
 - ✅ VAPI widget integration (`@vapi-ai/web`)
@@ -257,6 +284,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 - ✅ Agent configuration storage
 
 **What's Missing:**
+
 - ❌ Live function call testing
 - ❌ Agent-to-calendar connection verification UI
 - ❌ Real-time webhook status display
@@ -272,11 +300,13 @@ Token expires: 9:30 AM on Wednesday, November 26
 **Status:** 40% Complete ⚠️
 
 **What Works:**
+
 - ✅ `/dashboard` page exists
 - ✅ Basic layout with cards
 - ✅ User greeting
 
 **What's Missing:**
+
 - ❌ Calendar statistics display
 - ❌ Appointment booking metrics
 - ❌ Rental search history
@@ -293,10 +323,12 @@ Token expires: 9:30 AM on Wednesday, November 26
 **Status:** 30% Complete ⚠️
 
 **What Works:**
+
 - ✅ Backend integration ready (server actions)
 - ✅ Types defined (`RentalProperty`)
 
 **What's Missing:**
+
 - ❌ Rental search page/UI
 - ❌ Property listings display
 - ❌ Filter UI (price, bedrooms, etc.)
@@ -313,11 +345,13 @@ Token expires: 9:30 AM on Wednesday, November 26
 **Status:** 70% Complete ⚠️
 
 **What Works:**
+
 - ✅ Basic connection status
 - ✅ OAuth flow
 - ✅ Verification display
 
 **What's Missing:**
+
 - ❌ "View Calendar" button with `calendar_link`
 - ❌ Human-readable expiry display (`expires_at_formatted`)
 - ❌ Appointment booking UI (`/appointments` is basic)
@@ -334,6 +368,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 ### 🧪 Testing Infrastructure
 
 **Missing:**
+
 - ❌ Jest unit tests (config exists, no tests written)
 - ❌ Playwright E2E tests (config exists, tests outdated)
 - ❌ Component testing (React Testing Library)
@@ -343,6 +378,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 **Impact:** High - No automated testing means regressions not caught
 
 **Files Present:**
+
 - `jest.config.js` ✅
 - `jest.setup.js` ✅
 - `playwright.config.ts` ✅
@@ -353,6 +389,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 ### 🚨 Error Handling & Logging
 
 **Missing:**
+
 - ❌ Global error boundary (only per-route)
 - ❌ Error tracking service (Sentry, etc.)
 - ❌ User-friendly error pages
@@ -360,6 +397,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 - ❌ Performance monitoring
 
 **What Works:**
+
 - ✅ Per-route `error.tsx` files
 - ✅ Console logging in development
 - ✅ Backend error propagation
@@ -371,6 +409,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 ### 🔔 Notifications & Feedback
 
 **Missing:**
+
 - ❌ Toast notifications (react-hot-toast or similar)
 - ❌ Loading spinners (inconsistent)
 - ❌ Success/error feedback (except OAuth)
@@ -378,6 +417,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 - ❌ Optimistic UI updates
 
 **What Works:**
+
 - ✅ Alert component for OAuth results
 - ✅ Basic loading states
 
@@ -390,11 +430,13 @@ Token expires: 9:30 AM on Wednesday, November 26
 **Status:** 60% Complete ⚠️
 
 **What Works:**
+
 - ✅ Responsive Tailwind classes
 - ✅ Mobile-friendly navigation
 - ✅ Cards stack on mobile
 
 **What's Missing:**
+
 - ❌ Mobile-specific layouts
 - ❌ Touch-optimized interactions
 - ❌ Mobile navigation drawer
@@ -410,10 +452,12 @@ Token expires: 9:30 AM on Wednesday, November 26
 **Status:** 10% Complete ⚠️
 
 **What Works:**
+
 - ✅ Tailwind dark mode classes defined
 - ✅ Color system supports dark mode
 
 **What's Missing:**
+
 - ❌ Dark mode toggle
 - ❌ Dark mode persistence
 - ❌ Components styled for dark mode
@@ -426,6 +470,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 ### 🔒 Security Enhancements
 
 **Missing:**
+
 - ❌ Rate limiting (frontend side)
 - ❌ CSRF protection (Next.js handles some)
 - ❌ Input sanitization (comprehensive)
@@ -433,6 +478,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 - ❌ Content Security Policy
 
 **What Works:**
+
 - ✅ Clerk authentication
 - ✅ JWT token handling
 - ✅ HTTPS enforcement (Vercel)
@@ -444,6 +490,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 ### 📊 Performance Optimization
 
 **Missing:**
+
 - ❌ Image optimization (no images yet)
 - ❌ Code splitting (aggressive)
 - ❌ Bundle size optimization
@@ -451,6 +498,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 - ❌ Performance monitoring
 
 **What Works:**
+
 - ✅ Next.js automatic code splitting
 - ✅ Server Components (fast by default)
 - ✅ Vercel CDN
@@ -462,6 +510,7 @@ Token expires: 9:30 AM on Wednesday, November 26
 ## 🏗️ Frontend Architecture
 
 ### File Structure
+
 ```
 src/
 ├── app/                          # Next.js 15 App Router
@@ -558,6 +607,7 @@ src/
 ### Universal Identifier: `clerk_user_id`
 
 **Frontend Flow:**
+
 1. User signs in → Clerk generates JWT token
 2. JWT contains `clerk_user_id` (e.g., `user_34Qq8GSCZfnEvFffTzIhx1hXJR8`)
 3. Frontend calls `/api/users/current` → extracts JWT → calls backend `/users/me`
@@ -565,12 +615,13 @@ src/
 5. Frontend stores in `useCurrentUser()` hook
 
 **Backend Alignment:**
+
 ```typescript
 // Frontend: src/app/api/users/current/route.ts
-const token = await getToken({ template: 'pete-next' })  // Custom template
+const token = await getToken({ template: 'pete-next' }); // Custom template
 const response = await fetch(`${API_URL}/users/me`, {
-  headers: { 'Authorization': `Bearer ${token}` }
-})
+  headers: { Authorization: `Bearer ${token}` },
+});
 
 // Backend: Extracts clerk_user_id from JWT
 // Links to: users table → oauth_tokens → agents
@@ -581,6 +632,7 @@ const response = await fetch(`${API_URL}/users/me`, {
 ### Calendar Connection Flow
 
 **Frontend:**
+
 1. User clicks "Connect Microsoft Calendar"
 2. `handleConnectCalendar('microsoft')` → calls `getCalendarAuthURL('microsoft')`
 3. Server Action fetches OAuth URL from backend `/calendar/auth/start`
@@ -591,6 +643,7 @@ const response = await fetch(`${API_URL}/users/me`, {
 8. Frontend refreshes user data via `refetch()`
 
 **Backend Alignment:**
+
 ```
 Frontend                          Backend
 --------                          -------
@@ -610,16 +663,19 @@ refetch()                         → GET /api/users/current
 ### VAPI Agent Flow (Planned)
 
 **Frontend:**
+
 1. User creates agent in `/agent-builder`
 2. POST to backend `/agents` with `vapi_assistant_id`
 3. Backend links agent to user via `user_id`
 
 **When VAPI agent makes call:**
+
 - VAPI → Backend webhook → Maps `assistant_id` to `user_id` to `clerk_user_id`
 - Backend uses `clerk_user_id` to fetch calendar tokens
 - Creates appointment in user's calendar
 
 **Frontend shows:**
+
 - Agent status
 - Function call logs (future)
 - Calendar bookings made by agent
@@ -631,12 +687,14 @@ refetch()                         → GET /api/users/current
 ### ✅ What You Can Do Right Now
 
 **User Management:**
+
 - ✅ Sign in/up via Clerk
 - ✅ View user profile (name, email, IDs)
 - ✅ See calendar connection status
 - ✅ Multi-tenant isolation (automatic)
 
 **Calendar Integration:**
+
 - ✅ Connect Microsoft Calendar
 - ✅ Connect Google Calendar
 - ✅ View real calendar name (from Microsoft/Google API)
@@ -646,12 +704,14 @@ refetch()                         → GET /api/users/current
 - ✅ Get warnings for misconfigured connections
 
 **Voice AI (VAPI):**
+
 - ✅ Create VAPI agents
 - ✅ List user's agents
 - ✅ Configure agent settings
 - ✅ Test VAPI widget integration
 
 **UI/UX:**
+
 - ✅ Responsive design (mobile, tablet, desktop)
 - ✅ Consistent Tailwind styling
 - ✅ Loading states and error handling
@@ -662,22 +722,26 @@ refetch()                         → GET /api/users/current
 ### ⚠️ What Needs Work
 
 **Calendar:**
+
 - ⚠️ Display available time slots (UI missing)
 - ⚠️ Show upcoming appointments (UI missing)
 - ⚠️ Book appointments via form (UI basic)
 - ⚠️ Add "View Calendar" button with `calendar_link`
 
 **Rentals:**
+
 - ⚠️ Search UI (completely missing)
 - ⚠️ Property listings (no UI)
 - ⚠️ Filters and sorting (no UI)
 
 **VAPI:**
+
 - ⚠️ Function call testing (no UI)
 - ⚠️ Webhook logs (no display)
 - ⚠️ Real-time agent status (no UI)
 
 **Dashboard:**
+
 - ⚠️ Statistics cards (placeholder only)
 - ⚠️ Activity timeline (missing)
 - ⚠️ Quick actions (missing)
@@ -689,23 +753,27 @@ refetch()                         → GET /api/users/current
 ### High Priority (Do Next)
 
 1. **Add Toast Notifications**
+
    - Install `react-hot-toast` or `sonner`
    - Replace `alert()` calls with toast notifications
    - Add to all server actions (success/error feedback)
 
 2. **Complete Calendar UI**
+
    - Add "View Calendar" button using `calendar_link`
    - Display `expires_at_formatted` instead of raw timestamp
    - Build appointment booking form
    - Show availability calendar
 
 3. **Build Rental Search UI**
+
    - Create `/rentals` page
    - Property listing cards
    - Filter sidebar (price, bedrooms, etc.)
    - Property detail view
 
 4. **Testing**
+
    - Write Jest unit tests for hooks
    - Write Playwright E2E tests for OAuth flow
    - Test calendar connection end-to-end
@@ -722,18 +790,21 @@ refetch()                         → GET /api/users/current
 ### Medium Priority
 
 1. **Enhanced Dashboard**
+
    - Calendar statistics (use `getCalendarStats()`)
    - Recent appointments
    - Agent activity logs
    - Quick actions panel
 
 2. **VAPI Testing Interface**
+
    - Function call tester
    - Webhook log viewer
    - Real-time agent status
    - Voice interaction testing
 
 3. **Mobile Optimization**
+
    - Mobile navigation drawer
    - Touch-optimized controls
    - Mobile-specific layouts
@@ -750,11 +821,13 @@ refetch()                         → GET /api/users/current
 ### Low Priority
 
 1. **Dark Mode**
+
    - Add toggle in navigation
    - Style all components for dark mode
    - Persist preference
 
 2. **Advanced Features**
+
    - Saved searches
    - Property favorites
    - Email notifications
@@ -769,23 +842,23 @@ refetch()                         → GET /api/users/current
 
 ## 📊 Completeness Scorecard
 
-| Feature | Status | Completion |
-|---------|--------|-----------|
-| **Authentication** | ✅ Working | 100% |
-| **User Profile** | ✅ Working | 100% |
-| **Microsoft Calendar** | ✅ Working | 100% |
-| **Google Calendar** | ✅ Working | 100% |
-| **Calendar UI (Basic)** | ✅ Working | 100% |
-| **Calendar UI (Advanced)** | ⚠️ Partial | 60% |
-| **VAPI Agent Builder** | ⚠️ Partial | 60% |
-| **Dashboard** | ⚠️ Partial | 40% |
-| **Rental Search** | ❌ Missing | 30% |
-| **Testing** | ❌ Missing | 10% |
-| **Error Tracking** | ❌ Missing | 20% |
-| **Notifications** | ❌ Missing | 20% |
-| **Mobile Optimization** | ⚠️ Partial | 60% |
-| **Dark Mode** | ❌ Missing | 10% |
-| **Performance** | ⚠️ Partial | 70% |
+| Feature                    | Status     | Completion |
+| -------------------------- | ---------- | ---------- |
+| **Authentication**         | ✅ Working | 100%       |
+| **User Profile**           | ✅ Working | 100%       |
+| **Microsoft Calendar**     | ✅ Working | 100%       |
+| **Google Calendar**        | ✅ Working | 100%       |
+| **Calendar UI (Basic)**    | ✅ Working | 100%       |
+| **Calendar UI (Advanced)** | ⚠️ Partial | 60%        |
+| **VAPI Agent Builder**     | ⚠️ Partial | 60%        |
+| **Dashboard**              | ⚠️ Partial | 40%        |
+| **Rental Search**          | ❌ Missing | 30%        |
+| **Testing**                | ❌ Missing | 10%        |
+| **Error Tracking**         | ❌ Missing | 20%        |
+| **Notifications**          | ❌ Missing | 20%        |
+| **Mobile Optimization**    | ⚠️ Partial | 60%        |
+| **Dark Mode**              | ❌ Missing | 10%        |
+| **Performance**            | ⚠️ Partial | 70%        |
 
 **Overall Frontend Completion: 65%**
 
@@ -796,6 +869,7 @@ refetch()                         → GET /api/users/current
 The frontend is **production-ready** for core features:
 
 ✅ **Strengths:**
+
 - Solid authentication with Clerk
 - Complete calendar integration (Microsoft & Google)
 - Type-safe with TypeScript
@@ -804,6 +878,7 @@ The frontend is **production-ready** for core features:
 - Multi-tenant ready
 
 ⚠️ **Areas for Enhancement:**
+
 - Advanced calendar UI (booking, availability)
 - Rental search UI (completely missing)
 - Testing infrastructure (critical)
@@ -811,6 +886,7 @@ The frontend is **production-ready** for core features:
 - User feedback (toasts, loading states)
 
 **Next Steps:**
+
 1. Add toast notifications
 2. Complete calendar booking UI
 3. Build rental search UI
@@ -833,9 +909,10 @@ The frontend is **production-ready** for core features:
 **API Calls:** Server Actions (preferred) + API Routes  
 **State Management:** React hooks + Server Components  
 **Deployment:** Vercel  
-**Package Manager:** pnpm  
+**Package Manager:** pnpm
 
 **Key Libraries:**
+
 - `@clerk/nextjs` - Authentication
 - `@vapi-ai/web` - Voice AI
 - `class-variance-authority` - Component variants
@@ -843,6 +920,7 @@ The frontend is **production-ready** for core features:
 - `clsx` - Conditional classes
 
 **Environment Variables:**
+
 - `NEXT_PUBLIC_API_URL` - Backend URL
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk public key
 - `CLERK_SECRET_KEY` - Clerk secret (server-side)
@@ -853,4 +931,3 @@ The frontend is **production-ready** for core features:
 **Last Updated:** 2025-10-29  
 **Document Version:** 1.0  
 **Maintained By:** Frontend Team
-

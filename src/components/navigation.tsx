@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 // TODO: Uncomment when implementing RBAC: import { useUser as useClerkUser } from '@clerk/nextjs'
 import { useUser } from '@/lib/hooks/use-user'
+import { useCurrentUser } from '@/hooks/use-current-user'
 import { Calendar, CheckCircle2, XCircle } from 'lucide-react'
 
 interface NavItem {
@@ -18,23 +19,26 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { href: '/', label: 'Home', matchExact: true },
-  { href: '/dashboard', label: 'Properties', color: 'bg-blue-600' },
-  { href: '/appointments', label: 'Appointments', color: 'bg-purple-600' },
-  { href: '/agent-builder', label: 'Agent Builder', color: 'bg-indigo-600', badge: 'NEW' },
-  { href: '/users', label: 'Users', color: 'bg-green-600' },
-  { href: '/vapi-agent', label: 'Voice AI', color: 'bg-pink-600' },
-  { href: '/test-suite', label: 'Test Suite', color: 'bg-orange-600' },
-  { href: '/debug-clerk', label: 'Debug Clerk', color: 'bg-red-600' },
+  { href: '/dashboard', label: 'Dashboard', color: 'bg-blue-600' },
+  { href: '/calendar/events', label: 'Calendar', color: 'bg-green-600' },
+  { href: '/rentals', label: 'Rentals', color: 'bg-purple-600' },
+  { href: '/agent-builder', label: 'Agents', color: 'bg-indigo-600' },
+  { href: '/users', label: 'Profile', color: 'bg-teal-600' },
+]
+
+const adminNavItems: NavItem[] = [
+  { href: '/admin/testing', label: 'Admin Testing', color: 'bg-red-600', badge: 'ADMIN' },
 ]
 
 export default function Navigation() {
   const pathname = usePathname()
   // const { user: clerkUser } = useClerkUser() // TODO: Use when implementing proper RBAC
   const { calendarConnected, isLoading: isUserLoading } = useUser()
+  const { user } = useCurrentUser()
 
   // Check if user is admin (TODO: Get from backend user data via /users/me endpoint)
-  // For now, hide admin badge until proper RBAC is implemented
-  const isAdmin = false
+  // Temporary: Check if email includes 'mark@'
+  const isAdmin = user?.email?.includes('mark@') || false
 
   const isActive = (item: NavItem): boolean => {
     if (item.matchExact) {
@@ -51,6 +55,7 @@ export default function Navigation() {
       <div className="container mx-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4">
         {/* Navigation Links */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          {/* Main Navigation */}
           {navItems.map((item) => {
             const active = isActive(item)
 
@@ -61,6 +66,32 @@ export default function Navigation() {
                 className={cn(
                   'relative inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white transition-all duration-200',
                   'hover:bg-white/20 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white',
+                  active && 'bg-white/30 scale-105 shadow-lg'
+                )}
+                aria-current={active ? 'page' : undefined}
+              >
+                {item.label}
+                {item.badge && (
+                  <span className="ml-1 rounded-full bg-yellow-400 px-2 py-0.5 text-[10px] font-bold text-gray-900">
+                    {item.badge}
+                  </span>
+                )}
+              </Link>
+            )
+          })}
+
+          {/* Admin Navigation */}
+          {isAdmin && adminNavItems.map((item) => {
+            const active = isActive(item)
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'relative inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-white transition-all duration-200',
+                  'hover:bg-white/20 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white',
+                  'border-2 border-red-400',
                   active && 'bg-white/30 scale-105 shadow-lg'
                 )}
                 aria-current={active ? 'page' : undefined}
