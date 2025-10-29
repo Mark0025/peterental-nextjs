@@ -75,17 +75,40 @@ export async function checkCalendarAuth(): Promise<CalendarAuthStatus> {
 
 /**
  * Get OAuth authorization URL
- * NOTE: OAuth flows use browser redirects, so we can't use JWT tokens.
- * Backend requires user_id as query parameter for OAuth start endpoint.
+ * Backend requires Clerk JWT authentication and extracts user_id from token.
+ * Backend generates Microsoft OAuth URL and returns redirect (307).
+ * We fetch it first, extract the Location header, then redirect browser to Microsoft.
  */
 export async function getCalendarAuthURL(): Promise<string> {
-  const { userId } = await auth()
+  const headers = await getAuthHeaders()
+  
+  // Backend expects JWT in Authorization header
+  // Backend will generate OAuth URL and return redirect (307)
+  const response = await fetch(`${API_URL}/calendar/auth/start`, {
+    method: 'GET',
+    headers,
+    redirect: 'manual', // Don't follow redirect automatically, we need the Location header
+  })
 
-  if (!userId) {
-    throw new Error('Not authenticated - please sign in')
+  if (response.status === 401) {
+    throw new Error('Unauthorized - please sign in again')
   }
 
-  return `${API_URL}/calendar/auth/start?user_id=${encodeURIComponent(userId)}`
+  if (!response.ok && response.status !== 307) {
+    const errorText = await response.text()
+    throw new Error(`Failed to start OAuth flow: ${response.status} - ${errorText}`)
+  }
+
+  // Backend returns a redirect (307) to Microsoft OAuth URL
+  // Extract the Location header which contains the Microsoft OAuth URL
+  const location = response.headers.get('location')
+  
+  if (!location) {
+    throw new Error('Backend did not return OAuth redirect URL (no Location header)')
+  }
+
+  // Return the Microsoft OAuth URL to redirect to
+  return location
 }
 
 /**
