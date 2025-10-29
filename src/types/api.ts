@@ -60,11 +60,14 @@ export interface AvailabilitySlot {
 
 export interface CalendarAuthStatus {
   user_id: string
-  user_email?: string
+  user_email?: string // Clerk user email
+  calendar_email?: string // Actual Microsoft/Google calendar email (different from user_email)
   authorized: boolean
   token_valid?: boolean
+  provider?: 'microsoft' | 'google' // Which calendar provider is connected
   authorization_url?: string
   expires_at?: string // ISO 8601 datetime
+  created_at?: string // When calendar was connected
   message?: string
 }
 

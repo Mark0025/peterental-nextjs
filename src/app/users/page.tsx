@@ -343,15 +343,49 @@ function UsersPageContent() {
                   </div>
                   {user.microsoft_calendar_connected ? (
                     <div className="space-y-3">
-                      <p className="text-sm text-green-600 font-medium">
-                        ✅ Calendar is connected and ready for VAPI integration
-                      </p>
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                        <div className="flex-1 space-y-2">
+                          <p className="text-sm text-green-600 font-medium">
+                            Calendar is connected and ready for VAPI integration
+                          </p>
+                          {(user as any).calendar_provider && (
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <span>Provider:</span>
+                              <Badge variant="outline" className="text-xs">
+                                {(user as any).calendar_provider === 'microsoft' && '🔵 Microsoft'}
+                                {(user as any).calendar_provider === 'google' && '🔴 Google'}
+                                {!['microsoft', 'google'].includes((user as any).calendar_provider) && String((user as any).calendar_provider)}
+                              </Badge>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                       {user.microsoft_calendar_email && (
-                        <div className="flex items-center gap-2 text-sm">
-                          <span className="text-muted-foreground">Connected account:</span>
-                          <span className="font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded">
-                            {user.microsoft_calendar_email}
-                          </span>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2 text-sm">
+                            <span className="text-muted-foreground">Connected account:</span>
+                            <Badge variant="outline" className="font-mono bg-blue-50 text-blue-700 border-blue-200">
+                              {user.microsoft_calendar_email}
+                            </Badge>
+                          </div>
+                          {user.microsoft_calendar_email === user.email && (
+                            <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded">
+                              ⚠️ Calendar email matches your account email. Ensure this is a valid Microsoft account.
+                            </p>
+                          )}
+                        </div>
+                      )}
+                      {(user as any).calendar_token_valid === false && (
+                        <div className="rounded-md bg-yellow-50 border border-yellow-200 p-2">
+                          <p className="text-xs text-yellow-800">
+                            ⚠️ Token may be expired or invalid. Try disconnecting and reconnecting.
+                          </p>
+                        </div>
+                      )}
+                      {(user as any).calendar_expires_at && (
+                        <div className="text-xs text-muted-foreground">
+                          Token expires: {new Date((user as any).calendar_expires_at).toLocaleString()}
                         </div>
                       )}
                       <Button

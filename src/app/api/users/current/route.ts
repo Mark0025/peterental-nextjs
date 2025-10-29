@@ -120,8 +120,11 @@ export async function GET() {
         const calendarData = await calendarResponse.json();
         console.log('📅 Calendar auth status response:', JSON.stringify(calendarData, null, 2));
         calendarConnected = calendarData.authorized || false;
-        calendarEmail = calendarData.user_email || null;
+        // Use calendar_email if available (actual Microsoft/Google account)
+        // Fallback to user_email (Clerk email) if calendar_email not provided
+        calendarEmail = calendarData.calendar_email || calendarData.user_email || null;
         console.log(`✅ Calendar connected: ${calendarConnected}, Email: ${calendarEmail}`);
+        console.log(`📊 Calendar provider: ${calendarData.provider || 'unknown'}, Token valid: ${calendarData.token_valid || false}`);
       } else {
         const calendarErrorText = await calendarResponse.text();
         console.log('❌ Calendar status check failed:', calendarResponse.status, calendarErrorText);
@@ -145,9 +148,13 @@ export async function GET() {
       last_name: lastName,
       created_at: result.created_at,
       updated_at: result.created_at, // Use created_at as fallback
-      microsoft_calendar_connected: calendarConnected, // Use auth status, NOT database field
-      microsoft_calendar_email: calendarEmail, // Which Microsoft account is connected
-      google_calendar_connected: false // Not implemented yet
+      microsoft_calendar_connected: calendarConnected && (calendarData.provider === 'microsoft' || !calendarData.provider), // Default to Microsoft if no provider specified
+      microsoft_calendar_email: calendarData.provider === 'microsoft' ? calendarEmail : null,
+      google_calendar_connected: calendarConnected && calendarData.provider === 'google',
+      google_calendar_email: calendarData.provider === 'google' ? calendarEmail : null,
+      calendar_provider: calendarData.provider || (calendarConnected ? 'microsoft' : null), // Which provider (microsoft/google)
+      calendar_token_valid: calendarData.token_valid || false,
+      calendar_expires_at: calendarData.expires_at || null
     }
 
     console.log('✅ Successfully returning user data for userId:', userId);
