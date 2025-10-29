@@ -27,11 +27,7 @@ export async function GET() {
 
     // Get Clerk JWT token for user authentication
     // Use custom template for backend compatibility
-    let token = await authResult.getToken({ template: 'peterental-backend' })
-    if (!token) {
-      // Try alternative template names
-      token = await authResult.getToken({ template: 'backend' })
-    }
+    let token = await authResult.getToken({ template: 'pete-next' })
     if (!token) {
       // Fallback to default token
       token = await authResult.getToken()
