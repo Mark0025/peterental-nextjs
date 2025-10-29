@@ -153,8 +153,11 @@ export async function GET() {
       google_calendar_connected: calendarConnected && calendarData.provider === 'google',
       google_calendar_email: calendarData.provider === 'google' ? calendarEmail : null,
       calendar_provider: calendarData.provider || (calendarConnected ? 'microsoft' : null), // Which provider (microsoft/google)
+      calendar_email: calendarEmail, // Actual calendar email (not Clerk email) - the REAL connected account
       calendar_token_valid: calendarData.token_valid || false,
-      calendar_expires_at: calendarData.expires_at || null
+      calendar_expires_at: calendarData.expires_at || null,
+      // Add flag to detect if calendar_email matches user email (potential issue)
+      calendar_email_matches_account: calendarEmail === result.email
     }
 
     console.log('✅ Successfully returning user data for userId:', userId);
