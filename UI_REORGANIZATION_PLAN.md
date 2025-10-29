@@ -1,4 +1,5 @@
 # UI Reorganization Plan
+
 **Date:** 2025-10-29  
 **Status:** Planning Phase  
 **Goal:** Transform frontend into user-centric Pete AI Command Center
@@ -8,6 +9,7 @@
 ## 📋 Executive Summary
 
 Reorganize the entire frontend to be:
+
 1. **User-centric** - Everything scoped to the logged-in user
 2. **Analytical** - Dashboard shows metrics and insights
 3. **Agent-focused** - VAPI/agent management is core to profile
@@ -19,11 +21,14 @@ Reorganize the entire frontend to be:
 ## 🎯 Required Changes
 
 ### 1. Homepage (/) - "Pete AI Command Center"
+
 **Current State:**
+
 - Title: "PeteRental Next.js 15.4"
 - Buttons: "Get Started", "View API Docs", "View Rentals", etc.
 
 **New State:**
+
 - Title: **"Pete AI Command Center"**
 - Primary button: **"Profile"** (not "Connect Calendar")
 - Remove: "View API Docs", "View Rentals", "Calendar Events"
@@ -31,6 +36,7 @@ Reorganize the entire frontend to be:
 - Keep: Clean, focused landing page with single CTA
 
 **Changes:**
+
 ```typescript
 // src/app/page.tsx
 - <h1>PeteRental Next.js 15.4</h1>
@@ -46,12 +52,15 @@ Reorganize the entire frontend to be:
 ---
 
 ### 2. Dashboard (/dashboard) - Analytics & Overview
+
 **Current State:**
+
 - Basic layout with greeting
 - Placeholder cards
 - No real data
 
 **New State:**
+
 - **User-scoped analytics dashboard**
 - **Metrics to show:**
   - Number of agents configured
@@ -61,14 +70,16 @@ Reorganize the entire frontend to be:
   - Rental properties count
   - Recent agent activity
   - Calendar utilization (bookings this month)
-  
+
 **Data Sources:**
+
 - `/api/users/current` - User info, calendar status
 - `/agent-builder` data - User's agents
 - `/calendar/events` - Upcoming appointments
 - `/rentals` - User's properties
 
 **Layout:**
+
 ```
 ┌─────────────────────────────────────────┐
 │  Welcome back, Mark! 👋                 │
@@ -95,6 +106,7 @@ Reorganize the entire frontend to be:
 ```
 
 **Changes:**
+
 ```typescript
 // src/app/dashboard/page.tsx
 - Static placeholder cards
@@ -108,12 +120,15 @@ Reorganize the entire frontend to be:
 ---
 
 ### 3. Profile (/users) - User Hub with Agent Config
+
 **Current State:**
+
 - **Tabs:** Profile, Calendar, VAPI Config
 - VAPI Config tab links to Agent Builder
 - Calendar connection UI
 
 **New State:**
+
 - **Tabs:** Profile, Calendar, Agent Config (renamed from VAPI Config)
 - **Agent Config tab becomes full management:**
   - List of user's agents
@@ -125,6 +140,7 @@ Reorganize the entire frontend to be:
 - **Move VAPI testing tools here** (from separate page)
 
 **Changes:**
+
 ```typescript
 // src/app/users/page.tsx
 
@@ -139,7 +155,7 @@ Reorganize the entire frontend to be:
     </CardHeader>
     <CardContent>
       {/* List user's agents */}
-      {userAgents.map(agent => (
+      {userAgents.map((agent) => (
         <AgentCard
           key={agent.id}
           agent={agent}
@@ -147,11 +163,11 @@ Reorganize the entire frontend to be:
           onTest={() => testAgent(agent.id)}
         />
       ))}
-      
+
       <Button href="/agent-builder">
         <Plus /> Create New Agent
       </Button>
-      
+
       {/* VAPI Testing Interface (moved from /vapi-testing) */}
       <VAPITestInterface />
     </CardContent>
@@ -162,12 +178,15 @@ Reorganize the entire frontend to be:
 ---
 
 ### 4. Agent Builder (/agent-builder) - User's Agents
+
 **Current State:**
+
 - Shows all agents (not filtered by user)
 - Create new agent flow
 - Edit agent at `/agent-builder/[id]`
 
 **New State:**
+
 - **User-scoped agent list**
 - Filter: `agents.where(user_id = currentUser.id)`
 - Display agent cards with:
@@ -179,54 +198,61 @@ Reorganize the entire frontend to be:
 - "Create New Agent" prominent button
 
 **Changes:**
+
 ```typescript
 // src/app/agent-builder/page.tsx
 
 // Fetch only user's agents
-const { agents } = await getAgents({ userId: currentUser.id })
+const { agents } = await getAgents({ userId: currentUser.id });
 
 // Display user's agents only
-{agents.length === 0 ? (
-  <EmptyState>
-    <p>You haven't created any agents yet</p>
-    <Button href="/agent-builder/new">Create Your First Agent</Button>
-  </EmptyState>
-) : (
-  <AgentGrid>
-    {agents.map(agent => (
-      <AgentCard
-        key={agent.id}
-        agent={agent}
-        onEdit={() => router.push(`/agent-builder/${agent.id}`)}
-      />
-    ))}
-  </AgentGrid>
-)}
+{
+  agents.length === 0 ? (
+    <EmptyState>
+      <p>You haven't created any agents yet</p>
+      <Button href="/agent-builder/new">Create Your First Agent</Button>
+    </EmptyState>
+  ) : (
+    <AgentGrid>
+      {agents.map((agent) => (
+        <AgentCard
+          key={agent.id}
+          agent={agent}
+          onEdit={() => router.push(`/agent-builder/${agent.id}`)}
+        />
+      ))}
+    </AgentGrid>
+  );
+}
 ```
 
 **Edit Agent Page:**
+
 ```typescript
 // src/app/agent-builder/[id]/page.tsx
 
 // Verify agent belongs to user
-const agent = await getAgent(params.id)
+const agent = await getAgent(params.id);
 if (agent.user_id !== currentUser.id) {
-  return <AccessDenied />
+  return <AccessDenied />;
 }
 
 // Show edit form
-<AgentEditForm agent={agent} />
+<AgentEditForm agent={agent} />;
 ```
 
 ---
 
 ### 5. Rentals (/rentals) - User's Properties
+
 **Current State:**
+
 - Mock rental data
 - Search and filters
 - Not user-scoped yet
 
 **New State:**
+
 - **User-scoped rentals** - `user_id` filter
 - **Add "Add Rental Website" button**
 - **Form to add rental sources:**
@@ -240,6 +266,7 @@ if (agent.user_id !== currentUser.id) {
   - Track which agent handles each property
 
 **Changes:**
+
 ```typescript
 // src/app/rentals/page.tsx
 
@@ -266,12 +293,15 @@ const rentals = await fetch(`/api/rentals?company_id=${companyId}`)
 ---
 
 ### 6. Admin Tab - Debug & Testing
+
 **Current State:**
+
 - `/admin/testing` exists
 - "What's Working" on homepage
 - Various debug pages scattered
 
 **New State:**
+
 - **Consolidate into `/admin` section**
 - **Tabs:**
   - Testing (user switching)
@@ -282,6 +312,7 @@ const rentals = await fetch(`/api/rentals?company_id=${companyId}`)
 - **Navigation:** Only visible to admins
 
 **New Structure:**
+
 ```
 /admin
   ├── /testing        → User switching, impersonation
@@ -291,6 +322,7 @@ const rentals = await fetch(`/api/rentals?company_id=${companyId}`)
 ```
 
 **Changes:**
+
 ```typescript
 // src/app/admin/page.tsx (new)
 <Tabs>
@@ -300,19 +332,17 @@ const rentals = await fetch(`/api/rentals?company_id=${companyId}`)
     <TabsTrigger value="api-docs">API Docs</TabsTrigger>
     <TabsTrigger value="debug">Debug Tools</TabsTrigger>
   </TabsList>
-  
+
   <TabsContent value="testing">
     {/* Current /admin/testing content */}
   </TabsContent>
-  
-  <TabsContent value="status">
-    {/* Move "What's Working" here */}
-  </TabsContent>
-  
+
+  <TabsContent value="status">{/* Move "What's Working" here */}</TabsContent>
+
   <TabsContent value="api-docs">
     {/* Move /api-endpoints content here */}
   </TabsContent>
-  
+
   <TabsContent value="debug">
     {/* Move /debug-clerk content here */}
   </TabsContent>
@@ -324,6 +354,7 @@ const rentals = await fetch(`/api/rentals?company_id=${companyId}`)
 ## 📊 Current vs. New Structure
 
 ### Current Navigation
+
 ```
 Home
   ├── Get Started
@@ -353,6 +384,7 @@ Test Suite ❌
 ```
 
 ### New Navigation
+
 ```
 Home ("Pete AI Command Center")
   └── Profile (single CTA)
@@ -395,6 +427,7 @@ Admin (admin-only)
 ## 🗂️ File Changes Summary
 
 ### Files to Create
+
 ```
 src/app/admin/page.tsx                    # Admin hub with tabs
 src/app/admin/status/page.tsx             # System status (What's Working)
@@ -411,6 +444,7 @@ src/components/vapi/VAPITestInterface.tsx        # Testing interface
 ```
 
 ### Files to Modify
+
 ```
 src/app/page.tsx                          # Homepage → Command Center
 src/app/dashboard/page.tsx                # Basic → Analytics
@@ -422,6 +456,7 @@ src/components/navigation.tsx             # Update nav links
 ```
 
 ### Files to Move/Remove
+
 ```
 src/app/whats-working/page.tsx            → Move to /admin/status
 src/app/api-endpoints/page.tsx            → Move to /admin/api-docs
@@ -435,6 +470,7 @@ src/app/vapi-testing/page.tsx             → Integrate into /users (Agent Confi
 ## 🔄 Data Flow Changes
 
 ### Before (Current)
+
 ```
 User
   ↓
@@ -448,6 +484,7 @@ Rentals (mock data)
 ```
 
 ### After (New)
+
 ```
 User Authentication
   ↓
@@ -483,6 +520,7 @@ User Authentication
 ## 📐 ASCII Diagram
 
 ### Current Architecture
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                      HOMEPAGE (/)                        │
@@ -509,6 +547,7 @@ User Authentication
 ```
 
 ### New Architecture
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │         PETE AI COMMAND CENTER (/)                      │
@@ -536,10 +575,10 @@ User Authentication
         ▼      ▼             ▼             ▼      ▼
     Metrics  Profile   Agent Config   Create  Add Source
              Calendar  ├─ My Agents   /Edit   Manage
-                       ├─ Edit Agent          
-                       └─ Test VAPI           
-                       
-                       
+                       ├─ Edit Agent
+                       └─ Test VAPI
+
+
                        Admin Only
                        ┌──────────┐
                        │  Admin   │
@@ -560,46 +599,46 @@ User Authentication
 graph TD
     A[User Logs In] --> B{Authentication}
     B -->|JWT Token| C[Extract userId]
-    
+
     C --> D[Pete AI Command Center]
     D --> E[Profile Button]
-    
+
     E --> F[Dashboard]
     E --> G[Profile]
-    
+
     F --> F1[Agent Metrics<br/>userId scoped]
     F --> F2[Calendar Overview<br/>userId scoped]
     F --> F3[Rental Stats<br/>userId scoped]
     F --> F4[Recent Activity]
-    
+
     G --> G1[Profile Info]
     G --> G2[Calendar Management]
     G --> G3[Agent Config]
-    
+
     G3 --> G3A[My Agents List<br/>userId scoped]
     G3 --> G3B[Edit Agent<br/>/agent-builder/agentId]
     G3 --> G3C[Create Agent<br/>/agent-builder]
     G3 --> G3D[VAPI Testing]
-    
+
     G3B --> H[Agent Builder]
     G3C --> H
-    
+
     H --> H1{Verify Ownership}
     H1 -->|agent.userId == currentUser.id| H2[Allow Edit]
     H1 -->|Mismatch| H3[Access Denied]
-    
+
     F --> I[Rentals]
     I --> I1[My Properties<br/>userId scoped]
     I --> I2[Add Rental Website]
     I --> I3[Manage Sources]
-    
+
     C --> J{Admin Check}
     J -->|Is Admin| K[Admin Panel]
     K --> K1[User Testing]
     K --> K2[System Status]
     K --> K3[API Docs]
     K --> K4[Debug Tools]
-    
+
     style A fill:#90EE90
     style C fill:#FFD700
     style F fill:#87CEEB
@@ -614,6 +653,7 @@ graph TD
 ## 🔐 Multi-Tenant Data Scoping
 
 ### Current (Partial)
+
 ```typescript
 // Some endpoints user-scoped, some not
 GET /calendar/events  ✅ User-scoped (JWT)
@@ -622,6 +662,7 @@ GET /rentals          ❌ Mock data
 ```
 
 ### New (All User-Scoped)
+
 ```typescript
 // All data filtered by userId from JWT
 GET /dashboard/stats?userId={from JWT}
@@ -647,6 +688,7 @@ GET /rentals?companyId={from JWT}
 ## 📋 Implementation Checklist
 
 ### Phase 1: Homepage & Navigation
+
 - [ ] Update homepage title to "Pete AI Command Center"
 - [ ] Change primary button to "Profile"
 - [ ] Remove API Docs, Rentals, Calendar buttons
@@ -655,6 +697,7 @@ GET /rentals?companyId={from JWT}
 - [ ] Test routing
 
 ### Phase 2: Dashboard Transformation
+
 - [ ] Create Analytics dashboard component
 - [ ] Add Agent Metrics card
 - [ ] Add Calendar Overview card
@@ -664,6 +707,7 @@ GET /rentals?companyId={from JWT}
 - [ ] Test data display
 
 ### Phase 3: Profile Enhancement
+
 - [ ] Rename "VAPI Config" → "Agent Config"
 - [ ] Create user agents list component
 - [ ] Add "Edit Agent" buttons linking to `/agent-builder/[id]`
@@ -672,6 +716,7 @@ GET /rentals?companyId={from JWT}
 - [ ] Test agent management flow
 
 ### Phase 4: Agent Builder User-Scoping
+
 - [ ] Filter agents by userId
 - [ ] Add ownership verification to edit page
 - [ ] Create empty state for no agents
@@ -680,6 +725,7 @@ GET /rentals?companyId={from JWT}
 - [ ] Test edit ownership check
 
 ### Phase 5: Rentals Enhancement
+
 - [ ] Add "Add Rental Website" button
 - [ ] Create add source modal
 - [ ] Implement source management
@@ -688,6 +734,7 @@ GET /rentals?companyId={from JWT}
 - [ ] Prepare for companyId nesting
 
 ### Phase 6: Admin Consolidation
+
 - [ ] Create `/admin` hub page
 - [ ] Move Testing to `/admin` (tab)
 - [ ] Move "What's Working" to `/admin/status`
@@ -701,33 +748,39 @@ GET /rentals?companyId={from JWT}
 ## ⚠️ Potential Issues & Solutions
 
 ### Issue 1: Agent Ownership
+
 **Problem:** Users could edit others' agents via direct URL  
 **Solution:** Add ownership check in `/agent-builder/[id]` page
+
 ```typescript
 if (agent.user_id !== currentUser.id) {
-  return <AccessDenied />
+  return <AccessDenied />;
 }
 ```
 
 ### Issue 2: Dashboard Data Loading
+
 **Problem:** Multiple API calls on dashboard load  
 **Solution:** Use React Query or parallel fetching
+
 ```typescript
 const { data: analytics } = await Promise.all([
   fetch('/api/dashboard/agents'),
   fetch('/api/dashboard/calendar'),
   fetch('/api/dashboard/rentals'),
-])
+]);
 ```
 
 ### Issue 3: Navigation State
+
 **Problem:** Active tab confusion with new structure  
 **Solution:** Update `isActive` logic in navigation
+
 ```typescript
 const isActive = (href) => {
-  if (href === '/admin') return pathname.startsWith('/admin')
+  if (href === '/admin') return pathname.startsWith('/admin');
   // ... rest
-}
+};
 ```
 
 ---
@@ -747,6 +800,7 @@ const isActive = (href) => {
 ## 📊 Success Metrics
 
 After implementation, we should see:
+
 - [ ] Cleaner, more focused homepage
 - [ ] User-centric dashboard with real metrics
 - [ ] Streamlined agent management in profile
@@ -757,4 +811,3 @@ After implementation, we should see:
 ---
 
 **Next Step:** Review this plan, then implement phase by phase!
-
