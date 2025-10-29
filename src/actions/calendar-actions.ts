@@ -26,7 +26,12 @@ if (!API_URL) {
  */
 async function getAuthHeaders(): Promise<HeadersInit> {
   const { getToken } = await auth()
-  const token = await getToken()
+  
+  // Try custom template first, fallback to default
+  let token = await getToken({ template: 'pete-next' })
+  if (!token) {
+    token = await getToken()
+  }
 
   if (!token) {
     throw new Error('Not authenticated - please sign in')
