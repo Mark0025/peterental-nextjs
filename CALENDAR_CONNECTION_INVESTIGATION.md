@@ -3,6 +3,7 @@
 ## 🚨 Issue Report
 
 **Symptom**: Calendar shows as "connected" but:
+
 1. User didn't go through OAuth flow
 2. Email `mark@localhousebuyers.net` may not have a Microsoft account
 3. Not sure if it's actually connected or a false positive
@@ -53,6 +54,7 @@ AND provider = 'microsoft';
 ```
 
 **Questions:**
+
 - Does this query return a result?
 - What is the `calendar_email` value? (Is it `mark@localhousebuyers.net` or a different Microsoft account?)
 - Is the token valid? (`expires_at > NOW()`)
@@ -62,13 +64,13 @@ AND provider = 'microsoft';
 
 ```sql
 -- Check oauth_tokens table
-SELECT 
+SELECT
   user_id,
   provider,
   calendar_email,
   expires_at,
   created_at,
-  CASE 
+  CASE
     WHEN expires_at < NOW() THEN 'EXPIRED'
     WHEN access_token IS NULL THEN 'NO_TOKEN'
     ELSE 'VALID'
@@ -78,6 +80,7 @@ WHERE user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8';
 ```
 
 **What to check:**
+
 - Is there a row for this user?
 - What is `calendar_email`? (Should be the Microsoft account, not Clerk email)
 - Is token expired?
@@ -87,7 +90,7 @@ WHERE user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8';
 
 ```sql
 -- Check user flags
-SELECT 
+SELECT
   clerk_user_id,
   email,
   has_microsoft_calendar,
@@ -97,6 +100,7 @@ WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTz满足了hXJR8';
 ```
 
 **What to check:**
+
 - Is `has_microsoft_calendar` = true?
 - Is `microsoft_calendar_connected` = true?
 - Are these flags out of sync with actual OAuth tokens?
@@ -110,6 +114,7 @@ WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTz满足了hXJR8';
 **Scenario**: `users.has_microsoft_calendar = true` but no OAuth token exists
 
 **Backend Should**:
+
 - Only set flag when OAuth tokens are successfully stored
 - Check actual token existence, not just flag
 
@@ -118,6 +123,7 @@ WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTz满足了hXJR8';
 **Scenario**: `oauth_tokens.calendar_email` is null or set to Clerk email instead of Microsoft email
 
 **Backend Should**:
+
 - Set `calendar_email` from Microsoft Graph API user profile (after OAuth)
 - Not default to Clerk email
 - Return `null` if no calendar_email stored
@@ -127,6 +133,7 @@ WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTz满足了hXJR8';
 **Scenario**: Token exists but is expired or invalid
 
 **Backend Should**:
+
 - Check `expires_at` when determining `authorized` status
 - Refresh token if expired
 - Return `authorized: false` if token is expired
@@ -146,11 +153,11 @@ WHERE clerk_user_id = 'user_34Qq8GSCZfnEvFffTz满足了hXJR8';
 
 ```typescript
 // Warning if calendar email = account email
-⚠️ Calendar email matches your account email人心的. 
+⚠️ Calendar email matches your account email人心的.
 Ensure this is a valid Microsoft account.
 
 // Warning if token invalid
-⚠️ Token may be expired or invalid. 
+⚠️ Token may be expired or invalid.
 Try disconnecting and reconnecting.
 ```
 
@@ -183,11 +190,12 @@ curl -X GET "https://peterental-vapi-github-newer.onrender.com/calendar/auth/sta
 ```
 
 **Expected Response if Connected:**
+
 ```json
 {
   "user_id": "user_34Qq8GSCZfnEvFffTzIhx1hXJR8",
   "user_email": "mark@localhousebuyers.net",
-  "calendar_email": "actual_microsoft@outlook.com",  // Different from user_email!
+  "calendar_email": "actual_microsoft@outlook.com", // Different from user_email!
   "authorized": true,
   "token_valid": true,
   "provider": "microsoft",
@@ -196,6 +204,7 @@ curl -X GET "https://peterental-vapi-github-newer.onrender.com/calendar/auth/sta
 ```
 
 **Expected Response if NOT Connected:**
+
 ```json
 {
   "user_id": "user_34Qq8GSCZfnEvFffTzIhx1hXJR8",
@@ -212,8 +221,8 @@ curl -X GET "https://peterental-vapi-github-newer.onrender.com/calendar/auth/sta
 
 ```sql
 -- Should return 0 rows if not connected
-SELECT * FROM oauth_tokens 
-WHERE user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8' 
+SELECT * FROM oauth_tokens
+WHERE user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8'
 AND provider = 'microsoft';
 
 -- Should return token if connected
@@ -224,18 +233,21 @@ AND provider = 'microsoft';
 ## 🎯 Summary
 
 **Frontend Changes**:
+
 - ✅ Now shows provider (Microsoft/Google) clearly
 - ✅ Shows warning if calendar email = account email
 - ✅ Shows token validity status
 - ✅ Shows token expiry date
 
 **Backend Needs to Check**:
+
 - ❓ Is there actually an OAuth token in database?
 - ❓ Is `calendar_email` set correctly (Microsoft account, not Clerk email)?
 - ❓ Is token expired or invalid?
 - ❓ Are database flags (`has_microsoft_calendar`) in sync with actual tokens?
 
 **Next Steps**:
+
 1. Backend agent should verify database state
 2. Check if tokens actually exist
 3. Ensure `/calendar/auth/status` returns accurate data
@@ -243,6 +255,5 @@ AND provider = 'microsoft';
 
 ---
 
-*Created: 2025-10-29*  
-*Status: Frontend enhanced, waiting for backend verification*
-
+_Created: 2025-10-29_  
+_Status: Frontend enhanced, waiting for backend verification_

@@ -3,6 +3,7 @@
 ## 🚨 Critical Issue
 
 **Problem**: Frontend shows calendar as "connected" but:
+
 1. User didn't go through OAuth flow
 2. Email `mark@localhousebuyers.net` may not have a Microsoft account
 3. Cannot verify if connection is legitimate or false positive
@@ -14,6 +15,7 @@
 ## ✅ Frontend Implementation
 
 The frontend now displays:
+
 1. **Side-by-side comparison**: Shows Clerk account email vs Calendar account email
 2. **Warning**: If calendar email = account email (indicates potential false positive)
 3. **Success**: If calendar email ≠ account email (indicates legitimate connection)
@@ -63,9 +65,9 @@ OR (if there's an issue):
 ```json
 {
   "user_id": "user_34Qq8GSCZfnEvFffTzIhx1hXJR8",
-  "user_email": "mark@localhousebuyers.net",  // Clerk email (from users table)
-  "calendar_email": "actual_microsoft@outlook.com",  // ⚠️ CRITICAL: Actual Microsoft/Google account email from oauth_tokens.calendar_email
-  "provider": "microsoft",  // or "google"
+  "user_email": "mark@localhousebuyers.net", // Clerk email (from users table)
+  "calendar_email": "actual_microsoft@outlook.com", // ⚠️ CRITICAL: Actual Microsoft/Google account email from oauth_tokens.calendar_email
+  "provider": "microsoft", // or "google"
   "authorized": true,
   "token_valid": true,
   "expires_at": "2025-11-26T15:30:00Z"
@@ -78,8 +80,8 @@ OR (if there's an issue):
 
    ```sql
    -- ✅ CORRECT:
-   SELECT calendar_email FROM oauth_tokens 
-   WHERE user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8' 
+   SELECT calendar_email FROM oauth_tokens
+   WHERE user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8'
    AND provider = 'microsoft';
    -- Returns: actual_microsoft@outlook.com
 
@@ -95,7 +97,7 @@ OR (if there's an issue):
        calendar_email = token_data.get("calendar_email")  # From oauth_tokens table
    else:
        calendar_email = None  # No connection
-   
+
    # ❌ WRONG:
    calendar_email = user.email  # Defaulting to Clerk email
    ```
@@ -105,7 +107,7 @@ OR (if there's an issue):
    ```python
    # ✅ CORRECT:
    authorized = bool(token_data and token_data.get("calendar_email"))
-   
+
    # ❌ WRONG:
    authorized = user.has_microsoft_calendar  # Using database flag alone
    ```
@@ -135,7 +137,7 @@ When user completes OAuth flow, backend must:
    ```python
    # ❌ WRONG:
    calendar_email = user.email  # mark@localhousebuyers.net
-   
+
    # ✅ CORRECT:
    calendar_email = microsoft_graph_response.get("mail")  # actual_microsoft@outlook.com
    ```
@@ -146,12 +148,12 @@ When user completes OAuth flow, backend must:
 
 ```sql
 -- Verify calendar_email is populated correctly
-SELECT 
+SELECT
   user_id,
   provider,
   calendar_email,  -- ⚠️ This should be the actual Microsoft/Google account email
   expires_at,
-  CASE 
+  CASE
     WHEN calendar_email IS NULL THEN 'NO_EMAIL'
     WHEN expires_at < NOW() THEN 'EXPIRED'
     WHEN access_token IS NULL THEN 'NO_TOKEN'
@@ -162,6 +164,7 @@ WHERE user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8';
 ```
 
 **Expected Result if Connected**:
+
 ```
 user_id: user_34Qq8GSCZfnEvFffTzIhx1hXJR8
 provider: microsoft
@@ -170,6 +173,7 @@ status: VALID
 ```
 
 **Red Flags**:
+
 - `calendar_email` = `mark@localhousebuyers.net` (same as Clerk email)
 - `calendar_email` IS NULL (but `authorized: true`)
 - `expires_at` < NOW() (but `authorized: true`)
@@ -181,6 +185,7 @@ status: VALID
 **User**: `user_34Qq8GSCZfnEvFffTzIhx1hXJR8`
 
 **Clerk Data**:
+
 - Email: `mark@localhousebuyers.net`
 - Signed in via: Google OAuth (`oauth_google`)
 - **No Microsoft account in Clerk**
@@ -188,20 +193,24 @@ status: VALID
 **Questions for Backend**:
 
 1. **Does OAuth token exist?**
+
    ```sql
    SELECT * FROM oauth_tokens
    WHERE user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8'
    AND provider = 'microsoft';
    ```
+
    - If 0 rows → User is NOT connected (backend should return `authorized: false`)
    - If 1+ rows → Continue to question 2
 
 2. **What is `calendar_email` value?**
+
    ```sql
    SELECT calendar_email FROM oauth_tokens
    WHERE user_id = 'user_34Qq8GSCZfnEvFffTzIhx1hXJR8'
    AND provider = 'microsoft';
    ```
+
    - If `NULL` → Backend should return `authorized: false`
    - If `mark@localhousebuyers.net` → **RED FLAG**: Same as Clerk->email (potential issue)
    - If `something@outlook.com` → Likely legitimate
@@ -245,11 +254,12 @@ For OAuth callback:
 ### **Scenario 1: Legitimate Connection**
 
 **Backend Returns**:
+
 ```json
 {
   "user_id": "user_34Qq8GSCZfnEvFffTzIhx1hXJR8",
   "user_email": "mark@localhousebuyers.net",
-  "calendar_email": "mark.carpenter@outlook.com",  // Different from Clerk email
+  "calendar_email": "mark.carpenter@outlook.com", // Different from Clerk email
   "provider": "microsoft",
   "authorized": true,
   "token_valid": true
@@ -257,6 +267,7 @@ For OAuth callback:
 ```
 
 **Frontend Shows**:
+
 - ✅ Clerk email: `mark@localhousebuyers.net`
 - ✅ Calendar email: `mark.carpenter@outlook.com` (different!)
 - ✅ Success message: "Calendar connected to a different account"
@@ -264,11 +275,12 @@ For OAuth callback:
 ### **Scenario 2: False Positive (Current Issue)**
 
 **Backend Returns**:
+
 ```json
 {
   "user_id": "user_34Qq8GSCZfnEvFffTzIhx1hXJR8",
   "user_email": "mark@localhousebuyers.net",
-  "calendar_email": "mark@localhousebuyers.net",  // Same as Clerk email - RED FLAG!
+  "calendar_email": "mark@localhousebuyers.net", // Same as Clerk email - RED FLAG!
   "provider": "microsoft",
   "authorized": true,
   "token_valid": true
@@ -276,6 +288,7 @@ For OAuth callback:
 ```
 
 **Frontend Shows**:
+
 - ⚠️ Clerk email: `mark@localhousebuyers.net`
 - ⚠️ Calendar email: `mark@localhousebuyers.net` (same!)
 - ⚠️ **Warning**: "Calendar email matches your account email. This may indicate the calendar is not actually connected."
@@ -283,6 +296,7 @@ For OAuth callback:
 ### **Scenario 3: Not Connected**
 
 **Backend Returns**:
+
 ```json
 {
   "user_id": "user_34Qq8GSCZfnEvFffTzIhx1hXJR8",
@@ -295,6 +309,7 @@ For OAuth callback:
 ```
 
 **Frontend Shows**:
+
 - ❌ "Not Connected"
 - ✅ "Connect Microsoft Calendar" button
 
@@ -305,11 +320,13 @@ For OAuth callback:
 **The Frontend Needs**:
 
 1. **`calendar_email` field**: Must be the **actual Microsoft/Google account email** from OAuth tokens
+
    - NOT the Clerk email
    - Must come from `oauth_tokens.calendar_email` table
    - Must be populated from Microsoft Graph API during OAuth callback
 
 2. **Accurate `authorized` status**: Only `true` if:
+
    - OAuth token exists
    - `calendar_email` is not NULL
    - Token is not expired
@@ -318,6 +335,7 @@ For OAuth callback:
 3. **Proper validation**: Backend must check actual token existence, not database flags
 
 **The Frontend Will**:
+
 - ✅ Display both emails side-by-side
 - ✅ Warn users if calendar email = account email (potential false positive)
 - ✅ Show success if emails are different (legitimate connection)
@@ -325,7 +343,6 @@ For OAuth callback:
 
 ---
 
-*Created: 2025-10-29*  
-*Status: Frontend ready - waiting for backend verification and fixes*  
-*Priority: High - affects user trust and system accuracy*
-
+_Created: 2025-10-29_  
+_Status: Frontend ready - waiting for backend verification and fixes_  
+_Priority: High - affects user trust and system accuracy_

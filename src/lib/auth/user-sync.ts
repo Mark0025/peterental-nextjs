@@ -13,14 +13,24 @@ export interface DatabaseUser {
   id: string // Your internal UUID
   clerk_user_id: string // Clerk's user ID
   email: string
-  first_name?: string
-  last_name?: string
+  first_name?: string | null
+  last_name?: string | null
   created_at: string
   updated_at: string
   microsoft_calendar_connected: boolean
   microsoft_calendar_email?: string | null // Which Microsoft account is connected
   google_calendar_connected: boolean
-  // Add other fields as needed
+  google_calendar_email?: string | null // Which Google account is connected
+  // Calendar verification fields from backend
+  calendar_provider?: 'microsoft' | 'google' | null // Which calendar provider is connected
+  calendar_email?: string | null // Actual calendar email (not Clerk email)
+  calendar_name?: string | null // Actual calendar name from Microsoft Graph API
+  calendar_id?: string | null // Microsoft calendar ID
+  calendar_verified?: boolean // true if backend can access calendar via Graph API
+  calendar_error?: string | null // Error message if verification failed
+  calendar_token_valid?: boolean // Token validity status
+  calendar_expires_at?: string | null // Token expiry date
+  calendar_email_matches_account?: boolean // Flag to detect if calendar email = account email
 }
 
 export interface ClerkUserData {

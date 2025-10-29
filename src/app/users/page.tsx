@@ -349,13 +349,13 @@ function UsersPageContent() {
                           <p className="text-sm text-green-600 font-medium">
                             Calendar is connected and ready for VAPI integration
                           </p>
-                          {(user as any).calendar_provider && (
+                          {user.calendar_provider && (
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                               <span>Provider:</span>
                               <Badge variant="outline" className="text-xs">
-                                {(user as any).calendar_provider === 'microsoft' && '🔵 Microsoft'}
-                                {(user as any).calendar_provider === 'google' && '🔴 Google'}
-                                {!['microsoft', 'google'].includes((user as any).calendar_provider) && String((user as any).calendar_provider)}
+                                {user.calendar_provider === 'microsoft' && '🔵 Microsoft'}
+                                {user.calendar_provider === 'google' && '🔴 Google'}
+                                {user.calendar_provider !== 'microsoft' && user.calendar_provider !== 'google' && String(user.calendar_provider)}
                               </Badge>
                             </div>
                           )}
@@ -374,10 +374,10 @@ function UsersPageContent() {
                             </div>
                           </div>
 
-                          {(user as any).calendar_email || user.microsoft_calendar_email ? (
+                          {user.calendar_email || user.microsoft_calendar_email ? (
                             <div className="space-y-2">
                               {/* Calendar Name - Most Important Visual Indicator */}
-                              {(user as any).calendar_name && (
+                              {user.calendar_name && (
                                 <div className="flex items-center gap-2">
                                   <div className="flex-1">
                                     <div className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-2">
@@ -385,15 +385,15 @@ function UsersPageContent() {
                                       <span>Calendar Name:</span>
                                     </div>
                                     <div className="text-sm font-semibold bg-blue-50 text-blue-900 px-3 py-2 rounded-lg border-2 border-blue-300">
-                                      📅 {(user as any).calendar_name}
+                                      📅 {user.calendar_name}
                                     </div>
                                   </div>
-                                  {(user as any).calendar_verified === true && (
+                                  {user.calendar_verified === true && (
                                     <Badge className="bg-green-600 text-white" variant="default">
                                       ✓ Verified
                                     </Badge>
                                   )}
-                                  {(user as any).calendar_verified === false && (
+                                  {user.calendar_verified === false && (
                                     <Badge className="bg-red-600 text-white" variant="destructive">
                                       ✗ Not Verified
                                     </Badge>
@@ -406,27 +406,27 @@ function UsersPageContent() {
                                 <div className="flex-1">
                                   <div className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1">
                                     <span>Connected Account Email:</span>
-                                    {(user as any).calendar_provider === 'microsoft' && <span>🔵</span>}
-                                    {(user as any).calendar_provider === 'google' && <span>🔴</span>}
-                                    {!['microsoft', 'google'].includes((user as any).calendar_provider) && user.microsoft_calendar_email && <span>🔵</span>}
+                                    {user.calendar_provider === 'microsoft' && <span>🔵</span>}
+                                    {user.calendar_provider === 'google' && <span>🔴</span>}
+                                    {user.calendar_provider !== 'microsoft' && user.calendar_provider !== 'google' && user.microsoft_calendar_email && <span>🔵</span>}
                                   </div>
                                   <div className="text-sm font-mono bg-green-50 text-green-800 px-2 py-1 rounded border border-green-200 font-semibold">
-                                    {(user as any).calendar_email || user.microsoft_calendar_email}
+                                    {user.calendar_email || user.microsoft_calendar_email}
                                   </div>
                                 </div>
                               </div>
 
                               {/* Calendar ID (if available) */}
-                              {(user as any).calendar_id && (
+                              {user.calendar_id && (
                                 <div className="text-xs text-muted-foreground">
-                                  Calendar ID: <span className="font-mono">{String((user as any).calendar_id).substring(0, 20)}...</span>
+                                  Calendar ID: <span className="font-mono">{String(user.calendar_id).substring(0, 20)}...</span>
                                 </div>
                               )}
                             </div>
                           ) : null}
 
                           {/* Verification Status Warning */}
-                          {(user as any).calendar_verified === false && (
+                          {user.calendar_verified === false && (
                             <div className="rounded-md bg-red-50 border border-red-300 p-3">
                               <p className="text-xs text-red-900 font-bold mb-1">
                                 ❌ Calendar NOT Verified
@@ -434,9 +434,9 @@ function UsersPageContent() {
                               <p className="text-xs text-red-800 mb-1">
                                 We cannot access your calendar. This connection may be invalid or expired.
                               </p>
-                              {(user as any).calendar_error && (
+                              {user.calendar_error && (
                                 <p className="text-xs text-red-700 font-mono bg-red-100 px-2 py-1 rounded mt-1">
-                                  Error: {(user as any).calendar_error}
+                                  Error: {user.calendar_error}
                                 </p>
                               )}
                               <p className="text-xs text-red-700 mt-2">
@@ -446,45 +446,45 @@ function UsersPageContent() {
                           )}
 
                           {/* Email Match Warning */}
-                          {((user as any).calendar_email || user.microsoft_calendar_email) &&
-                            ((user as any).calendar_email === user.email || user.microsoft_calendar_email === user.email) && (
+                          {(user.calendar_email || user.microsoft_calendar_email) &&
+                            (user.calendar_email === user.email || user.microsoft_calendar_email === user.email) && (
                               <div className="rounded-md bg-amber-50 border border-amber-200 p-2">
                                 <p className="text-xs text-amber-800 font-medium">
                                   ⚠️ Warning: Calendar email matches your account email.
                                 </p>
                                 <p className="text-xs text-amber-700 mt-1">
-                                  This may indicate the calendar is not actually connected. The connected calendar should be a <strong>different</strong> Microsoft/Google account email. If this email doesn't have a Microsoft account, please disconnect and reconnect with a valid Microsoft account.
+                                  This may indicate the calendar is not actually connected. The connected calendar should be a <strong>different</strong> Microsoft/Google account email. If this email doesn&apos;t have a Microsoft account, please disconnect and reconnect with a valid Microsoft account.
                                 </p>
                               </div>
                             )}
 
                           {/* Success Indicators */}
-                          {((user as any).calendar_email || user.microsoft_calendar_email) &&
-                            ((user as any).calendar_email !== user.email && user.microsoft_calendar_email !== user.email) &&
-                            (user as any).calendar_verified !== false && (
+                          {(user.calendar_email || user.microsoft_calendar_email) &&
+                            user.calendar_email !== user.email && user.microsoft_calendar_email !== user.email &&
+                            user.calendar_verified !== false && (
                               <div className="rounded-md bg-green-50 border border-green-200 p-2">
                                 <p className="text-xs text-green-800 font-medium mb-1">
                                   ✅ Valid Calendar Connection
                                 </p>
                                 <p className="text-xs text-green-700">
-                                  Calendar connected to a <strong>different account</strong> than your Clerk email. {(user as any).calendar_verified === true && 'Calendar access verified.'}
+                                  Calendar connected to a <strong>different account</strong> than your Clerk email. {user.calendar_verified === true && 'Calendar access verified.'}
                                 </p>
                               </div>
                             )}
                         </div>
                       </div>
-                      {(user as any).calendar_token_valid === false && (
+                      {user.calendar_token_valid === false && (
                         <div className="rounded-md bg-yellow-50 border border-yellow-200 p-2">
                           <p className="text-xs text-yellow-800">
                             ⚠️ Token may be expired or invalid. Try disconnecting and reconnecting.
                           </p>
                         </div>
                       )}
-                      {(user as any).calendar_expires_at && (
-                        <div className="text-xs text-muted-foreground">
-                          Token expires: {new Date((user as any).calendar_expires_at).toLocaleString()}
-                        </div>
-                      )}
+                       {user.calendar_expires_at && (
+                          <div className="text-xs text-muted-foreground">
+                           Token expires: {new Date(user.calendar_expires_at).toLocaleString()}
+                          </div>
+                        )}
                       <Button
                         variant="outline"
                         size="sm"

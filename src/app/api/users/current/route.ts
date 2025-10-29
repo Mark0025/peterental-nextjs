@@ -9,6 +9,7 @@
 
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
+import type { CalendarAuthStatus } from '@/types/api'
 
 export async function GET() {
   let userId: string | null = null;
@@ -68,16 +69,16 @@ export async function GET() {
           errorMessage = `Backend service unavailable (${response.status})`;
         } else {
           // Try to parse as JSON
-          try {
-            const errorJson = JSON.parse(errorText);
-            errorMessage = errorJson.detail || errorJson.error || errorText;
-          } catch (parseError) {
-            errorMessage = errorText || `Backend returned error: ${response.status} ${response.statusText}`;
+              try {
+                const errorJson = JSON.parse(errorText);
+                errorMessage = errorJson.detail || errorJson.error || errorText;
+              } catch {
+                errorMessage = errorText || `Backend returned error: ${response.status} ${response.statusText}`;
+              }
+            }
+          } catch {
+            errorMessage = `Backend returned error: ${response.status} ${response.statusText}`;
           }
-        }
-      } catch (textError) {
-        errorMessage = `Backend returned error: ${response.status} ${response.statusText}`;
-      }
       
       return NextResponse.json(
         { error: errorMessage },
@@ -102,6 +103,7 @@ export async function GET() {
     console.log('🔍 Checking calendar auth status for user:', userId);
     let calendarConnected = false;
     let calendarEmail: string | null = null;
+    let calendarData: Partial<CalendarAuthStatus> = {}; // Store full calendar data
     try {
       console.log('🔄 Calling calendar status endpoint:', `${process.env.NEXT_PUBLIC_API_URL}/calendar/auth/status`);
       const calendarResponse = await fetch(
@@ -117,7 +119,7 @@ export async function GET() {
       console.log('📅 Calendar response status:', calendarResponse.status, calendarResponse.statusText);
       
       if (calendarResponse.ok) {
-        const calendarData = await calendarResponse.json();
+        calendarData = await calendarResponse.json();
         console.log('📅 Calendar auth status response:', JSON.stringify(calendarData, null, 2));
         calendarConnected = calendarData.authorized || false;
         // Use calendar_email if available (actual Microsoft/Google account)
