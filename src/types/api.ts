@@ -62,6 +62,10 @@ export interface CalendarAuthStatus {
   user_id: string
   user_email?: string // Clerk user email
   calendar_email?: string // Actual Microsoft/Google calendar email (different from user_email)
+  calendar_name?: string // ✨ Actual calendar name from Microsoft Graph API (e.g., "Calendar", "Mark's Work Calendar")
+  calendar_id?: string // ✨ Microsoft calendar ID (unique identifier)
+  calendar_verified?: boolean // ✨ true only if we can successfully access the calendar via Graph API
+  calendar_error?: string // Error message if calendar verification failed
   authorized: boolean
   token_valid?: boolean
   provider?: 'microsoft' | 'google' // Which calendar provider is connected

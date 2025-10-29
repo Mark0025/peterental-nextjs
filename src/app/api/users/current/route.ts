@@ -125,6 +125,7 @@ export async function GET() {
         calendarEmail = calendarData.calendar_email || calendarData.user_email || null;
         console.log(`✅ Calendar connected: ${calendarConnected}, Email: ${calendarEmail}`);
         console.log(`📊 Calendar provider: ${calendarData.provider || 'unknown'}, Token valid: ${calendarData.token_valid || false}`);
+        console.log(`📅 Calendar name: ${calendarData.calendar_name || 'N/A'}, Verified: ${calendarData.calendar_verified || false}`);
       } else {
         const calendarErrorText = await calendarResponse.text();
         console.log('❌ Calendar status check failed:', calendarResponse.status, calendarErrorText);
@@ -154,6 +155,10 @@ export async function GET() {
       google_calendar_email: calendarData.provider === 'google' ? calendarEmail : null,
       calendar_provider: calendarData.provider || (calendarConnected ? 'microsoft' : null), // Which provider (microsoft/google)
       calendar_email: calendarEmail, // Actual calendar email (not Clerk email) - the REAL connected account
+      calendar_name: calendarData.calendar_name || null, // ✨ Actual calendar name from Microsoft Graph API
+      calendar_id: calendarData.calendar_id || null, // ✨ Microsoft calendar ID
+      calendar_verified: calendarData.calendar_verified || false, // ✨ Verification status - can we actually access the calendar?
+      calendar_error: calendarData.calendar_error || null, // Error message if verification failed
       calendar_token_valid: calendarData.token_valid || false,
       calendar_expires_at: calendarData.expires_at || null,
       // Add flag to detect if calendar_email matches user email (potential issue)
