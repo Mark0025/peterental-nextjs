@@ -6,6 +6,7 @@ import { handleAPIResponse, retryWithBackoff } from './errors'
 import { CalendarAPI } from './calendar'
 import { VAPIAPI } from './vapi'
 import { RentalsAPI } from './rentals'
+import { DashboardAPI } from './dashboard'
 
 /**
  * Main API Client
@@ -31,6 +32,7 @@ export class APIClient {
   public readonly calendar: CalendarAPI
   public readonly vapi: VAPIAPI
   public readonly rentals: RentalsAPI
+  public readonly dashboard: DashboardAPI
   
   constructor(baseURL: string = apiConfig.baseURL) {
     this.baseURL = baseURL
@@ -39,6 +41,7 @@ export class APIClient {
     this.calendar = new CalendarAPI(baseURL)
     this.vapi = new VAPIAPI(baseURL)
     this.rentals = new RentalsAPI(baseURL)
+    this.dashboard = new DashboardAPI(baseURL)
   }
   
   /**
@@ -143,5 +146,5 @@ export class APIClient {
 export const apiClient = new APIClient()
 
 // Export for testing/custom instances
-export { CalendarAPI, VAPIAPI, RentalsAPI }
+export { CalendarAPI, VAPIAPI, RentalsAPI, DashboardAPI }
 

@@ -26,6 +26,7 @@ User speaks → VAPI processes → Webhook to backend → Returns data → VAPI 
 ### 1. Agent Filtering
 
 #### Path A: Direct Frontend Call (UI Display)
+
 ```
 User visits /agent-builder page
     ↓
@@ -41,6 +42,7 @@ Frontend displays: Agent list with edit buttons
 **Used For:** Displaying agent list in UI, editing agents
 
 #### Path B: VAPI Webhook (Maybe - but not primary)
+
 ```
 User asks: "What agents do I have?"
     ↓
@@ -57,6 +59,7 @@ VAPI speaks: "You have 3 agents: Property Bot, Rental Assistant..."
 **Used For:** Voice queries about agents (optional feature)
 
 #### ✅ Current Status:
+
 - **Direct Frontend Call:** ❌ BROKEN (returns ALL agents, not filtered)
 - **VAPI Webhook:** May not even be implemented yet
 - **Fix Needed:** Backend `GET /agents` MUST filter by user_id for UI to work
@@ -66,6 +69,7 @@ VAPI speaks: "You have 3 agents: Property Bot, Rental Assistant..."
 ### 2. Rentals Data
 
 #### Path A: Direct Frontend Call (UI Display)
+
 ```
 User visits /rentals page
     ↓
@@ -81,11 +85,12 @@ Frontend displays: Property cards with filters
 **Used For:** Browsing rentals in UI, applying filters, viewing details
 
 #### Path B: VAPI Webhook (Primary Voice Feature!)
+
 ```
 User asks: "What rentals do you have under $2000?"
     ↓
 VAPI webhook: POST /vapi/webhook
-    { 
+    {
       function: "search_rentals",
       arguments: { max_price: 2000 }
     }
@@ -102,6 +107,7 @@ VAPI speaks: "I found 5 properties under $2000. The first is at..."
 **Used For:** Voice queries about available rentals
 
 #### ✅ Current Status:
+
 - **Direct Frontend Call:** ❌ DOESN'T EXIST (frontend has mock data)
 - **VAPI Webhook:** ✅ May already be implemented as `website_search` function
 - **Fix Needed:** Backend `GET /rentals` needed for UI, might already work for VAPI
@@ -111,6 +117,7 @@ VAPI speaks: "I found 5 properties under $2000. The first is at..."
 ### 3. Dashboard Stats
 
 #### Path A: Direct Frontend Call (UI Display)
+
 ```
 User visits /dashboard page
     ↓
@@ -129,6 +136,7 @@ Frontend displays: Metric cards, charts, recent activity
 **Used For:** Dashboard analytics display
 
 #### Path B: VAPI Webhook (Optional)
+
 ```
 User asks: "How many properties do I have?"
     ↓
@@ -145,6 +153,7 @@ VAPI speaks: "You have 12 properties listed"
 **Used For:** Voice queries about statistics (optional)
 
 #### ✅ Current Status:
+
 - **Direct Frontend Call:** ❌ DOESN'T EXIST (no aggregation endpoint)
 - **VAPI Webhook:** Probably NOT implemented (would be separate functions)
 - **Fix Needed:** Backend `GET /dashboard/stats` needed for UI
@@ -154,15 +163,18 @@ VAPI speaks: "You have 12 properties listed"
 ## 🔍 Which APIs Are VAPI Function Calls?
 
 ### Currently Implemented VAPI Functions:
+
 From your backend (`/vapi/webhook`):
 
 1. ✅ **`get_availability`** (Calendar)
+
    ```
    User: "When am I available next week?"
    VAPI → Backend → Calendar API → Returns slots
    ```
 
 2. ✅ **`set_appointment`** (Calendar)
+
    ```
    User: "Book appointment for 2pm tomorrow"
    VAPI → Backend → Calendar API → Creates event
@@ -181,11 +193,13 @@ From your backend (`/vapi/webhook`):
 ### NOT VAPI Functions (Direct Frontend Calls):
 
 1. ❌ **`GET /agents`** (Agent List)
+
    - **Not** called by VAPI
    - **Is** called by frontend when user visits `/agent-builder`
    - **Broken:** Returns all agents, not filtered
 
 2. ❌ **`GET /rentals`** (Rental List)
+
    - **Not** called by VAPI (VAPI uses `website_search` which is different)
    - **Is** called by frontend when user visits `/rentals`
    - **Missing:** Doesn't exist yet
@@ -200,9 +214,11 @@ From your backend (`/vapi/webhook`):
 ## 🤔 The Confusion
 
 ### You Might Be Thinking:
+
 > "Since VAPI handles rental searches via `website_search`, doesn't that mean the rentals API is already implemented?"
 
 ### The Reality:
+
 **NO! They're separate:**
 
 ```
@@ -220,6 +236,7 @@ Used For: Browse my saved properties, view details, apply filters
 ```
 
 **Key Difference:**
+
 - VAPI `website_search` = Real-time scraping of external sites
 - `GET /rentals` = Database query of user's saved properties
 
@@ -230,6 +247,7 @@ Used For: Browse my saved properties, view details, apply filters
 ## 📋 What Your Backend Agent Needs to Confirm
 
 ### Question 1: Agent Filtering
+
 **Ask Backend:** "Does `GET /agents` filter by user_id from JWT?"
 
 ```python
@@ -250,13 +268,16 @@ async def get_agents(current_user: dict = Depends(get_current_user)):
 ---
 
 ### Question 2: Rentals API
+
 **Ask Backend:** "Does `GET /rentals` endpoint exist for listing user's saved properties?"
 
 **NOT asking about:**
+
 - ❌ VAPI `website_search` function (that's for real-time scraping)
 - ❌ `/database/rentals/{website}` (that's for scraping results)
 
 **Asking about:**
+
 - ✅ Direct API for user's saved properties
 - ✅ Database query: `SELECT * FROM rentals WHERE user_id = ?`
 
@@ -279,6 +300,7 @@ async def get_rentals(
 ---
 
 ### Question 3: Dashboard Stats
+
 **Ask Backend:** "Does `GET /dashboard/stats` endpoint exist for aggregated metrics?"
 
 ```python
@@ -286,15 +308,15 @@ async def get_rentals(
 @router.get("/dashboard/stats")
 async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
     user_id = current_user["user_id"]
-    
+
     agent_count = await db.fetch_one(
         "SELECT COUNT(*) FROM agents WHERE user_id = :user_id"
     )
-    
+
     rental_count = await db.fetch_one(
         "SELECT COUNT(*) FROM rentals WHERE user_id = :user_id"
     )
-    
+
     return {
         "agents": {"total": agent_count},
         "rentals": {"total": rental_count},
@@ -312,11 +334,13 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
 ### Questions to Answer:
 
 1. **`GET /agents` - Does it filter by user_id?**
+
    - Check the code: Does it have `WHERE user_id = ?`
    - If NO: ADD IT (security risk!)
    - If YES: ✅ Frontend will work
 
 2. **`GET /rentals` - Does this endpoint exist?**
+
    - NOT the VAPI `website_search` function
    - A direct HTTP endpoint for listing saved properties
    - If NO: CREATE IT (from `BACKEND_REQUIREMENTS_FOR_UI.md`)
@@ -332,14 +356,15 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
 ## ✅ What You Should Tell Backend Agent
 
 **Message:**
+
 > "Hey backend team! Frontend needs confirmation on 3 APIs:
-> 
+>
 > 1. **`GET /agents`** - Does it filter by user_id from JWT? (Security issue if not)
 > 2. **`GET /rentals`** - Does this exist? (Not the VAPI website_search, a direct database query)
 > 3. **`GET /dashboard/stats`** - Does this exist? (Aggregated metrics endpoint)
-> 
+>
 > See `BACKEND_REQUIREMENTS_FOR_UI.md` for exact specs if any are missing.
-> 
+>
 > These are for UI display (user browsing pages), NOT for VAPI function calls!"
 
 ---
@@ -377,4 +402,3 @@ async def get_dashboard_stats(current_user: dict = Depends(get_current_user)):
 ---
 
 **Want me to help you draft the message to your backend agent?**
-

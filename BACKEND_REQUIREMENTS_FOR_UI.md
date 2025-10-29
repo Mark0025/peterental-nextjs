@@ -10,6 +10,7 @@
 ## 🎯 Summary
 
 Frontend UI reorganization requires these backend changes:
+
 1. Database migrations (new tables, indexes)
 2. API modifications (add user filtering)
 3. New API endpoints (rentals, dashboard stats)
@@ -21,6 +22,7 @@ Frontend UI reorganization requires these backend changes:
 ## 📊 Database Migrations Required
 
 ### 1. Create `rental_sources` Table
+
 ```sql
 CREATE TABLE rental_sources (
     id SERIAL PRIMARY KEY,
@@ -31,7 +33,7 @@ CREATE TABLE rental_sources (
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
-    
+
     CONSTRAINT unique_user_website UNIQUE (user_id, website_url)
 );
 
@@ -45,13 +47,14 @@ CREATE INDEX idx_rental_sources_active ON rental_sources(is_active) WHERE is_act
 ---
 
 ### 2. Modify `rentals` Table (if needed)
+
 ```sql
 -- Add user_id if not present
-ALTER TABLE rentals 
+ALTER TABLE rentals
 ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(user_id);
 
 -- Add company_id for future use
-ALTER TABLE rentals 
+ALTER TABLE rentals
 ADD COLUMN IF NOT EXISTS company_id INTEGER;
 
 -- Add indexes
@@ -64,14 +67,15 @@ CREATE INDEX IF NOT EXISTS idx_rentals_company ON rentals(company_id);
 ---
 
 ### 3. Verify `agents` Table
+
 ```sql
 -- Check if user_id exists
-SELECT column_name, data_type 
-FROM information_schema.columns 
+SELECT column_name, data_type
+FROM information_schema.columns
 WHERE table_name = 'agents' AND column_name = 'user_id';
 
 -- If not, add it
-ALTER TABLE agents 
+ALTER TABLE agents
 ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(user_id);
 
 CREATE INDEX IF NOT EXISTS idx_agents_user ON agents(user_id);
@@ -86,6 +90,7 @@ CREATE INDEX IF NOT EXISTS idx_agents_user ON agents(user_id);
 ### 1. `GET /agents` - Add User Filtering
 
 **Current (Assumed):**
+
 ```python
 @router.get("/agents")
 async def get_agents():
@@ -95,23 +100,25 @@ async def get_agents():
 ```
 
 **Required:**
+
 ```python
 @router.get("/agents")
 async def get_agents(
     current_user: dict = Depends(get_current_user)
 ):
     user_id = current_user["user_id"]  # From JWT
-    
+
     # Filter by user_id!
     agents = await db.fetch_all(
         "SELECT * FROM agents WHERE user_id = :user_id",
         {"user_id": user_id}
     )
-    
+
     return {"agents": agents}
 ```
 
 **Test:**
+
 ```bash
 curl -H "Authorization: Bearer {JWT}" \
   https://peterental-vapi-github-newer.onrender.com/agents
@@ -124,6 +131,7 @@ curl -H "Authorization: Bearer {JWT}" \
 ### 2. `PATCH /agents/{agent_id}` - Add Ownership Verification
 
 **Current (Assumed):**
+
 ```python
 @router.patch("/agents/{agent_id}")
 async def update_agent(agent_id: str, data: AgentUpdate):
@@ -135,6 +143,7 @@ async def update_agent(agent_id: str, data: AgentUpdate):
 ```
 
 **Required:**
+
 ```python
 @router.patch("/agents/{agent_id}")
 async def update_agent(
@@ -143,26 +152,27 @@ async def update_agent(
     current_user: dict = Depends(get_current_user)
 ):
     user_id = current_user["user_id"]
-    
+
     # Verify ownership!
     agent = await db.fetch_one(
         "SELECT * FROM agents WHERE id = :id AND user_id = :user_id",
         {"id": agent_id, "user_id": user_id}
     )
-    
+
     if not agent:
         raise HTTPException(403, "You don't own this agent")
-    
+
     # Update agent
     await db.execute(
         "UPDATE agents SET ... WHERE id = :id",
         {"id": agent_id, ...}
     )
-    
+
     return {"success": True, "agent": agent}
 ```
 
 **Test:**
+
 ```bash
 # Should succeed (own agent)
 curl -X PATCH -H "Authorization: Bearer {USER1_JWT}" \
@@ -193,26 +203,26 @@ async def get_rentals(
     Get user's rental properties with optional filters
     """
     user_id = current_user["user_id"]
-    
+
     query = "SELECT * FROM rentals WHERE user_id = :user_id"
     params = {"user_id": user_id}
-    
+
     if max_price:
         query += " AND price <= :max_price"
         params["max_price"] = max_price
-    
+
     if min_bedrooms:
         query += " AND bedrooms >= :min_bedrooms"
         params["min_bedrooms"] = min_bedrooms
-    
+
     if website:
         query += " AND source_website ILIKE :website"
         params["website"] = f"%{website}%"
-    
+
     query += " ORDER BY created_at DESC"
-    
+
     rentals = await db.fetch_all(query, params)
-    
+
     return {
         "rentals": rentals,
         "count": len(rentals)
@@ -220,6 +230,7 @@ async def get_rentals(
 ```
 
 **Response Example:**
+
 ```json
 {
   "rentals": [
@@ -258,20 +269,20 @@ async def add_rental_source(
     Add a rental website source for scraping
     """
     user_id = current_user["user_id"]
-    
+
     # Check if already exists
     existing = await db.fetch_one(
-        """SELECT id FROM rental_sources 
+        """SELECT id FROM rental_sources
            WHERE user_id = :user_id AND website_url = :url""",
         {"user_id": user_id, "url": str(data.website_url)}
     )
-    
+
     if existing:
         raise HTTPException(400, "This website is already added")
-    
+
     # Insert new source
     source_id = await db.execute(
-        """INSERT INTO rental_sources 
+        """INSERT INTO rental_sources
            (user_id, website_url, scraping_config, is_active)
            VALUES (:user_id, :url, :config, TRUE)
            RETURNING id""",
@@ -281,7 +292,7 @@ async def add_rental_source(
             "config": json.dumps(data.scraping_config)
         }
     )
-    
+
     return {
         "success": True,
         "source_id": source_id,
@@ -290,6 +301,7 @@ async def add_rental_source(
 ```
 
 **Request Example:**
+
 ```json
 {
   "website_url": "https://www.zillow.com/austin-tx/",
@@ -313,14 +325,14 @@ async def get_rental_sources(
     Get user's rental website sources
     """
     user_id = current_user["user_id"]
-    
+
     sources = await db.fetch_all(
-        """SELECT * FROM rental_sources 
-           WHERE user_id = :user_id 
+        """SELECT * FROM rental_sources
+           WHERE user_id = :user_id
            ORDER BY created_at DESC""",
         {"user_id": user_id}
     )
-    
+
     return {
         "sources": sources,
         "count": len(sources)
@@ -328,13 +340,14 @@ async def get_rental_sources(
 ```
 
 **Response Example:**
+
 ```json
 {
   "sources": [
     {
       "id": 1,
       "website_url": "https://www.zillow.com/austin-tx/",
-      "scraping_config": {"max_price": 3000},
+      "scraping_config": { "max_price": 3000 },
       "is_active": true,
       "created_at": "2025-10-29T12:00:00Z"
     }
@@ -357,17 +370,17 @@ async def delete_rental_source(
     Delete a rental source (or mark as inactive)
     """
     user_id = current_user["user_id"]
-    
+
     # Verify ownership
     source = await db.fetch_one(
-        """SELECT * FROM rental_sources 
+        """SELECT * FROM rental_sources
            WHERE id = :id AND user_id = :user_id""",
         {"id": source_id, "user_id": user_id}
     )
-    
+
     if not source:
         raise HTTPException(404, "Source not found or not yours")
-    
+
     # Soft delete (mark inactive) or hard delete
     await db.execute(
         "UPDATE rental_sources SET is_active = FALSE WHERE id = :id",
@@ -375,7 +388,7 @@ async def delete_rental_source(
     )
     # OR hard delete:
     # await db.execute("DELETE FROM rental_sources WHERE id = :id", {"id": source_id})
-    
+
     return {"success": True, "message": "Source removed"}
 ```
 
@@ -392,31 +405,31 @@ async def get_dashboard_stats(
     Get aggregated statistics for user's dashboard
     """
     user_id = current_user["user_id"]
-    
+
     # Agent stats
     agent_stats = await db.fetch_one(
-        """SELECT 
+        """SELECT
              COUNT(*) as total,
              COUNT(*) FILTER (WHERE is_active = TRUE) as active,
              COUNT(*) FILTER (WHERE is_active = FALSE) as inactive
-           FROM agents 
+           FROM agents
            WHERE user_id = :user_id""",
         {"user_id": user_id}
     )
-    
+
     # Rental stats
     rental_stats = await db.fetch_one(
-        """SELECT 
+        """SELECT
              COUNT(*) as total,
              COUNT(*) FILTER (WHERE availability_date <= NOW()) as available
-           FROM rentals 
+           FROM rentals
            WHERE user_id = :user_id""",
         {"user_id": user_id}
     )
-    
+
     # Calendar stats (use existing calendar service)
     calendar_connected = await check_calendar_connected(user_id)
-    
+
     if calendar_connected:
         # Get events for next 7 days
         events = await get_upcoming_events(user_id, days_ahead=7)
@@ -431,7 +444,7 @@ async def get_dashboard_stats(
             "upcoming_events": 0,
             "next_event": None
         }
-    
+
     return {
         "agents": {
             "total": agent_stats["total"],
@@ -447,6 +460,7 @@ async def get_dashboard_stats(
 ```
 
 **Response Example:**
+
 ```json
 {
   "agents": {
@@ -491,15 +505,18 @@ After implementing, backend should test:
 ## 📋 Implementation Priority
 
 ### Phase 1 (Required for Dashboard) - HIGH PRIORITY
+
 1. ✅ `GET /dashboard/stats` - Dashboard needs this first
 2. ✅ `GET /agents` user filtering - Dashboard shows agent count
 3. ✅ `GET /rentals` user filtering - Dashboard shows rental count
 
 ### Phase 2 (Required for Agent Builder) - HIGH PRIORITY
+
 1. ✅ `PATCH /agents/{id}` ownership check - Security issue
 2. ✅ Verify `agents` table has `user_id` and indexes
 
 ### Phase 3 (Required for Rentals Page) - MEDIUM PRIORITY
+
 1. ✅ Create `rental_sources` table
 2. ✅ `POST /rentals/sources` - Add website
 3. ✅ `GET /rentals/sources` - List sources
@@ -513,7 +530,7 @@ After implementing, backend should test:
 - Modify existing APIs: 1 hour
 - Create new APIs: 2-3 hours
 - Testing: 1 hour
-**Total: 4-5 hours**
+  **Total: 4-5 hours**
 
 ---
 
@@ -529,6 +546,7 @@ After implementing, backend should test:
 ## ✅ Completion Criteria
 
 Backend is ready when:
+
 - [ ] All database migrations run successfully
 - [ ] All 8 API endpoints implemented and tested
 - [ ] User-scoping verified (can't access others' data)
@@ -540,4 +558,3 @@ Backend is ready when:
 ---
 
 **Questions?** Contact frontend team for clarification!
-
