@@ -255,8 +255,10 @@ function UsersPageContent() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">Name:</span>
                     <span className="text-sm">
-                      {user.first_name && user.last_name
-                        ? `${user.first_name} ${user.last_name}`
+                      {user.first_name
+                        ? user.last_name
+                          ? `${user.first_name} ${user.last_name}`
+                          : user.first_name
                         : 'Name not provided'
                       }
                     </span>

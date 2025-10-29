@@ -132,12 +132,17 @@ export async function GET() {
 
     // Map backend response to frontend format
     // Backend returns user data directly, not wrapped in 'data' property
+    // Handle full_name parsing - backend may have multiple spaces (e.g., 'Mark  Carpenter')
+    const nameParts = result.full_name?.trim().split(/\s+/) || []
+    const firstName = nameParts[0] || null
+    const lastName = nameParts.slice(1).join(' ') || null // Join remaining parts in case of multiple words
+    
     const userData = {
       id: result.user_id.toString(),
       clerk_user_id: userId,
       email: result.email,
-      first_name: result.full_name?.split(' ')[0] || null,
-      last_name: result.full_name?.split(' ')[1] || null,
+      first_name: firstName,
+      last_name: lastName,
       created_at: result.created_at,
       updated_at: result.created_at, // Use created_at as fallback
       microsoft_calendar_connected: calendarConnected, // Use auth status, NOT database field
