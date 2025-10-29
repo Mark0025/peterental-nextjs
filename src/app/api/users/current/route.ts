@@ -88,8 +88,9 @@ export async function GET() {
     const result = await response.json()
     console.log('Backend response:', result);
     
-    if (!result.success) {
-      console.error('Backend returned error:', result.error)
+    // Backend returns user data directly, not wrapped in success object
+    if (!result.user_id) {
+      console.error('Backend returned error:', result.error || 'No user data')
       return NextResponse.json(
         { error: result.error || 'Failed to fetch user from database' },
         { status: 500 }
