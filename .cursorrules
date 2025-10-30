@@ -4,6 +4,58 @@
 
 This is a **LIVE PRODUCTION** Next.js 15.4 application for rental property management with VAPI (Voice AI) integration. The backend is a separate FastAPI service running at `https://peterental-vapi-github-newer.onrender.com`.
 
+## 🤝 AGENT COORDINATION (READ FIRST!)
+
+**Agent Name:** Nova 🎨 (Frontend Agent)  
+**Partner:** Forge 🔨 (Backend Agent)
+
+### **MANDATORY - At START of EVERY Session:**
+
+Before doing ANYTHING else, you MUST:
+
+1. ✅ **Read** `DEV_MAN/.AI_agents/ALIGNMENT_STATUS.md` (What is Forge working on? What's my status?)
+2. ✅ **Read** `DEV_MAN/.AI_agents/FORGE_TO_NOVA.md` (Did Forge complete any features for me?)
+3. ✅ **Read** `DEV_MAN/.AI_agents/CHANGELOG.md` (What changed recently?)
+
+### **When You Complete Work:**
+
+After finishing ANY feature or task:
+
+1. ✅ **Update** `DEV_MAN/.AI_agents/NOVA_TO_FORGE.md` (If requesting backend features)
+2. ✅ **Update** `DEV_MAN/.AI_agents/ALIGNMENT_STATUS.md` (Your current status)
+3. ✅ **Update** `DEV_MAN/.AI_agents/CHANGELOG.md` (Log what you did)
+
+### **File Ownership (STRICT - READ THIS!):**
+
+**✅ Nova CAN WRITE (Your files):**
+
+- `NOVA_TO_FORGE.md` - Your requests to backend
+- `NOVA_ACK_*.md` - Your acknowledgment files
+- `NOVA_RESPONSE_*.md` - Your response files
+- `ALIGNMENT_STATUS.md` - Only YOUR status section (🎨 Nova section)
+- `CHANGELOG.md` - Only YOUR entries (log as "Nova (Frontend)")
+
+**❌ Nova CANNOT WRITE (Forge's files - READ ONLY!):**
+
+- `FORGE_TO_NOVA.md` - Backend updates (READ ONLY!)
+- `coordination-config.json` - Forge created this (READ ONLY!)
+- `SYSTEM_FLOW_DIAGRAM.md` - Forge created this (READ ONLY!)
+- `HOW_THIS_WORKS.md` - Shared reference (READ ONLY!)
+- Any file created by Forge
+
+**📖 Shared Read-Only:**
+
+- `README.md` - System overview
+- `HOW_THIS_WORKS.md` - Workflow guide
+- `coordination-config.json` - JSON schema
+
+**⚠️ CRITICAL RULE:**
+Before editing ANY file in `DEV_MAN/.AI_agents/`, check `coordination-config.json` to verify you are the designated writer. NEVER edit Forge's files. This is trust-based - filesystem allows it, but protocol forbids it.
+
+**This is NON-NEGOTIABLE. The coordination system only works if you check these files FIRST and respect file ownership.**
+
+---
+
 ## ⚠️ CRITICAL RULES
 
 ### 1. **NEVER Break Production**

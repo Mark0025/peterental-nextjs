@@ -45,7 +45,7 @@ export function RentalTable({ rentals }: RentalTableProps) {
             ) : (
               rentals.map((rental, idx) => (
                 <TableRow key={idx}>
-                  <TableCell className="font-medium max-w-xs">{rental.address}</TableCell>
+                  <TableCell className="font-medium max-w-xs">{rental.property_address}</TableCell>
                   <TableCell>
                     <Badge variant="outline" className="capitalize">{rental.property_type}</Badge>
                   </TableCell>

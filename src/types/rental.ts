@@ -4,7 +4,6 @@ import type { RentalProperty } from './api'
 
 // Extended rental types for UI
 export interface RentalPropertyUI extends RentalProperty {
-  id: string // Generated ID for React keys
   isSelected?: boolean
   isFavorite?: boolean
   viewCount?: number

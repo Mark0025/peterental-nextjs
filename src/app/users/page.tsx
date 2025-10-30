@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { useCurrentUser } from '@/hooks/use-current-user'
 import { getCalendarAuthURL, disconnectCalendar } from '@/actions/calendar-actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -233,7 +234,7 @@ function UsersPageContent() {
             </TabsTrigger>
             <TabsTrigger value="vapi" className="flex items-center gap-2">
               <Mic className="h-4 w-4" />
-              VAPI Config
+              Agent Config
             </TabsTrigger>
             <TabsTrigger value="rentals" className="flex items-center gap-2">
               <Home className="h-4 w-4" />
@@ -601,32 +602,37 @@ function UsersPageContent() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Mic className="h-5 w-5" />
-                  VAPI Agent Configuration
+                  Agent Configuration
                 </CardTitle>
                 <CardDescription>
-                  Manage your voice AI agents and configurations
+                  Manage your AI agents and voice configurations
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Agent Builder:</span>
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="h-4 w-4 mr-2" />
+                <div className="grid gap-3">
+                  <Link href="/agent-builder">
+                    <Button className="w-full justify-start" variant="outline">
+                      <Settings className="h-4 w-4 mr-2" />
                     Open Agent Builder
                   </Button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Voice Testing:</span>
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="h-4 w-4 mr-2" />
+                  </Link>
+                  <Link href="/vapi-agent">
+                    <Button className="w-full justify-start" variant="outline">
+                      <Mic className="h-4 w-4 mr-2" />
                     Test Voice Agent
                   </Button>
+                  </Link>
+                  <Link href="/vapi-testing">
+                    <Button className="w-full justify-start" variant="outline">
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Webhook Testing
+                    </Button>
+                  </Link>
                 </div>
                 <div className="mt-4 p-4 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    <strong>Note:</strong> Your VAPI configurations are automatically
-                    linked to your user account. Each agent you create will be
-                    associated with your calendar and rental data.
+                    <strong>Note:</strong> Your agents are automatically linked to your account.
+                    Each agent you create will have access to your calendar and rental data.
                   </p>
                 </div>
               </CardContent>
