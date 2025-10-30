@@ -129,30 +129,31 @@ export async function getAgents(): Promise<BackendAgent[]> {
 
 /**
  * Fetch a single agent by ID
- * Uses GET /agents/{agent_id} if available, otherwise filters list
+ * GET /agents/{agent_id} - Backend user-scopes this via JWT
  */
 export async function getAgentById(agentId: number): Promise<BackendAgent | null> {
   try {
     const headers = await getAuthHeaders()
     
-    // Try specific endpoint first
     const response = await fetch(`${API_URL}/agents/${agentId}`, {
       method: 'GET',
       headers,
       cache: 'no-store',
     })
 
-    if (response.ok) {
-      const agent = await response.json()
-      console.log(`✅ Fetched agent ${agentId} from backend`)
-      return agent
+    if (!response.ok) {
+      if (response.status === 404) {
+        // Agent doesn't exist OR user doesn't own it (backend returns 404 for both)
+        return null
+      }
+      const errorText = await response.text()
+      console.error('[Server Action] getAgentById error:', response.status, errorText)
+      throw new Error(`Failed to fetch agent: ${response.status} ${errorText}`)
     }
 
-    // Fallback to filtering list
-    console.log(`⚠️ GET /agents/${agentId} not available, filtering list`)
-    const agents = await getAgents()
-    const agent = agents.find(a => a.agent_id === agentId)
-    return agent || null
+    const agent = await response.json()
+    console.log(`✅ Fetched agent ${agentId} from backend`)
+    return agent
   } catch (error) {
     console.error('[Server Action] getAgentById error:', error)
     throw error
