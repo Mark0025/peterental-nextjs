@@ -24,6 +24,7 @@ Shared Folder: .AI_agents/
 ## 📁 Folder Structure
 
 ### Setup:
+
 ```bash
 # Create shared folder (once)
 mkdir -p /Users/markcarpenter/Desktop/pete/.AI_agents/plans
@@ -51,12 +52,14 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 **Last Updated:** 2025-10-29 14:30
 
 ## Nova (Frontend)
+
 - **Status:** ✅ Ready
 - **Working On:** Profile page enhancements
 - **Blocked By:** Rental endpoints (waiting for Forge)
 - **Next:** Dashboard optimization
 
 ## Forge (Backend)
+
 - **Status:** ✅ Ready
 - **Working On:** Rental endpoints implementation
 - **Blocked By:** Nothing
@@ -69,17 +72,20 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 # Agent Changelog
 
 ## 2025-10-29 14:30 - Nova (Frontend)
+
 - ✅ Completed UI reorganization (all 5 phases)
 - ✅ Added dashboard analytics
 - ✅ Created admin section
 - 📝 Created RENTAL_ARCHITECTURE_CLARIFICATION.md
 
 ## 2025-10-29 14:00 - Forge (Backend)
+
 - ✅ Verified GET /agents endpoint (user-scoped)
 - ✅ Confirmed GET /database/available works
 - 🔄 Starting rental endpoints implementation
 
 ## 2025-10-29 13:30 - Nova (Frontend)
+
 - ✅ Created calendar events page
 - ✅ Added rental search UI
 - ⏳ Waiting for rental CRUD endpoints
@@ -93,11 +99,13 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 ## High Priority
 
 ### 1. Rental Management Endpoints
+
 **Status:** 🔄 IN PROGRESS  
 **Requested By:** Nova  
-**Date:** 2025-10-29  
+**Date:** 2025-10-29
 
 **Endpoints Needed:**
+
 - `POST /rentals` - Add rental manually
 - `PATCH /rentals/{id}` - Edit rental
 - `DELETE /rentals/{id}` - Delete rental
@@ -109,14 +117,17 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 ---
 
 ### 2. Rental Sources Table
+
 **Status:** ⏳ PENDING  
 **Requested By:** Nova  
-**Date:** 2025-10-29  
+**Date:** 2025-10-29
 
 **Database:**
+
 - `rental_sources` table (see spec in RENTAL_ARCHITECTURE_CLARIFICATION.md)
 
 **Endpoints:**
+
 - `POST /rentals/sources` - Add website
 - `GET /rentals/sources` - List sources
 - `DELETE /rentals/sources/{id}` - Remove source
@@ -126,11 +137,13 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 ## Low Priority
 
 ### 3. Dashboard Stats Optimization
+
 **Status:** 💡 OPTIONAL  
 **Requested By:** Nova  
-**Date:** 2025-10-29  
+**Date:** 2025-10-29
 
 **Endpoint:**
+
 - `GET /dashboard/stats` - Single endpoint instead of 4 calls
 
 **Note:** Frontend already combines 4 endpoints efficiently, this is just optimization
@@ -142,16 +155,19 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 # Completed Features
 
 ## 2025-10-29 - Rental Endpoints Complete
+
 **Implemented By:** Forge  
-**For:** Nova  
+**For:** Nova
 
 **Completed:**
+
 - ✅ POST /rentals
 - ✅ PATCH /rentals/{id}
 - ✅ DELETE /rentals/{id}
 - ✅ Added ownership verification
 
 **Frontend Action Required:**
+
 - Update `src/lib/api/rentals.ts` to use new endpoints
 - Test CRUD operations
 - Remove "coming soon" placeholder
@@ -159,15 +175,18 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 ---
 
 ## 2025-10-28 - Calendar Integration
+
 **Implemented By:** Forge  
-**For:** Nova  
+**For:** Nova
 
 **Completed:**
+
 - ✅ Added `calendar_name` field
 - ✅ Added `calendar_link` field
 - ✅ Added `expires_at_formatted` field
 
 **Frontend Action Required:**
+
 - Display calendar link as button
 - Show formatted expiry time
 ```
@@ -181,6 +200,7 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 **Goal:** Complete rental management system
 
 ## Nova (Frontend) Tasks
+
 - [x] UI reorganization (all phases)
 - [x] Dashboard analytics
 - [x] Calendar integration UI
@@ -189,6 +209,7 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 - [ ] Add rental source management UI
 
 ## Forge (Backend) Tasks
+
 - [x] Verify agent endpoints (user-scoped)
 - [x] Confirm rental display works
 - [ ] Implement rental CRUD endpoints
@@ -197,6 +218,7 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 - [ ] Test with frontend
 
 ## Coordination
+
 - **Blocker:** Nova waiting for rental endpoints
 - **Timeline:** Forge implementing (2-3 hours)
 - **Next:** Test together once backend ready
@@ -217,7 +239,7 @@ ln -s /Users/markcarpenter/Desktop/pete/.AI_agents .AI_agents
 ### Forge (Backend) Workflow:
 
 1. **Check `requests.md`** for frontend needs
-2. **Update `status.md`** with current task  
+2. **Update `status.md`** with current task
 3. **Add to `changelog.md`** when completing features
 4. **Write to `completed.md`** when features ready
 5. **Update `requests.md`** with progress/ETA
@@ -346,4 +368,3 @@ echo "## $(date) - Forge
 ---
 
 **This is MUCH simpler than webhooks/SSE! Just a shared folder both agents use to coordinate.** 📁✨
-

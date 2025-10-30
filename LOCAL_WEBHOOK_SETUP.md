@@ -49,7 +49,7 @@ async def dev_webhook(
 ):
     """
     Development webhook - triggered by frontend when changes happen
-    
+
     Example:
     POST /dev/webhook
     {
@@ -58,17 +58,17 @@ async def dev_webhook(
     }
     """
     print(f"🔔 [DEV WEBHOOK] {event_type}: {json.dumps(data, indent=2)}")
-    
+
     # Broadcast to all SSE subscribers
     event = {
         "type": event_type,
         "data": data,
         "timestamp": datetime.utcnow().isoformat()
     }
-    
+
     for queue in event_subscribers:
         await queue.put(event)
-    
+
     return {
         "success": True,
         "message": f"Event {event_type} broadcasted to {len(event_subscribers)} subscribers"
@@ -83,11 +83,11 @@ async def dev_events_stream(current_user: dict = Depends(get_current_user)):
     async def event_generator() -> AsyncGenerator[str, None]:
         queue = asyncio.Queue()
         event_subscribers.append(queue)
-        
+
         try:
             # Send initial connection message
             yield f"data: {json.dumps({'type': 'connected', 'message': 'SSE connected'})}\n\n"
-            
+
             # Stream events
             while True:
                 event = await queue.get()
@@ -96,7 +96,7 @@ async def dev_events_stream(current_user: dict = Depends(get_current_user)):
             pass
         finally:
             event_subscribers.remove(queue)
-    
+
     return StreamingResponse(
         event_generator(),
         media_type="text/event-stream",
@@ -117,10 +117,10 @@ async def trigger_event(event_type: str, data: dict):
         "data": data,
         "timestamp": datetime.utcnow().isoformat()
     }
-    
+
     for queue in event_subscribers:
         await queue.put(event)
-    
+
     return {"success": True, "subscribers_notified": len(event_subscribers)}
 ```
 
@@ -149,8 +149,8 @@ app.include_router(dev_webhook.router, prefix="/api")
  * Real-time sync with local backend during development
  */
 
-const DEV_MODE = process.env.NODE_ENV === 'development'
-const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+const DEV_MODE = process.env.NODE_ENV === 'development';
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 /**
  * Send event to backend webhook
@@ -159,7 +159,7 @@ export async function sendDevWebhook(
   eventType: string,
   data: Record<string, unknown>
 ): Promise<void> {
-  if (!DEV_MODE) return // Only in development
+  if (!DEV_MODE) return; // Only in development
 
   try {
     const response = await fetch(`${BACKEND_URL}/api/dev/webhook`, {
@@ -171,15 +171,15 @@ export async function sendDevWebhook(
         event_type: eventType,
         data,
       }),
-    })
+    });
 
     if (!response.ok) {
-      console.warn('[DEV WEBHOOK] Failed to send:', eventType, response.status)
+      console.warn('[DEV WEBHOOK] Failed to send:', eventType, response.status);
     } else {
-      console.log('🔔 [DEV WEBHOOK] Sent:', eventType, data)
+      console.log('🔔 [DEV WEBHOOK] Sent:', eventType, data);
     }
   } catch (error) {
-    console.warn('[DEV WEBHOOK] Error:', error)
+    console.warn('[DEV WEBHOOK] Error:', error);
   }
 }
 
@@ -189,29 +189,29 @@ export async function sendDevWebhook(
 export function subscribeToBackendEvents(
   onEvent: (eventType: string, data: unknown) => void
 ): () => void {
-  if (!DEV_MODE) return () => {} // Only in development
+  if (!DEV_MODE) return () => {}; // Only in development
 
-  const eventSource = new EventSource(`${BACKEND_URL}/api/dev/events`)
+  const eventSource = new EventSource(`${BACKEND_URL}/api/dev/events`);
 
   eventSource.onmessage = (event) => {
     try {
-      const parsed = JSON.parse(event.data)
-      console.log('📡 [DEV SSE] Received:', parsed.type, parsed.data)
-      onEvent(parsed.type, parsed.data)
+      const parsed = JSON.parse(event.data);
+      console.log('📡 [DEV SSE] Received:', parsed.type, parsed.data);
+      onEvent(parsed.type, parsed.data);
     } catch (error) {
-      console.error('[DEV SSE] Parse error:', error)
+      console.error('[DEV SSE] Parse error:', error);
     }
-  }
+  };
 
   eventSource.onerror = (error) => {
-    console.warn('[DEV SSE] Connection error:', error)
-  }
+    console.warn('[DEV SSE] Connection error:', error);
+  };
 
   // Return cleanup function
   return () => {
-    eventSource.close()
-    console.log('🔌 [DEV SSE] Disconnected')
-  }
+    eventSource.close();
+    console.log('🔌 [DEV SSE] Disconnected');
+  };
 }
 ```
 
@@ -266,10 +266,11 @@ export default function AgentBuilderPage() {
 ## 🔥 Use Cases
 
 ### 1. **Agent Creation/Update**
+
 ```typescript
 // Frontend creates agent
-await createConfig(newAgent)
-await sendDevWebhook('agent.created', { agent_id: 'abc123' })
+await createConfig(newAgent);
+await sendDevWebhook('agent.created', { agent_id: 'abc123' });
 
 // Backend receives webhook
 // Backend can update its internal state
@@ -277,6 +278,7 @@ await sendDevWebhook('agent.created', { agent_id: 'abc123' })
 ```
 
 ### 2. **Rental Addition**
+
 ```typescript
 // Frontend adds rental
 await fetch('/api/rentals', { method: 'POST', body: {...} })
@@ -288,10 +290,11 @@ await sendDevWebhook('rental.created', { rental_id: 'xyz789' })
 ```
 
 ### 3. **Calendar Connection**
+
 ```typescript
 // Frontend connects calendar
-await connectCalendar()
-await sendDevWebhook('calendar.connected', { provider: 'microsoft' })
+await connectCalendar();
+await sendDevWebhook('calendar.connected', { provider: 'microsoft' });
 
 // Backend receives notification
 // Backend can update agent configurations
@@ -337,32 +340,32 @@ Backend CLI Script        Backend      Frontend
 **File:** `scripts/dev-sync.js`
 
 ```javascript
-const chokidar = require('chokidar')
-const fetch = require('node-fetch')
+const chokidar = require('chokidar');
+const fetch = require('node-fetch');
 
-const BACKEND_URL = 'http://localhost:8000'
+const BACKEND_URL = 'http://localhost:8000';
 
 // Watch for file changes
 const watcher = chokidar.watch('src/**/*.{ts,tsx}', {
   ignored: /node_modules/,
-  persistent: true
-})
+  persistent: true,
+});
 
 watcher.on('change', async (path) => {
-  console.log(`📝 File changed: ${path}`)
-  
+  console.log(`📝 File changed: ${path}`);
+
   // Notify backend
   await fetch(`${BACKEND_URL}/api/dev/trigger`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       event_type: 'frontend.file_changed',
-      data: { file: path, timestamp: new Date().toISOString() }
-    })
-  })
-})
+      data: { file: path, timestamp: new Date().toISOString() },
+    }),
+  });
+});
 
-console.log('👀 Watching for file changes...')
+console.log('👀 Watching for file changes...');
 ```
 
 ---
@@ -370,6 +373,7 @@ console.log('👀 Watching for file changes...')
 ## 🚀 Quick Start
 
 ### 1. Start Backend (Terminal 1)
+
 ```bash
 cd /Users/markcarpenter/Desktop/pete/PeteRental_vapi_10_02_25
 source venv/bin/activate  # or your venv
@@ -377,12 +381,14 @@ uvicorn main:app --reload --port 8000
 ```
 
 ### 2. Start Frontend (Terminal 2)
+
 ```bash
 cd /Users/markcarpenter/Desktop/pete/peterental-nextjs
 pnpm dev
 ```
 
 ### 3. Test Webhook
+
 ```bash
 # Terminal 3 - Send test event
 curl -X POST http://localhost:8000/api/dev/webhook \
@@ -394,6 +400,7 @@ curl -X POST http://localhost:8000/api/dev/webhook \
 ```
 
 ### 4. Test SSE
+
 ```bash
 # Terminal 4 - Subscribe to events
 curl -N http://localhost:8000/api/dev/events
@@ -415,16 +422,19 @@ curl -N http://localhost:8000/api/dev/events
 ## ⚡ Implementation Priority
 
 ### Phase 1: Basic Webhook (30 min)
+
 - Add backend `/dev/webhook` endpoint
 - Add frontend `sendDevWebhook()` function
 - Test with agent creation
 
 ### Phase 2: SSE Events (1 hour)
+
 - Add backend `/dev/events` SSE endpoint
 - Add frontend `subscribeToBackendEvents()` function
 - Test multi-tab sync
 
 ### Phase 3: Integration (1 hour)
+
 - Add webhooks to all CRUD operations
 - Add SSE subscription to all pages
 - Test full flow
@@ -436,13 +446,14 @@ curl -N http://localhost:8000/api/dev/events
 **Complete Agent Builder with Dev Webhook:**
 
 ```typescript
-'use client'
+'use client';
 
-import { useEffect } from 'react'
-import { sendDevWebhook, subscribeToBackendEvents } from '@/lib/dev-webhook'
+import { useEffect } from 'react';
+import { sendDevWebhook, subscribeToBackendEvents } from '@/lib/dev-webhook';
 
 export default function AgentBuilderPage() {
-  const { configs, createConfig, updateConfig, deleteConfig, refetch } = useAgentConfig()
+  const { configs, createConfig, updateConfig, deleteConfig, refetch } =
+    useAgentConfig();
 
   // Subscribe to backend events on mount
   useEffect(() => {
@@ -451,29 +462,32 @@ export default function AgentBuilderPage() {
         case 'agent.created':
         case 'agent.updated':
         case 'agent.deleted':
-          console.log(`🔄 Backend event: ${eventType}, refreshing...`)
-          refetch()
-          break
+          console.log(`🔄 Backend event: ${eventType}, refreshing...`);
+          refetch();
+          break;
       }
-    })
+    });
 
-    return unsubscribe
-  }, [refetch])
+    return unsubscribe;
+  }, [refetch]);
 
   const handleCreate = async (newAgent) => {
-    const agent = await createConfig(newAgent)
-    await sendDevWebhook('agent.created', { agent_id: agent.id, source: 'frontend' })
-  }
+    const agent = await createConfig(newAgent);
+    await sendDevWebhook('agent.created', {
+      agent_id: agent.id,
+      source: 'frontend',
+    });
+  };
 
   const handleUpdate = async (id, updates) => {
-    await updateConfig(id, updates)
-    await sendDevWebhook('agent.updated', { agent_id: id, source: 'frontend' })
-  }
+    await updateConfig(id, updates);
+    await sendDevWebhook('agent.updated', { agent_id: id, source: 'frontend' });
+  };
 
   const handleDelete = async (id) => {
-    await deleteConfig(id)
-    await sendDevWebhook('agent.deleted', { agent_id: id, source: 'frontend' })
-  }
+    await deleteConfig(id);
+    await sendDevWebhook('agent.deleted', { agent_id: id, source: 'frontend' });
+  };
 
   // ... rest of component
 }
