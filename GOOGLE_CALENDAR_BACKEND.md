@@ -130,6 +130,39 @@ Already implemented (confirmed working):
 - `/calendar/auth/disconnect` → Disconnect Microsoft
 - `/calendar/google/auth/disconnect` → Disconnect Google
 
+**IMPORTANT: OAuth Callback URL for Local Development**
+
+The frontend now sends a `redirect_url` query parameter:
+
+```
+GET /calendar/auth/start?redirect_url=http://localhost:3000
+GET /calendar/google/auth/start?redirect_url=http://localhost:3000
+```
+
+**Backend must:**
+1. Accept `redirect_url` parameter (optional)
+2. Use it to construct OAuth callback URL
+3. Redirect back to `{redirect_url}/users?auth=success` after OAuth completes
+4. If `redirect_url` not provided, default to production URL
+
+**Example:**
+```python
+def start_oauth(request):
+    redirect_url = request.args.get('redirect_url', 'https://peterental-nextjs.vercel.app')
+
+    # Construct OAuth callback URL
+    callback_url = f"{redirect_url}/api/calendar/callback"
+
+    # Pass callback_url to Microsoft/Google OAuth
+    auth_url = generate_oauth_url(callback_url=callback_url)
+
+    return redirect(auth_url)
+```
+
+This allows OAuth to work on both:
+- **Production**: `https://peterental-nextjs.vercel.app`
+- **Local dev**: `http://localhost:3000`
+
 ### 5. Google Calendar API Integration
 
 The backend needs Google Calendar API client configured with:

@@ -79,16 +79,23 @@ export async function checkCalendarAuth(): Promise<CalendarAuthStatus> {
  * Backend generates OAuth URL and returns redirect (307).
  * We fetch it first, extract the Location header, then redirect browser to provider.
  */
-export async function getCalendarAuthURL(provider: 'microsoft' | 'google' = 'microsoft'): Promise<string> {
+export async function getCalendarAuthURL(provider: 'microsoft' | 'google' = 'microsoft', redirectUrl?: string): Promise<string> {
   const headers = await getAuthHeaders()
-  
+
   // Backend expects JWT in Authorization header
   // Backend will generate OAuth URL and return redirect (307)
   const endpoint = provider === 'google'
     ? `${API_URL}/calendar/google/auth/start`
     : `${API_URL}/calendar/auth/start`;
-    
-  const response = await fetch(endpoint, {
+
+  // Add redirect_url parameter for local development
+  // Backend should use this to construct the OAuth callback URL
+  const url = new URL(endpoint)
+  if (redirectUrl) {
+    url.searchParams.set('redirect_url', redirectUrl)
+  }
+
+  const response = await fetch(url.toString(), {
     method: 'GET',
     headers,
     redirect: 'manual', // Don't follow redirect automatically, we need the Location header

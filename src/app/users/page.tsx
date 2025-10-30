@@ -71,7 +71,12 @@ function UsersPageContent() {
 
     try {
       console.log(`🔗 Starting ${provider} calendar connection for user:`, user.clerk_user_id)
-      const authUrl = await getCalendarAuthURL(provider)
+
+      // Pass current origin for OAuth callback (supports localhost and production)
+      const redirectUrl = window.location.origin
+      console.log(`📍 OAuth callback will redirect to: ${redirectUrl}`)
+
+      const authUrl = await getCalendarAuthURL(provider, redirectUrl)
       console.log('🌐 Redirecting to OAuth URL:', authUrl)
       window.location.href = authUrl
     } catch (error) {
