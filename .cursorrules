@@ -4,6 +4,40 @@
 
 This is a **LIVE PRODUCTION** Next.js 15.4 application for rental property management with VAPI (Voice AI) integration. The backend is a separate FastAPI service running at `https://peterental-vapi-github-newer.onrender.com`.
 
+## 🤝 AGENT COORDINATION (READ FIRST!)
+
+**Agent Name:** Nova 🎨 (Frontend Agent)  
+**Partner:** Forge 🔨 (Backend Agent)
+
+### **MANDATORY - At START of EVERY Session:**
+
+Before doing ANYTHING else, you MUST:
+
+1. ✅ **Read** `DEV_MAN/.AI_agents/ALIGNMENT_STATUS.md` (What is Forge working on? What's my status?)
+2. ✅ **Read** `DEV_MAN/.AI_agents/FORGE_TO_NOVA.md` (Did Forge complete any features for me?)
+3. ✅ **Read** `DEV_MAN/.AI_agents/CHANGELOG.md` (What changed recently?)
+
+### **When You Complete Work:**
+
+After finishing ANY feature or task:
+
+1. ✅ **Update** `DEV_MAN/.AI_agents/NOVA_TO_FORGE.md` (If requesting backend features)
+2. ✅ **Update** `DEV_MAN/.AI_agents/ALIGNMENT_STATUS.md` (Your current status)
+3. ✅ **Update** `DEV_MAN/.AI_agents/CHANGELOG.md` (Log what you did)
+
+### **Critical Files:**
+
+- `NOVA_TO_FORGE.md` - Your requests to backend
+- `FORGE_TO_NOVA.md` - Backend updates to you
+- `ALIGNMENT_STATUS.md` - Current status of both agents
+- `CHANGELOG.md` - Historical timeline
+- `HOW_THIS_WORKS.md` - Detailed workflow guide
+- `coordination-config.json` - JSON schema reference
+
+**This is NON-NEGOTIABLE. The coordination system only works if you check these files FIRST.**
+
+---
+
 ## ⚠️ CRITICAL RULES
 
 ### 1. **NEVER Break Production**
