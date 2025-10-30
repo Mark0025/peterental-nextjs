@@ -130,8 +130,9 @@ export async function getAgents(): Promise<BackendAgent[]> {
 /**
  * Fetch a single agent by ID
  * GET /agents/{agent_id} - Backend user-scopes this via JWT
+ * Note: Backend accepts agent_id as string in URL, converts to int internally
  */
-export async function getAgentById(agentId: number): Promise<BackendAgent | null> {
+export async function getAgentById(agentId: number | string): Promise<BackendAgent | null> {
   try {
     const headers = await getAuthHeaders()
     
