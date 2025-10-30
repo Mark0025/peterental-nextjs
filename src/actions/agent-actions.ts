@@ -41,8 +41,61 @@ export interface BackendAgent {
   vapi_assistant_id: string | null
   agent_name: string
   is_active: boolean
+  config?: AgentConfigJSON | null  // VAPI-compatible config
   created_at: string
   updated_at?: string
+}
+
+/**
+ * VAPI-compatible agent configuration (stored in backend as JSONB)
+ */
+export interface AgentConfigJSON {
+  model?: {
+    provider: string
+    model: string
+    messages?: Array<{
+      role: 'system' | 'user' | 'assistant'
+      content: string
+    }>
+  }
+  voice?: {
+    provider: string
+    voiceId: string
+  }
+  firstMessage?: string
+  serverUrl?: string
+  serverUrlSecret?: string
+  functions?: Array<{
+    name: string
+    description: string
+    parameters: {
+      type: 'object'
+      properties: Record<string, unknown>
+      required: string[]
+    }
+    url: string
+    method: 'POST'
+  }>
+  variables?: Array<{
+    id: string
+    name: string
+    displayName: string
+    type: string
+    description: string
+    required: boolean
+    defaultValue?: string
+    validation?: {
+      pattern?: string
+      minLength?: number
+      maxLength?: number
+      options?: string[]
+    }
+    extractionPrompt?: string
+  }>
+  // Sync metadata
+  lastSyncedAt?: string
+  syncStatus?: 'draft' | 'syncing' | 'synced' | 'error'
+  syncError?: string
 }
 
 /**
@@ -76,10 +129,27 @@ export async function getAgents(): Promise<BackendAgent[]> {
 
 /**
  * Fetch a single agent by ID
- * Uses GET /agents and filters client-side (backend is user-scoped)
+ * Uses GET /agents/{agent_id} if available, otherwise filters list
  */
 export async function getAgentById(agentId: number): Promise<BackendAgent | null> {
   try {
+    const headers = await getAuthHeaders()
+    
+    // Try specific endpoint first
+    const response = await fetch(`${API_URL}/agents/${agentId}`, {
+      method: 'GET',
+      headers,
+      cache: 'no-store',
+    })
+
+    if (response.ok) {
+      const agent = await response.json()
+      console.log(`✅ Fetched agent ${agentId} from backend`)
+      return agent
+    }
+
+    // Fallback to filtering list
+    console.log(`⚠️ GET /agents/${agentId} not available, filtering list`)
     const agents = await getAgents()
     const agent = agents.find(a => a.agent_id === agentId)
     return agent || null
@@ -97,6 +167,7 @@ export async function createAgent(data: {
   agent_name: string
   vapi_assistant_id?: string
   is_active?: boolean
+  config?: AgentConfigJSON
 }): Promise<BackendAgent> {
   try {
     const headers = await getAuthHeaders()
@@ -132,6 +203,7 @@ export async function updateAgent(
     agent_name?: string
     vapi_assistant_id?: string
     is_active?: boolean
+    config?: AgentConfigJSON
   }
 ): Promise<BackendAgent> {
   try {

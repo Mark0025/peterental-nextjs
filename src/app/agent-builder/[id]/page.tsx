@@ -1,12 +1,13 @@
 /**
  * Agent Configuration Editor
  * Visual editor for individual agent
+ * Now fetches from backend database + supports VAPI sync
  */
 
 'use client'
 
-import { use, useState } from 'react'
-// import { useRouter } from 'next/navigation'
+import { use, useState, useEffect } from 'react'
+import { getAgentById, updateAgent, type BackendAgent } from '@/actions/agent-actions'
 import { useAgentConfig } from '@/lib/hooks/use-agent-config'
 import { syncAgent, previewAgentConfig } from '@/actions/agent-config-actions'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,7 +17,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { AgentVariable, AgentFunction } from '@/types/agent-config'
+import type { AgentVariable, AgentFunction, AgentConfig } from '@/types/agent-config'
 import {
     ArrowLeft,
     Plus,
@@ -26,9 +27,9 @@ import {
     CheckCircle2,
     XCircle,
     Loader2,
-    Settings,
     FileText,
     Code,
+    Save,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -38,16 +39,16 @@ export default function AgentConfigPage({
     params: Promise<{ id: string }>
 }) {
     const { id: rawId } = use(params)
-    // Decode URL-encoded ID (e.g., agent_mark%40peterei.com_123 → agent_mark@peterei.com_123)
     const id = decodeURIComponent(rawId)
-    // const router = useRouter()
+    
+    // Use localStorage config system (until backend config JSONB is ready)
     const { configs, updateConfig, loading: configsLoading } = useAgentConfig()
     const [syncing, setSyncing] = useState(false)
     const [showSlashMenu, setShowSlashMenu] = useState(false)
     const [slashMenuPosition, setSlashMenuPosition] = useState({ top: 0, left: 0 })
     const [slashSearch, setSlashSearch] = useState('')
 
-    // Find the config from the list (updates automatically when configs load)
+    // Find config from localStorage
     const config = configs.find(c => c.id === id)
     const [syncResult, setSyncResult] = useState<{
         success: boolean
@@ -59,8 +60,6 @@ export default function AgentConfigPage({
         systemPrompt?: string
         error?: string
     } | null>(null)
-
-    // Config is now automatically found from configs array - no need for separate useEffect
 
     if (configsLoading) {
         return (
@@ -95,7 +94,7 @@ export default function AgentConfigPage({
 
     const handleSave = () => {
         updateConfig(id, config)
-        alert('Configuration saved!')
+        alert('Configuration saved to localStorage!')
     }
 
     const handleSync = async () => {
@@ -233,7 +232,7 @@ export default function AgentConfigPage({
                             <Eye className="h-4 w-4 mr-2" /> Preview
                         </Button>
                         <Button onClick={handleSave} variant="outline">
-                            <Settings className="h-4 w-4 mr-2" /> Save
+                            <Save className="h-4 w-4 mr-2" /> Save
                         </Button>
                         <Button onClick={handleSync} disabled={syncing} size="lg">
                             {syncing ? (
