@@ -559,18 +559,153 @@ function UsersPageContent() {
                     </Badge>
                   </div>
                   {user.google_calendar_connected ? (
-                    <div className="space-y-2">
-                      <p className="text-sm text-green-600">
-                        ✓ Google Calendar connected
-                      </p>
-                      {user.google_calendar_email && (
-                        <div className="text-sm">
-                          <span className="text-muted-foreground">Connected:</span>
-                          <Badge variant="outline" className="ml-2 font-mono bg-green-50 text-green-700">
-                            {user.google_calendar_email}
-                          </Badge>
+                    <div className="space-y-3">
+                      <div className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
+                        <div className="flex-1 space-y-2">
+                          <p className="text-sm text-green-600 font-medium">
+                            Calendar is connected and ready for Pete integration
+                          </p>
+                          {user.calendar_provider && (
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <span>Provider:</span>
+                              <Badge variant="outline" className="text-xs">
+                                {user.calendar_provider === 'microsoft' && '🔵 Microsoft'}
+                                {user.calendar_provider === 'google' && '🔴 Google'}
+                                {user.calendar_provider !== 'microsoft' && user.calendar_provider !== 'google' && String(user.calendar_provider)}
+                              </Badge>
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
+                      <div className="space-y-3 rounded-lg border bg-gray-50 p-3">
+                        <div className="space-y-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1">
+                              <div className="text-xs font-medium text-muted-foreground mb-1">
+                                Your Account Email (Clerk):
+                              </div>
+                              <div className="text-sm font-mono bg-white px-2 py-1 rounded border">
+                                {user.email}
+                              </div>
+                            </div>
+                          </div>
+
+                          {user.google_calendar_email && (
+                            <div className="space-y-2">
+                              {/* Calendar Name - Most Important Visual Indicator */}
+                              {user.calendar_name && (
+                                <div className="flex items-center gap-2">
+                                  <div className="flex-1">
+                                    <div className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-2">
+                                      <Calendar className="h-3 w-3" />
+                                      <span>Calendar Name:</span>
+                                    </div>
+                                    <div className="text-sm font-semibold bg-blue-50 text-blue-900 px-3 py-2 rounded-lg border-2 border-blue-300">
+                                      📅 {user.calendar_name}
+                                    </div>
+                                  </div>
+                                  {user.calendar_verified === true && (
+                                    <Badge className="bg-green-600 text-white" variant="default">
+                                      ✓ Verified
+                                    </Badge>
+                                  )}
+                                  {user.calendar_verified === false && (
+                                    <Badge className="bg-red-600 text-white" variant="destructive">
+                                      ✗ Not Verified
+                                    </Badge>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Calendar Account Email */}
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1">
+                                  <div className="text-xs font-medium text-muted-foreground mb-1 flex items-center gap-1">
+                                    <span>Connected Account Email:</span>
+                                    <span>🔴</span>
+                                  </div>
+                                  <div className="text-sm font-mono bg-green-50 text-green-800 px-2 py-1 rounded border border-green-200 font-semibold">
+                                    {user.google_calendar_email}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Calendar ID (if available) */}
+                              {user.calendar_id && (
+                                <div className="text-xs text-muted-foreground">
+                                  Calendar ID: <span className="font-mono">{String(user.calendar_id).substring(0, 20)}...</span>
+                                </div>
+                              )}
+
+                              {/* View Calendar Button */}
+                              {user.calendar_link && (
+                                <div className="mt-2">
+                                  <a
+                                    href={user.calendar_link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 border border-blue-300 rounded-lg hover:bg-blue-100 transition-colors"
+                                  >
+                                    <Calendar className="h-4 w-4" />
+                                    View Calendar in Google
+                                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                    </svg>
+                                  </a>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Verification Status Warning */}
+                          {user.calendar_verified === false && (
+                            <div className="rounded-md bg-red-50 border border-red-300 p-3">
+                              <p className="text-xs text-red-900 font-bold mb-1">
+                                ❌ Calendar NOT Verified
+                              </p>
+                              <p className="text-xs text-red-800 mb-1">
+                                We cannot access your calendar. This connection may be invalid or expired.
+                              </p>
+                              {user.calendar_error && (
+                                <p className="text-xs text-red-700 font-mono bg-red-100 px-2 py-1 rounded mt-1">
+                                  Error: {user.calendar_error}
+                                </p>
+                              )}
+                              <p className="text-xs text-red-700 mt-2">
+                                <strong>Action required:</strong> Disconnect and reconnect your calendar.
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Email Match Warning */}
+                          {user.google_calendar_email &&
+                            user.google_calendar_email === user.email && (
+                              <div className="rounded-md bg-amber-50 border border-amber-200 p-2">
+                                <p className="text-xs text-amber-800 font-medium">
+                                  ⚠️ Warning: Calendar email matches your account email.
+                                </p>
+                                <p className="text-xs text-amber-700 mt-1">
+                                  This may indicate the calendar is not actually connected. The connected calendar should be a <strong>different</strong> Google account email. If this email doesn&apos;t have a Google account, please disconnect and reconnect with a valid Google account.
+                                </p>
+                              </div>
+                            )}
+
+                          {/* Success Indicators */}
+                          {user.google_calendar_email &&
+                            user.google_calendar_email !== user.email &&
+                            user.calendar_verified !== false && (
+                              <div className="rounded-md bg-green-50 border border-green-200 p-2">
+                                <p className="text-xs text-green-800 font-medium mb-1">
+                                  ✅ Valid Calendar Connection
+                                </p>
+                                <p className="text-xs text-green-700">
+                                  Calendar connected to a <strong>different account</strong> than your Clerk email. {user.calendar_verified === true && 'Calendar access verified.'}
+                                </p>
+                              </div>
+                            )}
+                        </div>
+                      </div>
                       <Button
                         variant="outline"
                         size="sm"
