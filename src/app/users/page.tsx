@@ -648,28 +648,38 @@ function UsersPageContent() {
                   Rental Properties
                 </CardTitle>
                 <CardDescription>
-                  Manage your rental properties and bookings
+                  Manage your rental properties and sources
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Properties:</span>
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    View Properties
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Bookings:</span>
-                  <Button variant="outline" size="sm">
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    View Bookings
-                  </Button>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Your Properties:</span>
+                    <Link href="/rentals">
+                      <Button variant="outline" size="sm">
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        View Properties
+                      </Button>
+                    </Link>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium">Scraping Sources:</span>
+                    <Link href="/rentals?tab=sources">
+                      <Button variant="outline" size="sm">
+                        <Settings className="h-4 w-4 mr-2" />
+                        Manage Sources
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
                 <div className="mt-4 p-4 bg-green-50 rounded-lg">
                   <p className="text-sm text-green-800">
                     <strong>Integration:</strong> Your rental properties are automatically
                     available to VAPI agents for appointment booking and management.
+                  </p>
+                  <p className="text-xs text-green-700 mt-2">
+                    • Add properties manually or configure scraping sources<br />
+                    • All rentals are private to your account (user-scoped)
                   </p>
                 </div>
               </CardContent>
