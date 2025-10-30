@@ -118,9 +118,22 @@ export async function getAgents(): Promise<BackendAgent[]> {
       throw new Error(`Failed to fetch agents: ${response.status}`)
     }
 
-    const agents = await response.json()
-    console.log(`✅ Fetched ${agents.length} agents from backend`)
-    return agents
+    const data = await response.json()
+    console.log(`✅ Backend response:`, data)
+    
+    // Handle different response structures
+    if (Array.isArray(data)) {
+      // Direct array response
+      console.log(`✅ Fetched ${data.length} agents from backend (array)`)
+      return data
+    } else if (data.agents && Array.isArray(data.agents)) {
+      // Object with agents array
+      console.log(`✅ Fetched ${data.agents.length} agents from backend (object.agents)`)
+      return data.agents
+    } else {
+      console.warn('Unexpected response structure:', data)
+      return []
+    }
   } catch (error) {
     console.error('[Server Action] getAgents error:', error)
     throw error
