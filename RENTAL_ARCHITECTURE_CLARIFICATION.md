@@ -58,6 +58,7 @@ CREATE TABLE rental_sources (
 ```
 
 **Backend Endpoints Needed:**
+
 ```python
 # Add a website to scrape
 POST /rentals/sources
@@ -125,19 +126,19 @@ CREATE TABLE rentals (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,  -- ✅ Must have this!
     company_id INTEGER,         -- Future: for company grouping
-    
+
     -- Property details
     address VARCHAR(500),
     price DECIMAL(10,2),
     bedrooms INTEGER,
     bathrooms DECIMAL(3,1),
     square_feet INTEGER,
-    
+
     -- Source tracking
     source_type VARCHAR(50),    -- 'scraped' or 'manual'
     source_url VARCHAR(500),    -- URL if scraped
     source_id INTEGER,          -- rental_sources.id if scraped
-    
+
     -- Metadata
     availability_date DATE,
     created_at TIMESTAMP DEFAULT NOW(),
@@ -161,7 +162,7 @@ CREATE INDEX idx_rental_sources_user ON rental_sources(user_id);
 2. Clicks "Add Rental Source"
 3. Enters: "https://myproperties.com/listings"
 4. Frontend: POST /rentals/sources
-5. Backend: 
+5. Backend:
    - Stores in rental_sources table (with user_id)
    - Starts scraping job
    - Scrapes properties
@@ -170,21 +171,22 @@ CREATE INDEX idx_rental_sources_user ON rental_sources(user_id);
 ```
 
 **Frontend → Backend:**
+
 ```typescript
 // Add scraping source
 await fetch(`${API_URL}/rentals/sources`, {
   method: 'POST',
   headers: await getAuthHeaders(),
   body: JSON.stringify({
-    website_url: "https://myproperties.com/listings",
-    scraping_config: { max_price: 5000 }
-  })
-})
+    website_url: 'https://myproperties.com/listings',
+    scraping_config: { max_price: 5000 },
+  }),
+});
 
 // Get all user's rentals (includes scraped ones)
 const rentals = await fetch(`${API_URL}/database/available`, {
-  headers: await getAuthHeaders()
-})
+  headers: await getAuthHeaders(),
+});
 ```
 
 ---
@@ -206,24 +208,25 @@ const rentals = await fetch(`${API_URL}/database/available`, {
 ```
 
 **Frontend → Backend:**
+
 ```typescript
 // Add manual rental
 await fetch(`${API_URL}/rentals`, {
   method: 'POST',
   headers: await getAuthHeaders(),
   body: JSON.stringify({
-    address: "456 Oak St",
+    address: '456 Oak St',
     price: 2200,
     bedrooms: 3,
     bathrooms: 2,
-    source_type: "manual"
-  })
-})
+    source_type: 'manual',
+  }),
+});
 
 // Get all user's rentals (includes manual ones)
 const rentals = await fetch(`${API_URL}/database/available`, {
-  headers: await getAuthHeaders()
-})
+  headers: await getAuthHeaders(),
+});
 ```
 
 ---
@@ -233,22 +236,28 @@ const rentals = await fetch(`${API_URL}/database/available`, {
 ### Required Endpoints:
 
 1. **✅ `GET /database/available`** (HAS - verified user-scoped)
+
    - Returns all user's rentals (scraped + manual)
 
 2. **❌ `POST /rentals`** (MISSING - need to add)
+
    - Add rental manually
    - Must include `user_id` from JWT
 
 3. **❌ `PATCH /rentals/{id}`** (MISSING - need to add)
+
    - Update rental (with ownership check)
 
 4. **❌ `DELETE /rentals/{id}`** (MISSING - need to add)
+
    - Delete rental (with ownership check)
 
 5. **❌ `POST /rentals/sources`** (MISSING - need to add)
+
    - Add website to scrape
 
 6. **❌ `GET /rentals/sources`** (MISSING - need to add)
+
    - List user's scraping sources
 
 7. **❌ `DELETE /rentals/sources/{id}`** (MISSING - need to add)
@@ -292,9 +301,9 @@ async def create_rental(
 ):
     """Add rental manually (not from scraping)"""
     user_id = current_user.id
-    
+
     rental_id = await db.execute(
-        """INSERT INTO rentals 
+        """INSERT INTO rentals
            (user_id, address, price, bedrooms, bathrooms, square_feet, source_type)
            VALUES (:user_id, :address, :price, :bedrooms, :bathrooms, :sqft, 'manual')
            RETURNING id""",
@@ -307,7 +316,7 @@ async def create_rental(
             "sqft": rental.square_feet
         }
     )
-    
+
     return {"success": True, "rental_id": rental_id}
 
 @router.patch("/rentals/{rental_id}")
@@ -318,16 +327,16 @@ async def update_rental(
 ):
     """Update rental (with ownership check)"""
     user_id = current_user.id
-    
+
     # Verify ownership
     rental = await db.fetch_one(
         "SELECT * FROM rentals WHERE id = :id AND user_id = :user_id",
         {"id": rental_id, "user_id": user_id}
     )
-    
+
     if not rental:
         raise HTTPException(403, "You don't own this rental")
-    
+
     # Update...
     return {"success": True}
 
@@ -338,16 +347,16 @@ async def delete_rental(
 ):
     """Delete rental (with ownership check)"""
     user_id = current_user.id
-    
+
     # Verify ownership
     result = await db.execute(
         "DELETE FROM rentals WHERE id = :id AND user_id = :user_id RETURNING id",
         {"id": rental_id, "user_id": user_id}
     )
-    
+
     if not result:
         raise HTTPException(403, "You don't own this rental")
-    
+
     return {"success": True}
 
 @router.post("/rentals/sources")
@@ -357,16 +366,16 @@ async def add_rental_source(
 ):
     """Add website to scrape for rentals"""
     user_id = current_user.id
-    
+
     # Check if exists
     existing = await db.fetch_one(
         "SELECT id FROM rental_sources WHERE user_id = :uid AND website_url = :url",
         {"uid": user_id, "url": source.website_url}
     )
-    
+
     if existing:
         raise HTTPException(400, "This website is already added")
-    
+
     source_id = await db.execute(
         """INSERT INTO rental_sources (user_id, website_url, scraping_config)
            VALUES (:user_id, :url, :config) RETURNING id""",
@@ -376,22 +385,22 @@ async def add_rental_source(
             "config": json.dumps(source.scraping_config or {})
         }
     )
-    
+
     # Trigger scraping job (async)
     await trigger_scraping_job(user_id, source_id)
-    
+
     return {"success": True, "source_id": source_id}
 
 @router.get("/rentals/sources")
 async def get_rental_sources(current_user: User = Depends(get_current_user)):
     """Get user's rental scraping sources"""
     user_id = current_user.id
-    
+
     sources = await db.fetch_all(
         "SELECT * FROM rental_sources WHERE user_id = :user_id ORDER BY created_at DESC",
         {"user_id": user_id}
     )
-    
+
     return {"sources": sources}
 
 @router.delete("/rentals/sources/{source_id}")
@@ -401,18 +410,18 @@ async def delete_rental_source(
 ):
     """Delete rental source (with ownership check)"""
     user_id = current_user.id
-    
+
     result = await db.execute(
         "DELETE FROM rental_sources WHERE id = :id AND user_id = :user_id RETURNING id",
         {"id": source_id, "user_id": user_id}
     )
-    
+
     if not result:
         raise HTTPException(403, "You don't own this source")
-    
+
     # Optionally: Delete associated rentals
     # await db.execute("DELETE FROM rentals WHERE source_id = :id", {"id": source_id})
-    
+
     return {"success": True}
 ```
 
@@ -423,11 +432,13 @@ async def delete_rental_source(
 **Backend needs to add:**
 
 1. **Database:**
+
    - `rental_sources` table ✅
    - `user_id` column in `rentals` table (if missing) ✅
    - `source_type` column in `rentals` table ✅
 
 2. **API Endpoints:**
+
    - `POST /rentals` - Add rental manually
    - `PATCH /rentals/{id}` - Update rental
    - `DELETE /rentals/{id}` - Delete rental
@@ -458,6 +469,7 @@ async def delete_rental_source(
 ```
 
 **Frontend can:**
+
 - Display rentals (using existing `GET /database/available`) ✅
 - Show "coming soon" for manual add
 - Build UI for scraping sources (connect when backend ready)
@@ -465,10 +477,10 @@ async def delete_rental_source(
 ---
 
 **Next Steps:**
+
 1. Continue frontend UI reorganization (Phases 3-5)
 2. Provide this document to backend agent
 3. Backend implements rental management endpoints
 4. Frontend connects to new endpoints
 
 **Estimated Backend Work:** 2-3 hours for all rental management endpoints
-
