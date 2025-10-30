@@ -35,6 +35,40 @@ function UsersPageContent() {
   const handleConnectCalendar = async (provider: 'microsoft' | 'google' = 'microsoft') => {
     if (!user) return
 
+    // Check if user already has a different provider connected
+    const otherProvider = provider === 'microsoft' ? 'google' : 'microsoft'
+    const hasOtherProvider = provider === 'microsoft'
+      ? user.google_calendar_connected
+      : user.microsoft_calendar_connected
+
+    if (hasOtherProvider) {
+      const otherProviderName = otherProvider === 'microsoft' ? 'Microsoft' : 'Google'
+      const newProviderName = provider === 'microsoft' ? 'Microsoft' : 'Google'
+
+      const confirmed = window.confirm(
+        `You currently have ${otherProviderName} Calendar connected.\n\n` +
+        `Connecting ${newProviderName} Calendar will automatically disconnect ${otherProviderName} Calendar.\n\n` +
+        `Only one calendar provider can be active at a time.\n\n` +
+        `Continue?`
+      )
+
+      if (!confirmed) return
+
+      // Disconnect the other provider first
+      console.log(`🔌 Auto-disconnecting ${otherProvider} calendar before connecting ${provider}`)
+      try {
+        await disconnectCalendar(otherProvider)
+        console.log(`✅ ${otherProviderName} Calendar disconnected`)
+      } catch (error) {
+        console.error(`❌ Failed to disconnect ${otherProvider}:`, error)
+        setOauthResult({
+          type: 'error',
+          message: `Failed to disconnect ${otherProviderName} Calendar. Please try again.`
+        })
+        return
+      }
+    }
+
     try {
       console.log(`🔗 Starting ${provider} calendar connection for user:`, user.clerk_user_id)
       const authUrl = await getCalendarAuthURL(provider)
@@ -322,14 +356,20 @@ function UsersPageContent() {
           {/* Calendar Tab */}
           <TabsContent value="calendar">
             <div className="grid gap-6 lg:grid-cols-2">
-              <Card>
+              <Card className={user.google_calendar_connected ? "opacity-60" : ""}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="h-5 w-5" />
                     Microsoft Calendar
+                    {user.google_calendar_connected && (
+                      <Badge variant="outline" className="ml-auto text-xs">
+                        Unavailable (Google connected)
+                      </Badge>
+                    )}
                   </CardTitle>
                   <CardDescription>
                     Connect your Microsoft Calendar for appointment booking
+                    {user.google_calendar_connected && " (disconnect Google first)"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -535,14 +575,20 @@ function UsersPageContent() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className={user.microsoft_calendar_connected ? "opacity-60" : ""}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="h-5 w-5" />
                     Google Calendar
+                    {user.microsoft_calendar_connected && (
+                      <Badge variant="outline" className="ml-auto text-xs">
+                        Unavailable (Microsoft connected)
+                      </Badge>
+                    )}
                   </CardTitle>
                   <CardDescription>
                     Connect your Google Calendar for appointment booking
+                    {user.microsoft_calendar_connected && " (disconnect Microsoft first)"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">

@@ -291,9 +291,19 @@ export default function VAPITestingPage() {
             <CardContent>
               <div className="space-y-3 text-sm">
                 <div>
+                  <strong className="text-green-600">✅ Multi-Provider Support</strong>
+                  <p className="text-muted-foreground">
+                    → Works with both Microsoft Calendar and Google Calendar
+                    <br />
+                    → Backend automatically detects which provider you connected
+                    <br />
+                    → Same functions work for both providers (transparent to VAPI)
+                  </p>
+                </div>
+                <div>
                   <strong className="text-red-600">❌ Not Authorized</strong>
                   <p className="text-muted-foreground">
-                    → Go to the Users page and authenticate with Microsoft Calendar
+                    → Go to the Users page and connect Microsoft Calendar or Google Calendar
                   </p>
                 </div>
                 <div>
