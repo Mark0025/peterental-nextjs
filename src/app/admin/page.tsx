@@ -175,12 +175,12 @@ export default function AdminPage() {
             </CardContent>
           </Card>
 
-          {/* VAPI Agent Testing */}
+          {/* Pete Agent Testing */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Activity className="h-5 w-5 text-purple-600" />
-                <CardTitle>VAPI Agent</CardTitle>
+                <CardTitle>Pete Agent</CardTitle>
               </div>
               <CardDescription>
                 Test voice agent functionality
@@ -193,7 +193,7 @@ export default function AdminPage() {
                 </Button>
               </Link>
               <p className="text-xs text-muted-foreground mt-2">
-                Test VAPI voice AI integration
+                Test Pete voice AI integration
               </p>
             </CardContent>
           </Card>

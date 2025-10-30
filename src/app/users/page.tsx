@@ -177,7 +177,7 @@ function UsersPageContent() {
               User Profile
             </h1>
             <p className="text-muted-foreground mt-2">
-              Manage your account, calendar connections, and VAPI configurations
+              Manage your account, calendar connections, and Pete configurations
             </p>
           </div>
           <Button onClick={handleRefresh} disabled={refreshing} variant="outline">
@@ -261,7 +261,7 @@ function UsersPageContent() {
                     <span className="text-sm">
                       {user.first_name
                         ? user.last_name
-                        ? `${user.first_name} ${user.last_name}`
+                          ? `${user.first_name} ${user.last_name}`
                           : user.first_name
                         : 'Name not provided'
                       }
@@ -350,8 +350,8 @@ function UsersPageContent() {
                       <div className="flex items-start gap-2">
                         <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5" />
                         <div className="flex-1 space-y-2">
-                      <p className="text-sm text-green-600 font-medium">
-                            Calendar is connected and ready for VAPI integration
+                          <p className="text-sm text-green-600 font-medium">
+                            Calendar is connected and ready for Pete integration
                           </p>
                           {user.calendar_provider && (
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -502,16 +502,16 @@ function UsersPageContent() {
                           </p>
                         </div>
                       )}
-                          {/* Token Expiration - use formatted version if available */}
-                          {user.calendar_expires_at_formatted ? (
-                            <div className="text-xs text-muted-foreground">
-                              Token expires: <span className="font-medium">{user.calendar_expires_at_formatted}</span>
-                            </div>
-                          ) : user.calendar_expires_at ? (
-                            <div className="text-xs text-muted-foreground">
-                              Token expires: {new Date(user.calendar_expires_at).toLocaleString()}
-                            </div>
-                          ) : null}
+                      {/* Token Expiration - use formatted version if available */}
+                      {user.calendar_expires_at_formatted ? (
+                        <div className="text-xs text-muted-foreground">
+                          Token expires: <span className="font-medium">{user.calendar_expires_at_formatted}</span>
+                        </div>
+                      ) : user.calendar_expires_at ? (
+                        <div className="text-xs text-muted-foreground">
+                          Token expires: {new Date(user.calendar_expires_at).toLocaleString()}
+                        </div>
+                      ) : null}
                       <Button
                         variant="outline"
                         size="sm"
@@ -582,13 +582,13 @@ function UsersPageContent() {
                     </div>
                   ) : (
                     <div className="space-y-2">
-                  <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600">
                         Connect your Google Calendar to enable appointment booking
-                  </p>
+                      </p>
                       <Button className="w-full" onClick={() => handleConnectCalendar('google')}>
-                    <Calendar className="h-4 w-4 mr-2" />
+                        <Calendar className="h-4 w-4 mr-2" />
                         Connect Google Calendar
-                  </Button>
+                      </Button>
                     </div>
                   )}
                 </CardContent>
@@ -596,7 +596,7 @@ function UsersPageContent() {
             </div>
           </TabsContent>
 
-          {/* VAPI Config Tab */}
+          {/* Pete Config Tab */}
           <TabsContent value="vapi">
             <Card>
               <CardHeader>
@@ -605,7 +605,7 @@ function UsersPageContent() {
                   Agent Configuration
                 </CardTitle>
                 <CardDescription>
-                  Manage your AI agents and voice configurations
+                  Manage your Pete agents and voice configurations
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -613,19 +613,19 @@ function UsersPageContent() {
                   <Link href="/agent-builder">
                     <Button className="w-full justify-start" variant="outline">
                       <Settings className="h-4 w-4 mr-2" />
-                    Open Agent Builder
-                  </Button>
+                      Open Agent Builder
+                    </Button>
                   </Link>
                   <Link href="/vapi-agent">
                     <Button className="w-full justify-start" variant="outline">
                       <Mic className="h-4 w-4 mr-2" />
-                    Test Voice Agent
-                  </Button>
+                      Test Pete Voice Agent
+                    </Button>
                   </Link>
                   <Link href="/vapi-testing">
                     <Button className="w-full justify-start" variant="outline">
                       <ExternalLink className="h-4 w-4 mr-2" />
-                      Webhook Testing
+                      Pete Webhook Testing
                     </Button>
                   </Link>
                 </div>
@@ -675,7 +675,7 @@ function UsersPageContent() {
                 <div className="mt-4 p-4 bg-green-50 rounded-lg">
                   <p className="text-sm text-green-800">
                     <strong>Integration:</strong> Your rental properties are automatically
-                    available to VAPI agents for appointment booking and management.
+                    available to Pete agents for appointment booking and management.
                   </p>
                   <p className="text-xs text-green-700 mt-2">
                     • Add properties manually or configure scraping sources<br />

@@ -44,17 +44,17 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          {/* VAPI Testing Card */}
+          {/* Pete Testing Card */}
           <Card>
             <CardHeader>
-              <CardTitle>VAPI Testing & Configuration</CardTitle>
+              <CardTitle>Pete Testing & Configuration</CardTitle>
               <CardDescription>
-                Test webhooks and configure VAPI integration
+                Test webhooks and configure Pete integration
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Configure and test your VAPI webhooks, view function definitions, and
+                Configure and test your Pete webhooks, view function definitions, and
                 troubleshoot integration issues.
               </p>
               <div className="flex gap-2">
