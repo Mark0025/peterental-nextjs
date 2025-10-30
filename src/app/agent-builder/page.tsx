@@ -59,7 +59,7 @@ export default function AgentBuilderPage() {
                         🎨 Agent Builder
                     </h1>
                     <p className="text-muted-foreground mt-2">
-                        Visual configuration for VAPI agents - no guesswork, perfect sync every time
+                        Your AI agents - Configure, deploy, and manage your voice assistants
                     </p>
                 </div>
 
@@ -148,8 +148,11 @@ export default function AgentBuilderPage() {
                         <CardContent>
                             <div className="text-muted-foreground mb-4">
                                 <Settings className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                                <p className="text-lg">No agents configured yet</p>
-                                <p className="text-sm mt-2">Create your first agent to get started</p>
+                                <p className="text-lg">No agents yet</p>
+                                <p className="text-sm mt-2">Create your first AI agent to get started</p>
+                                <p className="text-xs mt-1 text-blue-600">
+                                    Your agents are private and user-scoped
+                                </p>
                             </div>
                         </CardContent>
                     </Card>
