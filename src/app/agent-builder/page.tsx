@@ -37,7 +37,14 @@ export default function AgentBuilderPage() {
             setLoading(true)
             setError(null) // Clear any previous errors
             const backendAgents = await getAgents()
-            setAgents(backendAgents)
+
+            // DEFENSIVE: Ensure we always have an array
+            if (Array.isArray(backendAgents)) {
+                setAgents(backendAgents)
+            } else {
+                console.warn('getAgents returned non-array:', backendAgents)
+                setAgents([])
+            }
         } catch (error) {
             console.error('Failed to load agents:', error)
             // Set error state instead of throwing

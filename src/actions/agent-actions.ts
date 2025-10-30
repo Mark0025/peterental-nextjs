@@ -120,7 +120,8 @@ export async function getAgents(): Promise<BackendAgent[]> {
 
     const data = await response.json()
     console.log(`✅ Backend response:`, data)
-    
+    console.log(`✅ data.agents type:`, typeof data.agents, Array.isArray(data.agents))
+
     // Handle different response structures
     if (Array.isArray(data)) {
       // Direct array response
@@ -129,9 +130,11 @@ export async function getAgents(): Promise<BackendAgent[]> {
     } else if (data.agents && Array.isArray(data.agents)) {
       // Object with agents array
       console.log(`✅ Fetched ${data.agents.length} agents from backend (object.agents)`)
+      console.log(`✅ Returning agents array:`, data.agents)
       return data.agents
     } else {
-      console.warn('Unexpected response structure:', data)
+      console.warn('⚠️ Unexpected response structure:', data)
+      console.warn('⚠️ Returning empty array as fallback')
       return []
     }
   } catch (error) {
