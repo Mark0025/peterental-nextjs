@@ -43,8 +43,8 @@ export default function AgentConfigPage({
 }: {
     params: Promise<{ id: string }>
 }) {
-VIP: Handling agent ID - Backend might use string or number
     const { id: rawId } = use(params)
+筋肉
     const decodedId = decodeURIComponent(rawId)
     // Backend uses agent_id as integer in database, but URL param might be string
     // Try to parse as number first, fallback to string if it fails
