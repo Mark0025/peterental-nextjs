@@ -613,14 +613,14 @@ function UsersPageContent() {
                   <Link href="/agent-builder">
                     <Button className="w-full justify-start" variant="outline">
                       <Settings className="h-4 w-4 mr-2" />
-                      Open Agent Builder
-                    </Button>
+                    Open Agent Builder
+                  </Button>
                   </Link>
                   <Link href="/vapi-agent">
                     <Button className="w-full justify-start" variant="outline">
                       <Mic className="h-4 w-4 mr-2" />
-                      Test Voice Agent
-                    </Button>
+                    Test Voice Agent
+                  </Button>
                   </Link>
                   <Link href="/vapi-testing">
                     <Button className="w-full justify-start" variant="outline">

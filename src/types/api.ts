@@ -169,18 +169,26 @@ export interface GetAssistantsResponse {
 // ============================================================================
 
 export interface RentalProperty {
-  address: string
-  property_type?: string
-  price: string
-  bedrooms: string | number
-  bathrooms: string | number
-  square_feet?: string
-  available_date: string
+  id: number // Rental ID from database
+  user_id: string // Clerk user ID who owns this rental
+  property_address: string // Full property address
+  price: number // Monthly rental price
+  bedrooms: number // Number of bedrooms
+  bathrooms: number // Number of bathrooms
+  square_feet?: number | null // Square footage (optional)
+  property_type?: string | null // Type of property (optional)
+  available_date?: string | null // ISO date when property is available
+  description?: string | null // Property description (optional)
+  contact_info?: string | null // Contact information (optional)
+  website?: string | null // Source website (for scraped rentals)
+  url?: string | null // Source URL (for scraped rentals)
+  source_type?: 'scraped' | 'manual' | null // How the rental was added
+  created_at: string // ISO timestamp when rental was created
+  updated_at?: string // ISO timestamp when rental was last updated
+  // Legacy fields for backward compatibility with scraped data
   availability_status?: string
   days_until_available?: number | string
-  description?: string
   features?: string[]
-  website?: string
 }
 
 export interface RentalData {
