@@ -1,7 +1,7 @@
 /**
  * Visual Agent Builder
- * Configure VAPI agents with drag-and-drop variables
- * Now fetches from backend database + VAPI dashboard!
+ * Configure Pete agents with drag-and-drop variables
+ * Now fetches from backend database + Pete dashboard!
  */
 
 'use client'
@@ -21,6 +21,7 @@ export default function AgentBuilderPage() {
     const [agents, setAgents] = useState<BackendAgent[]>([])
     const [vapiAgents, setVAPIAgents] = useState<VAPIAssistant[]>([])
     const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
     const [showCreateForm, setShowCreateForm] = useState(false)
     const [showImportDialog, setShowImportDialog] = useState(false)
     const [newAgentName, setNewAgentName] = useState('')
@@ -34,10 +35,17 @@ export default function AgentBuilderPage() {
     const loadAgents = async () => {
         try {
             setLoading(true)
+            setError(null) // Clear any previous errors
             const backendAgents = await getAgents()
             setAgents(backendAgents)
         } catch (error) {
             console.error('Failed to load agents:', error)
+            // Set error state instead of throwing
+            setError(
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to load agents. Please try again.'
+            )
         } finally {
             setLoading(false)
         }
@@ -50,8 +58,8 @@ export default function AgentBuilderPage() {
             setVAPIAgents(assistants)
             setShowImportDialog(true)
         } catch (error) {
-            console.error('Failed to load VAPI assistants:', error)
-            alert('Failed to load VAPI assistants. Please try again.')
+            console.error('Failed to load Pete assistants:', error)
+            alert('Failed to load Pete assistants. Please try again.')
         } finally {
             setImporting(false)
         }
@@ -113,6 +121,50 @@ export default function AgentBuilderPage() {
         )
     }
 
+    // Show error state with retry option
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-100 flex items-center justify-center p-4">
+                <Card className="w-full max-w-md">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-red-600">
+                            ⚠️ Failed to Load Agents
+                        </CardTitle>
+                        <CardDescription>
+                            We couldn&apos;t connect to the backend
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="text-sm text-muted-foreground bg-red-50 p-3 rounded">
+                            {error}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                            This could be due to:
+                            <ul className="list-disc list-inside mt-2 space-y-1">
+                                <li>Backend still waking up from sleep</li>
+                                <li>Authentication token expired</li>
+                                <li>Network connection issues</li>
+                            </ul>
+                        </div>
+                    </CardContent>
+                    <CardContent className="flex gap-3 pt-0">
+                        <Button onClick={loadAgents} className="flex-1">
+                            <Loader2 className="h-4 w-4 mr-2" />
+                            Retry
+                        </Button>
+                        <Button
+                            onClick={() => window.location.href = '/'}
+                            variant="outline"
+                            className="flex-1"
+                        >
+                            Go Home
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-100 p-8">
             <div className="container mx-auto max-w-7xl">
@@ -142,7 +194,7 @@ export default function AgentBuilderPage() {
                                 &quot;Book Appointment&quot;
                             </li>
                             <li>
-                                <strong>Deploy:</strong> One click syncs everything to VAPI Dashboard + your
+                                <strong>Deploy:</strong> One click syncs everything to Pete Dashboard + your
                                 backend
                             </li>
                             <li>
@@ -159,9 +211,9 @@ export default function AgentBuilderPage() {
                         <CardHeader>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <CardTitle>Import from VAPI Dashboard</CardTitle>
+                                    <CardTitle>Import from Pete Dashboard</CardTitle>
                                     <CardDescription>
-                                        Select agents from your VAPI dashboard to import
+                                        Select agents from your Pete dashboard to import
                                     </CardDescription>
                                 </div>
                                 <Button
@@ -191,7 +243,7 @@ export default function AgentBuilderPage() {
                                                         {vapiAgent.voice?.voiceId || 'N/A'}
                                                     </p>
                                                     <p className="text-xs text-muted-foreground mt-1">
-                                                        VAPI ID: {vapiAgent.id}
+                                                        Pete ID: {vapiAgent.id}
                                                     </p>
                                                 </div>
                                                 {alreadyImported ? (
