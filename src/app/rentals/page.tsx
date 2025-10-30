@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, Home, DollarSign, Bed, Bath, Square, MapPin, ExternalLink, Loader2, AlertCircle, Filter } from 'lucide-react'
+import { Search, Home, DollarSign, Bed, Bath, Square, MapPin, ExternalLink, Loader2, AlertCircle, Filter, Plus } from 'lucide-react'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -119,13 +120,21 @@ export default function RentalsPage() {
                             {user && <span className="text-xs ml-2">• Showing your properties</span>}
                         </p>
                     </div>
-                    {user?.email?.includes('mark@') && (
-                        <a href="/admin/testing">
-                            <Button variant="outline" size="sm">
-                                Admin Testing
+                    <div className="flex gap-2">
+                        <Link href="/rentals/new">
+                            <Button className="bg-blue-600 hover:bg-blue-700">
+                                <Plus className="h-4 w-4 mr-2" />
+                                Add Property
                             </Button>
-                        </a>
-                    )}
+                        </Link>
+                        {user?.email?.includes('mark@') && (
+                            <Link href="/admin/testing">
+                                <Button variant="outline" size="sm">
+                                    Admin Testing
+                                </Button>
+                            </Link>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -305,10 +314,12 @@ export default function RentalsPage() {
 
                                         {/* Actions */}
                                         <div className="flex gap-2 pt-2">
-                                            <Button className="flex-1" size="sm">
-                                                <MapPin className="h-3 w-3 mr-1" />
-                                                View Details
-                                            </Button>
+                                            <Link href={`/rentals/${rental.id}`} className="flex-1">
+                                                <Button className="w-full" size="sm">
+                                                    <MapPin className="h-3 w-3 mr-1" />
+                                                    View Details
+                                                </Button>
+                                            </Link>
                                             {rental.url && (
                                                 <a
                                                     href={rental.url}
