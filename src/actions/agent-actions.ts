@@ -75,6 +75,21 @@ export async function getAgents(): Promise<BackendAgent[]> {
 }
 
 /**
+ * Fetch a single agent by ID
+ * Uses GET /agents and filters client-side (backend is user-scoped)
+ */
+export async function getAgentById(agentId: number): Promise<BackendAgent | null> {
+  try {
+    const agents = await getAgents()
+    const agent = agents.find(a => a.agent_id === agentId)
+    return agent || null
+  } catch (error) {
+    console.error('[Server Action] getAgentById error:', error)
+    throw error
+  }
+}
+
+/**
  * Create a new agent in the backend
  * POST /agents
  */
@@ -235,4 +250,3 @@ export async function importVAPIAssistant(vapiAssistantId: string, agentName: st
     throw error
   }
 }
-
