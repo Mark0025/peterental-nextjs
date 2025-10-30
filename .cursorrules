@@ -25,16 +25,31 @@ After finishing ANY feature or task:
 2. ✅ **Update** `DEV_MAN/.AI_agents/ALIGNMENT_STATUS.md` (Your current status)
 3. ✅ **Update** `DEV_MAN/.AI_agents/CHANGELOG.md` (Log what you did)
 
-### **Critical Files:**
+### **File Ownership (STRICT - READ THIS!):**
 
+**✅ Nova CAN WRITE (Your files):**
 - `NOVA_TO_FORGE.md` - Your requests to backend
-- `FORGE_TO_NOVA.md` - Backend updates to you
-- `ALIGNMENT_STATUS.md` - Current status of both agents
-- `CHANGELOG.md` - Historical timeline
-- `HOW_THIS_WORKS.md` - Detailed workflow guide
-- `coordination-config.json` - JSON schema reference
+- `NOVA_ACK_*.md` - Your acknowledgment files
+- `NOVA_RESPONSE_*.md` - Your response files
+- `ALIGNMENT_STATUS.md` - Only YOUR status section (🎨 Nova section)
+- `CHANGELOG.md` - Only YOUR entries (log as "Nova (Frontend)")
 
-**This is NON-NEGOTIABLE. The coordination system only works if you check these files FIRST.**
+**❌ Nova CANNOT WRITE (Forge's files - READ ONLY!):**
+- `FORGE_TO_NOVA.md` - Backend updates (READ ONLY!)
+- `coordination-config.json` - Forge created this (READ ONLY!)
+- `SYSTEM_FLOW_DIAGRAM.md` - Forge created this (READ ONLY!)
+- `HOW_THIS_WORKS.md` - Shared reference (READ ONLY!)
+- Any file created by Forge
+
+**📖 Shared Read-Only:**
+- `README.md` - System overview
+- `HOW_THIS_WORKS.md` - Workflow guide
+- `coordination-config.json` - JSON schema
+
+**⚠️ CRITICAL RULE:**
+Before editing ANY file in `DEV_MAN/.AI_agents/`, check `coordination-config.json` to verify you are the designated writer. NEVER edit Forge's files. This is trust-based - filesystem allows it, but protocol forbids it.
+
+**This is NON-NEGOTIABLE. The coordination system only works if you check these files FIRST and respect file ownership.**
 
 ---
 
