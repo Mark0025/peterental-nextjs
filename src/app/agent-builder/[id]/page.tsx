@@ -44,14 +44,34 @@ export default function AgentConfigPage({
     params: Promise<{ id: string }>
 }) {
     const { id: rawId } = use(params)
-    const agentId = parseInt(decodeURIComponent(rawId), 10)
-
+    const decodedId = decodeURIComponent(rawId)
+    const agentId = parseInt(decodedId, 10)
+    
     // Backend state
     const [agent, setAgent] = useState<BackendAgent | null>(null)
     const [variables, setVariables] = useState<BackendVariable[]>([])
     const [functions, setFunctions] = useState<BackendFunction[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    
+    // Validate agent ID
+    if (isNaN(agentId)) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-100 flex items-center justify-center">
+                <Card>
+                    <CardContent className="p-8 text-center">
+                        <h2 className="text-2xl font-bold mb-2">Invalid Agent ID</h2>
+                        <p className="text-muted-foreground mb-4">
+                            Agent ID must be a number: <code className="text-xs bg-gray-100 px-2 py-1 rounded">{decodedId}</code>
+                        </p>
+                        <Link href="/agent-builder">
+                            <Button className="mt-4">Back to Agent Builder</Button>
+                        </Link>
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
     const [syncing, setSyncing] = useState(false)
     const [saving, setSaving] = useState(false)
 
@@ -73,42 +93,53 @@ export default function AgentConfigPage({
             try {
                 setLoading(true)
                 setError(null) // Clear previous errors
-                const [agentData, vars, funcs] = await Promise.all([
-                    getAgentById(agentId),
+                
+                // First get the agent - this will 404 if not found or not owned by user
+                const agentData = await getAgentById(agentId)
+                
+                if (!agentData) {
+                    setAgent(null)
+                    setError('Agent not found or you don\'t have permission to access it')
+                    return
+                }
+                
+                setAgent(agentData)
+                
+                // Then load variables and functions for this agent
+                const [vars, funcs] = await Promise.all([
                     getAgentVariables(agentId),
                     getAgentFunctions(agentId),
                 ])
-
-                if (!agentData) {
-                    setAgent(null)
-                    setError('Agent not found')
-                    return
-                }
-
-                setAgent(agentData)
+                
                 setVariables(vars)
                 setFunctions(funcs)
-
+                
                 // Initialize local state from backend config
                 setAgentName(agentData.agent_name)
                 setSystemPrompt(agentData.config?.model?.messages?.[0]?.content || '')
                 setFirstMessage(agentData.config?.firstMessage || '')
                 setVoice(agentData.config?.voice?.voiceId || 'jennifer')
                 setModel(agentData.config?.model?.model || 'gpt-4')
-
+                
             } catch (error) {
                 console.error('Failed to load agent:', error)
                 setAgent(null)
-                setError(
-                    error instanceof Error
-                        ? error.message
-                        : 'Failed to load agent. Please try again.'
-                )
+                
+                // Check if it's a 404 (agent not found or no permission)
+                if (error instanceof Error && error.message.includes('404')) {
+                    setError('Agent not found or you don\'t have permission to access it')
+                } else {
+                    setError(
+                        error instanceof Error
+                            ? error.message
+                            : 'Failed to load agent. Please try again.'
+                    )
+                }
             } finally {
                 setLoading(false)
             }
         }
-
+        
         loadAgent()
     }, [agentId])
 

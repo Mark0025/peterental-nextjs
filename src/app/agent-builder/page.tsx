@@ -317,7 +317,7 @@ export default function AgentBuilderPage() {
                             ) : (
                                 <Download className="h-5 w-5 mr-2" />
                             )}
-                            {importing ? 'Loading...' : 'Import from VAPI'}
+                            {importing ? 'Loading...' : 'Import from Pete'}
                         </Button>
                     </div>
                 )}
