@@ -322,3 +322,163 @@ export async function importVAPIAssistant(vapiAssistantId: string, agentName: st
     throw error
   }
 }
+
+/* ============================================================
+ * AGENT VARIABLES - Backend Storage (NEW!)
+ * ============================================================ */
+
+export interface AgentVariable {
+  id?: number                  // DB ID (optional for create)
+  variable_id: string          // Frontend ID (e.g., "property_type")
+  name: string                 // Variable name
+  display_name: string         // Display name for UI
+  type: string                 // Type: string, number, email, etc.
+  description: string          // Description
+  required: boolean            // Is required?
+  default_value?: string       // Default value
+  validation_pattern?: string  // Regex pattern
+  extraction_prompt?: string   // How AI should ask
+  sort_order?: number          // Sort order
+  created_at?: string          // Timestamp
+  updated_at?: string          // Timestamp
+}
+
+/**
+ * Add a variable to an agent
+ * POST /agents/{agent_id}/variables
+ */
+export async function addAgentVariable(
+  agentId: number,
+  variable: Omit<AgentVariable, 'id' | 'created_at' | 'updated_at'>
+): Promise<AgentVariable> {
+  try {
+    const headers = await getAuthHeaders()
+    
+    const response = await fetch(`${API_URL}/agents/${agentId}/variables`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(variable),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('[Server Action] addAgentVariable error:', response.status, errorText)
+      throw new Error(`Failed to add variable: ${response.status}`)
+    }
+
+    const data = await response.json()
+    console.log(`✅ Added variable: ${variable.name} to agent ${agentId}`)
+    return data.variable
+  } catch (error) {
+    console.error('[Server Action] addAgentVariable error:', error)
+    throw error
+  }
+}
+
+/**
+ * Get all variables for an agent
+ * GET /agents/{agent_id}/variables
+ */
+export async function getAgentVariables(agentId: number): Promise<AgentVariable[]> {
+  try {
+    const headers = await getAuthHeaders()
+    
+    const response = await fetch(`${API_URL}/agents/${agentId}/variables`, {
+      method: 'GET',
+      headers,
+      cache: 'no-store',
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('[Server Action] getAgentVariables error:', response.status, errorText)
+      throw new Error(`Failed to fetch variables: ${response.status}`)
+    }
+
+    const data = await response.json()
+    console.log(`✅ Fetched ${data.variables?.length || 0} variables for agent ${agentId}`)
+    return data.variables || []
+  } catch (error) {
+    console.error('[Server Action] getAgentVariables error:', error)
+    throw error
+  }
+}
+
+/* ============================================================
+ * AGENT FUNCTIONS - Backend Storage (NEW!)
+ * ============================================================ */
+
+export interface AgentFunction {
+  id?: number                  // DB ID (optional for create)
+  function_id: string          // Frontend ID (e.g., "search_properties")
+  name: string                 // Function name
+  display_name: string         // Display name for UI
+  description: string          // Description
+  enabled: boolean             // Is enabled?
+  webhook_url?: string         // Webhook URL
+  method?: string              // HTTP method (POST, GET, etc.)
+  sort_order?: number          // Sort order
+  created_at?: string          // Timestamp
+  updated_at?: string          // Timestamp
+}
+
+/**
+ * Add a function to an agent
+ * POST /agents/{agent_id}/functions
+ */
+export async function addAgentFunction(
+  agentId: number,
+  func: Omit<AgentFunction, 'id' | 'created_at' | 'updated_at'>
+): Promise<AgentFunction> {
+  try {
+    const headers = await getAuthHeaders()
+    
+    const response = await fetch(`${API_URL}/agents/${agentId}/functions`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(func),
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('[Server Action] addAgentFunction error:', response.status, errorText)
+      throw new Error(`Failed to add function: ${response.status}`)
+    }
+
+    const data = await response.json()
+    console.log(`✅ Added function: ${func.name} to agent ${agentId}`)
+    return data.function
+  } catch (error) {
+    console.error('[Server Action] addAgentFunction error:', error)
+    throw error
+  }
+}
+
+/**
+ * Get all functions for an agent
+ * GET /agents/{agent_id}/functions
+ */
+export async function getAgentFunctions(agentId: number): Promise<AgentFunction[]> {
+  try {
+    const headers = await getAuthHeaders()
+    
+    const response = await fetch(`${API_URL}/agents/${agentId}/functions`, {
+      method: 'GET',
+      headers,
+      cache: 'no-store',
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('[Server Action] getAgentFunctions error:', response.status, errorText)
+      throw new Error(`Failed to fetch functions: ${response.status}`)
+    }
+
+    const data = await response.json()
+    console.log(`✅ Fetched ${data.functions?.length || 0} functions for agent ${agentId}`)
+    return data.functions || []
+  } catch (error) {
+    console.error('[Server Action] getAgentFunctions error:', error)
+    throw error
+  }
+}
